@@ -41,3 +41,5 @@ out/
 
 ### Package Files ###
 resources/
+logs/
+compression-logs/
