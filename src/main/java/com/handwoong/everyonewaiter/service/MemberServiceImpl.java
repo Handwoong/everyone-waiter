@@ -55,7 +55,11 @@ public class MemberServiceImpl implements MemberService {
                     log.error("존재하지 않는 회원 찾기 = 찾으려는 아이디 : '{}'", memberId);
                     return new ResourceNotFoundException("존재하지 않는 회원입니다.");
                 });
-        return MemberResponseDto.from(member);
+        MemberResponseDto memberDto = MemberResponseDto.from(member);
+        log.info("회원 조회 = 아이디 : '{}', 이메일 : '{}', 이름 : '{}', 잔액 : '{}'",
+                memberDto.getId(), memberDto.getEmail(), memberDto.getName(),
+                memberDto.getBalance());
+        return memberDto;
     }
 
     @Override
