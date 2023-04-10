@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.handwoong.everyonewaiter.dto.member.MemberRequestDto;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class MemberTest {
@@ -17,6 +18,7 @@ class MemberTest {
     }
 
     @Test
+    @DisplayName("회원 엔티티 생성")
     void createMember() throws Exception {
         Member member = Member.createMember(memberDto);
         assertThat(member.getEmail()).isEqualTo(memberDto.getEmail());

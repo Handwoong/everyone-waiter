@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.dto.member.MemberRequestDto;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -24,6 +25,7 @@ class MemberRepositoryTest {
     }
 
     @Test
+    @DisplayName("이메일 중복 검사")
     void existEmail() throws Exception {
         // given
         String email = "test@test.com";
@@ -38,6 +40,7 @@ class MemberRepositoryTest {
     }
 
     @Test
+    @DisplayName("이메일 중복X")
     void notExistEmail() throws Exception {
         // given
         String email = "test@test.com";
@@ -50,6 +53,7 @@ class MemberRepositoryTest {
     }
 
     @Test
+    @DisplayName("휴대폰 번호 중복 검사")
     void existPhoneNumber() throws Exception {
         // given
         String phoneNumber = "01012345678";
@@ -64,6 +68,7 @@ class MemberRepositoryTest {
     }
 
     @Test
+    @DisplayName("휴대폰 번호 중복X")
     void notExistPhoneNumber() throws Exception {
         // given
         String phoneNumber = "01012345678";

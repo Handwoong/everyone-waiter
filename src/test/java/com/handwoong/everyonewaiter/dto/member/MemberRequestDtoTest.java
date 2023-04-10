@@ -9,6 +9,7 @@ import jakarta.validation.ValidatorFactory;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class MemberRequestDtoTest {
@@ -31,6 +32,7 @@ class MemberRequestDtoTest {
     }
 
     @Test
+    @DisplayName("유효성 검사 통과")
     void validSuccess() throws Exception {
         Set<ConstraintViolation<MemberRequestDto>> validResult = validator.validate(
                 memberDto);
@@ -40,6 +42,7 @@ class MemberRequestDtoTest {
     }
 
     @Test
+    @DisplayName("이메일 공백 유효성 검사")
     void validEmailBlank() throws Exception {
         // given
         memberDto.setEmail("");
@@ -56,6 +59,7 @@ class MemberRequestDtoTest {
     }
 
     @Test
+    @DisplayName("이메일 형식 유효성 검사")
     void validEmailType() throws Exception {
         // given
         memberDto.setEmail("emailType");
@@ -73,6 +77,7 @@ class MemberRequestDtoTest {
     }
 
     @Test
+    @DisplayName("비밀번호 길이 유효성 검사")
     void validPasswordSize() throws Exception {
         // given
         memberDto.setPassword("passwd");
@@ -86,6 +91,7 @@ class MemberRequestDtoTest {
     }
 
     @Test
+    @DisplayName("비밀번호 패턴 유효성 검사 (숫자 미포함)")
     void validPasswordNotNumber() throws Exception {
         // given
         memberDto.setPassword("password");
@@ -99,6 +105,7 @@ class MemberRequestDtoTest {
     }
 
     @Test
+    @DisplayName("비밀번호 패턴 유효성 검사 (문자 미포함)")
     void validPasswordNotChar() throws Exception {
         // given
         memberDto.setPassword("12345678");
@@ -112,6 +119,7 @@ class MemberRequestDtoTest {
     }
 
     @Test
+    @DisplayName("이름 최소 길이 유효성 검사")
     void validNameLowSize() throws Exception {
         // given
         memberDto.setName("");
@@ -129,6 +137,7 @@ class MemberRequestDtoTest {
     }
 
     @Test
+    @DisplayName("이름 최대 길이 유효성 검사")
     void validNameOverSize() throws Exception {
         // given
         memberDto.setName("abcdefghijklmnopqrstuvwxyz");
@@ -146,6 +155,7 @@ class MemberRequestDtoTest {
     }
 
     @Test
+    @DisplayName("휴대폰 번호 형식 유효성 검사")
     void validPhoneNumber() throws Exception {
         // given
         // Length 11
@@ -160,6 +170,7 @@ class MemberRequestDtoTest {
     }
 
     @Test
+    @DisplayName("모든 유효성 검사 실패")
     void validAllFail() throws Exception {
         // given
         memberDto.setEmail("email");
