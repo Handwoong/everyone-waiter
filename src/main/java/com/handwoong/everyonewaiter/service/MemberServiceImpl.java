@@ -23,21 +23,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public Long register(MemberRequestDto memberDto) {
-        // 이메일 중복 검사
-        boolean isExistEmail = memberRepository.existsByEmail(memberDto.getEmail());
-        if (isExistEmail) {
-            log.error("이메일 중복 가입 요청 = 이메일 : '{}'", memberDto.getEmail());
-            throw new ResourceExistsException("이미 존재하는 이메일 입니다.");
-        }
-
-        // 휴대폰 번호 중복 검사
-        boolean isExistPhoneNumber = memberRepository.existsByPhoneNumber(
-                memberDto.getPhoneNumber());
-        if (isExistPhoneNumber) {
-            log.error("휴대폰 번호 중복 가입 요청 = 이메일 : '{}', 휴대폰 번호 : '{}'",
-                    memberDto.getEmail(), memberDto.getPhoneNumber());
-            throw new ResourceExistsException("이미 존재하는 휴대폰 번호 입니다.");
-        }
+        isExistsEmail(memberDto);
+        isExistsPhoneNumber(memberDto);
 
         // 회원 생성
         Member member = Member.createMember(memberDto);
@@ -46,6 +33,24 @@ public class MemberServiceImpl implements MemberService {
                 member.getId(), member.getEmail(), member.getName(),
                 member.getPhoneNumber());
         return member.getId();
+    }
+
+    private void isExistsPhoneNumber(MemberRequestDto memberDto) {
+        boolean isExistsPhoneNumber = memberRepository.existsByPhoneNumber(
+                memberDto.getPhoneNumber());
+        if (isExistsPhoneNumber) {
+            log.error("휴대폰 번호 중복 가입 요청 = 이메일 : '{}', 휴대폰 번호 : '{}'",
+                    memberDto.getEmail(), memberDto.getPhoneNumber());
+            throw new ResourceExistsException("이미 존재하는 휴대폰 번호 입니다.");
+        }
+    }
+
+    private void isExistsEmail(MemberRequestDto memberDto) {
+        boolean isExistsEmail = memberRepository.existsByEmail(memberDto.getEmail());
+        if (isExistsEmail) {
+            log.error("이메일 중복 가입 요청 = 이메일 : '{}'", memberDto.getEmail());
+            throw new ResourceExistsException("이미 존재하는 이메일 입니다.");
+        }
     }
 
     @Override
