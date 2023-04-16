@@ -46,7 +46,7 @@ class StoreServiceImplTest {
     void register() throws Exception {
         // given
         StoreRequestDto storeDto = new StoreRequestDto("나루");
-        Long storeId = storeService.register(storeDto, "test@test.com");
+        Long storeId = storeService.register("test@test.com", storeDto);
 
         // when
         Store store = storeRepository.findById(storeId).orElseThrow();
@@ -61,7 +61,7 @@ class StoreServiceImplTest {
     @DisplayName("매장 등록 시 회원 이메일을 찾을 수 없음")
     void registerNotFoundEmail() throws Exception {
         StoreRequestDto storeDto = new StoreRequestDto("나루");
-        assertThatThrownBy(() -> storeService.register(storeDto, "notfound@test.com"))
+        assertThatThrownBy(() -> storeService.register("notfound@test.com", storeDto))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 

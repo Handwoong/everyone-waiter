@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface StoreService {
 
-    Long register(StoreRequestDto storeDto, String userEmail);
+    Long register(String userEmail, StoreRequestDto storeDto);
 
     List<StoreResponseDto> findStoreList(String userEmail);
 }

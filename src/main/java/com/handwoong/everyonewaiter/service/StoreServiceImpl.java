@@ -25,7 +25,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     @Transactional
-    public Long register(StoreRequestDto storeDto, String userEmail) {
+    public Long register(String userEmail, StoreRequestDto storeDto) {
         Member findMember = memberRepository.findByEmail(userEmail).orElseThrow(() -> {
             log.error("존재하지 않는 회원 이메일로 매장 생성 요청 = 찾으려는 이메일 : '{}'", userEmail);
             return new ResourceNotFoundException("존재하지 않는 회원 입니다.");
