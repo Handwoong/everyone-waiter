@@ -79,4 +79,20 @@ class MemberRepositoryTest {
         // then
         assertThat(isExistPhoneNumber).isFalse();
     }
+
+    @Test
+    @DisplayName("이메일로 회원 조회")
+    void findByEmail() throws Exception {
+        // given
+        Member member = Member.createMember(memberDto);
+        memberRepository.save(member);
+
+        // when
+        Member findMember = memberRepository.findByEmail("test@test.com").orElseThrow();
+
+        // then
+        assertThat(findMember.getId()).isEqualTo(member.getId());
+        assertThat(findMember.getEmail()).isEqualTo(member.getEmail());
+        assertThat(findMember.getPhoneNumber()).isEqualTo(member.getPhoneNumber());
+    }
 }
