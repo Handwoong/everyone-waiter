@@ -1,7 +1,7 @@
 package com.handwoong.everyonewaiter.service;
 
 import com.handwoong.everyonewaiter.domain.Member;
-import com.handwoong.everyonewaiter.dto.member.MemberRegisterDto;
+import com.handwoong.everyonewaiter.dto.member.MemberDto;
 import com.handwoong.everyonewaiter.dto.member.MemberResponseDto;
 import com.handwoong.everyonewaiter.exception.ResourceExistsException;
 import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
@@ -25,7 +25,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public Long register(MemberRegisterDto memberDto) {
+    public Long register(MemberDto memberDto) {
         isExistsUsername(memberDto);
         isExistsPhoneNumber(memberDto);
 
@@ -39,7 +39,7 @@ public class MemberServiceImpl implements MemberService {
         return member.getId();
     }
 
-    private void isExistsPhoneNumber(MemberRegisterDto memberDto) {
+    private void isExistsPhoneNumber(MemberDto memberDto) {
         boolean isExistsPhoneNumber = memberRepository.existsByPhoneNumber(
                 memberDto.getPhoneNumber());
         if (isExistsPhoneNumber) {
@@ -49,7 +49,7 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    private void isExistsUsername(MemberRegisterDto memberDto) {
+    private void isExistsUsername(MemberDto memberDto) {
         boolean isExistsUsername = memberRepository.existsByUsername(
                 memberDto.getUsername());
         if (isExistsUsername) {
