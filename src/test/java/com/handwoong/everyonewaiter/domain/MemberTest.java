@@ -25,7 +25,7 @@ class MemberTest {
         assertThat(member.getUsername()).isEqualTo(memberDto.getUsername());
         assertThat(member.getPhoneNumber()).isEqualTo(memberDto.getPhoneNumber());
         assertThat(member.getBalance()).isEqualTo(0);
-        assertThat(member.getRole()).isEqualTo(MemberRole.USER);
+        assertThat(member.getRole()).isEqualTo(MemberRole.ROLE_USER);
     }
 
     @Test
