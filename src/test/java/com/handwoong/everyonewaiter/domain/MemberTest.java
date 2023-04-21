@@ -2,7 +2,7 @@ package com.handwoong.everyonewaiter.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.handwoong.everyonewaiter.dto.member.MemberRegisterDto;
+import com.handwoong.everyonewaiter.dto.member.MemberDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,11 +11,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 class MemberTest {
 
-    private MemberRegisterDto memberDto;
+    private MemberDto memberDto;
 
     @BeforeEach
     void beforeEach() {
-        memberDto = new MemberRegisterDto("handwoong", "password", "01012345678");
+        memberDto = new MemberDto("handwoong", "password", "01012345678");
     }
 
     @Test
@@ -24,7 +24,7 @@ class MemberTest {
         Member member = Member.createMember(memberDto);
         assertThat(member.getUsername()).isEqualTo(memberDto.getUsername());
         assertThat(member.getPhoneNumber()).isEqualTo(memberDto.getPhoneNumber());
-        assertThat(member.getBalance()).isEqualTo(0);
+        assertThat(member.getBalance()).isEqualTo(300);
         assertThat(member.getRole()).isEqualTo(MemberRole.ROLE_USER);
     }
 

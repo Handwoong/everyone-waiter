@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.domain.Store;
-import com.handwoong.everyonewaiter.dto.member.MemberRegisterDto;
+import com.handwoong.everyonewaiter.dto.member.MemberDto;
 import com.handwoong.everyonewaiter.dto.store.StoreRequestDto;
 import com.handwoong.everyonewaiter.dto.store.StoreResponseDto;
 import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
@@ -36,7 +36,7 @@ class StoreServiceImplTest {
 
     @BeforeEach
     void beforeEach() {
-        MemberRegisterDto memberDto = new MemberRegisterDto("handwoong", "password1",
+        MemberDto memberDto = new MemberDto("handwoong", "password1",
                 "01012345678");
         member = memberRepository.save(Member.createMember(memberDto));
     }

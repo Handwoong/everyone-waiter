@@ -3,7 +3,7 @@ package com.handwoong.everyonewaiter.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.handwoong.everyonewaiter.domain.Member;
-import com.handwoong.everyonewaiter.dto.member.MemberRegisterDto;
+import com.handwoong.everyonewaiter.dto.member.MemberDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +16,11 @@ class MemberRepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    private MemberRegisterDto memberDto;
+    private MemberDto memberDto;
 
     @BeforeEach
     void beforeEach() {
-        memberDto = new MemberRegisterDto("handwoong", "password1", "01012345678");
+        memberDto = new MemberDto("handwoong", "password1", "01012345678");
     }
 
     @Test

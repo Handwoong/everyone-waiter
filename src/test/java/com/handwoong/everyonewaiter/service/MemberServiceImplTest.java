@@ -2,7 +2,7 @@ package com.handwoong.everyonewaiter.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.handwoong.everyonewaiter.dto.member.MemberRegisterDto;
+import com.handwoong.everyonewaiter.dto.member.MemberDto;
 import com.handwoong.everyonewaiter.dto.member.MemberResponseDto;
 import com.handwoong.everyonewaiter.exception.ResourceExistsException;
 import java.util.List;
@@ -21,12 +21,12 @@ class MemberServiceImplTest {
     @Autowired
     private MemberService memberService;
 
-    private MemberRegisterDto memberDto;
+    private MemberDto memberDto;
 
 
     @BeforeEach
     void beforeEach() {
-        memberDto = new MemberRegisterDto("handwoong", "password1", "01012345678");
+        memberDto = new MemberDto("handwoong", "password1", "01012345678");
     }
 
     @Test

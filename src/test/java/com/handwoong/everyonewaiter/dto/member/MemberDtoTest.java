@@ -12,11 +12,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class MemberRegisterDtoTest {
+class MemberDtoTest {
 
     private static Validator validator;
 
-    private MemberRegisterDto memberDto;
+    private MemberDto memberDto;
 
 
     @BeforeAll
@@ -27,14 +27,13 @@ class MemberRegisterDtoTest {
 
     @BeforeEach
     void beforeEach() {
-        memberDto = new MemberRegisterDto("handwoong", "password1", "01012345678");
+        memberDto = new MemberDto("handwoong", "password1", "01012345678");
     }
 
     @Test
     @DisplayName("유효성 검사 통과")
     void validSuccess() throws Exception {
-        Set<ConstraintViolation<MemberRegisterDto>> validResult = validator.validate(
-                memberDto);
+        Set<ConstraintViolation<MemberDto>> validResult = validator.validate(memberDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(0);
@@ -43,7 +42,7 @@ class MemberRegisterDtoTest {
     @Test
     @DisplayName("로그인 아이디 LowerCase")
     void lowercaseUsername() throws Exception {
-        MemberRegisterDto memberDtoA = new MemberRegisterDto("HAND1", "password",
+        MemberDto memberDtoA = new MemberDto("HAND1", "password",
                 "01012345678");
 
         // then
@@ -57,14 +56,12 @@ class MemberRegisterDtoTest {
         memberDto.setUsername("");
 
         // when
-        Set<ConstraintViolation<MemberRegisterDto>> validResult = validator.validate(
-                memberDto);
+        Set<ConstraintViolation<MemberDto>> validResult = validator.validate(memberDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
-        for (ConstraintViolation<MemberRegisterDto> result : validResult) {
-            assertThat(result.getMessage()).isEqualTo(
-                    "must match \"^[A-Za-z0-9]{6,20}$\"");
+        for (ConstraintViolation<MemberDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.username}");
         }
     }
 
@@ -75,14 +72,12 @@ class MemberRegisterDtoTest {
         memberDto.setUsername("user");
 
         // when
-        Set<ConstraintViolation<MemberRegisterDto>> validResult = validator.validate(
-                memberDto);
+        Set<ConstraintViolation<MemberDto>> validResult = validator.validate(memberDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
-        for (ConstraintViolation<MemberRegisterDto> result : validResult) {
-            assertThat(result.getMessage()).isEqualTo(
-                    "must match \"^[A-Za-z0-9]{6,20}$\"");
+        for (ConstraintViolation<MemberDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.username}");
         }
     }
 
@@ -93,14 +88,12 @@ class MemberRegisterDtoTest {
         memberDto.setUsername("abcdefghijklmnopqrstuvwxyz");
 
         // when
-        Set<ConstraintViolation<MemberRegisterDto>> validResult = validator.validate(
-                memberDto);
+        Set<ConstraintViolation<MemberDto>> validResult = validator.validate(memberDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
-        for (ConstraintViolation<MemberRegisterDto> result : validResult) {
-            assertThat(result.getMessage()).isEqualTo(
-                    "must match \"^[A-Za-z0-9]{6,20}$\"");
+        for (ConstraintViolation<MemberDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.username}");
         }
     }
 
@@ -111,8 +104,7 @@ class MemberRegisterDtoTest {
         memberDto.setPassword("passwd");
 
         // when
-        Set<ConstraintViolation<MemberRegisterDto>> validResult = validator.validate(
-                memberDto);
+        Set<ConstraintViolation<MemberDto>> validResult = validator.validate(memberDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
@@ -125,8 +117,7 @@ class MemberRegisterDtoTest {
         memberDto.setPassword("password");
 
         // when
-        Set<ConstraintViolation<MemberRegisterDto>> validResult = validator.validate(
-                memberDto);
+        Set<ConstraintViolation<MemberDto>> validResult = validator.validate(memberDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
@@ -139,8 +130,7 @@ class MemberRegisterDtoTest {
         memberDto.setPassword("12345678");
 
         // when
-        Set<ConstraintViolation<MemberRegisterDto>> validResult = validator.validate(
-                memberDto);
+        Set<ConstraintViolation<MemberDto>> validResult = validator.validate(memberDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
@@ -154,8 +144,7 @@ class MemberRegisterDtoTest {
         memberDto.setPhoneNumber("12345678910");
 
         // when
-        Set<ConstraintViolation<MemberRegisterDto>> validResult = validator.validate(
-                memberDto);
+        Set<ConstraintViolation<MemberDto>> validResult = validator.validate(memberDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
@@ -170,8 +159,7 @@ class MemberRegisterDtoTest {
         memberDto.setPhoneNumber("12345678910");
 
         // when
-        Set<ConstraintViolation<MemberRegisterDto>> validResult = validator.validate(
-                memberDto);
+        Set<ConstraintViolation<MemberDto>> validResult = validator.validate(memberDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(3);
