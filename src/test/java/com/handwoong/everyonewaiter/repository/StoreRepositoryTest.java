@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.domain.Store;
-import com.handwoong.everyonewaiter.dto.member.MemberRequestDto;
+import com.handwoong.everyonewaiter.dto.member.MemberRegisterDto;
 import com.handwoong.everyonewaiter.dto.store.StoreRequestDto;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,8 +26,8 @@ class StoreRepositoryTest {
 
     @BeforeEach
     void beforeEach() {
-        MemberRequestDto memberDto = new MemberRequestDto("test@test.com",
-                "password1", "handwoong", "01012345678");
+        MemberRegisterDto memberDto = new MemberRegisterDto("handwoong", "password1",
+                "01012345678");
         member = memberRepository.save(Member.createMember(memberDto));
     }
 

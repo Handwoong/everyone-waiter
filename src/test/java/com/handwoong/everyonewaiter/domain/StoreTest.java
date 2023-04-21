@@ -2,7 +2,7 @@ package com.handwoong.everyonewaiter.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.handwoong.everyonewaiter.dto.member.MemberRequestDto;
+import com.handwoong.everyonewaiter.dto.member.MemberRegisterDto;
 import com.handwoong.everyonewaiter.dto.store.StoreRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,8 +16,8 @@ class StoreTest {
 
     @BeforeEach
     void beforeEach() {
-        MemberRequestDto memberDto = new MemberRequestDto("test@test.com",
-                "password", "handwoong", "01012345678");
+        MemberRegisterDto memberDto = new MemberRegisterDto("handwoong", "password",
+                "01012345678");
         member = Member.createMember(memberDto);
         storeRequestDto = new StoreRequestDto("나루");
     }
@@ -27,6 +27,6 @@ class StoreTest {
     void createStore() throws Exception {
         Store store = Store.createStore(storeRequestDto, member);
         assertThat(store.getName()).isEqualTo("나루");
-        assertThat(store.getMember().getEmail()).isEqualTo("test@test.com");
+        assertThat(store.getMember().getUsername()).isEqualTo("handwoong");
     }
 }

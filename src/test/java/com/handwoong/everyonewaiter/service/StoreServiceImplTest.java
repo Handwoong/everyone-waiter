@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.domain.Store;
-import com.handwoong.everyonewaiter.dto.member.MemberRequestDto;
+import com.handwoong.everyonewaiter.dto.member.MemberRegisterDto;
 import com.handwoong.everyonewaiter.dto.store.StoreRequestDto;
 import com.handwoong.everyonewaiter.dto.store.StoreResponseDto;
 import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
@@ -36,8 +36,8 @@ class StoreServiceImplTest {
 
     @BeforeEach
     void beforeEach() {
-        MemberRequestDto memberDto = new MemberRequestDto("test@test.com",
-                "password1", "handwoong", "01012345678");
+        MemberRegisterDto memberDto = new MemberRegisterDto("handwoong", "password1",
+                "01012345678");
         member = memberRepository.save(Member.createMember(memberDto));
     }
 
@@ -46,7 +46,7 @@ class StoreServiceImplTest {
     void register() throws Exception {
         // given
         StoreRequestDto storeDto = new StoreRequestDto("나루");
-        Long storeId = storeService.register("test@test.com", storeDto);
+        Long storeId = storeService.register("handwoong", storeDto);
 
         // when
         Store store = storeRepository.findById(storeId).orElseThrow();
@@ -54,14 +54,14 @@ class StoreServiceImplTest {
         // then
         assertThat(store.getId()).isEqualTo(storeId);
         assertThat(store.getName()).isEqualTo("나루");
-        assertThat(store.getMember().getEmail()).isEqualTo("test@test.com");
+        assertThat(store.getMember().getUsername()).isEqualTo("handwoong");
     }
 
     @Test
-    @DisplayName("매장 등록 시 회원 이메일을 찾을 수 없음")
-    void registerNotFoundEmail() throws Exception {
+    @DisplayName("매장 등록 시 회원 로그인 아이디를 찾을 수 없음")
+    void registerNotFoundUsername() throws Exception {
         StoreRequestDto storeDto = new StoreRequestDto("나루");
-        assertThatThrownBy(() -> storeService.register("notfound@test.com", storeDto))
+        assertThatThrownBy(() -> storeService.register("notfound", storeDto))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -77,7 +77,7 @@ class StoreServiceImplTest {
         storeRepository.save(storeB);
 
         // when
-        List<StoreResponseDto> storeList = storeService.findStoreList("test@test.com");
+        List<StoreResponseDto> storeList = storeService.findStoreList("handwoong");
 
         // then
         assertThat(storeList.size()).isEqualTo(2);
@@ -88,8 +88,8 @@ class StoreServiceImplTest {
     }
 
     @Test
-    @DisplayName("회원의 매장 조회 시 회원 이메일을 찾을 수 없음")
-    void findStoreListNotFoundEmail() throws Exception {
+    @DisplayName("회원의 매장 조회 시 회원 로그인 아이디를 찾을 수 없음")
+    void findStoreListNotFoundUsername() throws Exception {
         assertThatThrownBy(() -> storeService.findStoreList("notfound@test.com"))
                 .isInstanceOf(ResourceNotFoundException.class);
     }

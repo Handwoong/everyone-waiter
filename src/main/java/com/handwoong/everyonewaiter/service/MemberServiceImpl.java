@@ -1,7 +1,7 @@
 package com.handwoong.everyonewaiter.service;
 
 import com.handwoong.everyonewaiter.domain.Member;
-import com.handwoong.everyonewaiter.dto.member.MemberRequestDto;
+import com.handwoong.everyonewaiter.dto.member.MemberRegisterDto;
 import com.handwoong.everyonewaiter.dto.member.MemberResponseDto;
 import com.handwoong.everyonewaiter.exception.ResourceExistsException;
 import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
@@ -9,6 +9,7 @@ import com.handwoong.everyonewaiter.repository.MemberRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,36 +21,40 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     @Transactional
-    public Long register(MemberRequestDto memberDto) {
-        isExistsEmail(memberDto);
+    public Long register(MemberRegisterDto memberDto) {
+        isExistsUsername(memberDto);
         isExistsPhoneNumber(memberDto);
 
         // 회원 생성
         Member member = Member.createMember(memberDto);
+        member.encodePassword(passwordEncoder.encode(member.getPassword()));
         memberRepository.save(member);
-        log.info("회원 생성 = 아이디 : '{}', 이메일 : '{}', 이름 : '{}', 휴대폰 번호 : '{}'",
-                member.getId(), member.getEmail(), member.getName(),
-                member.getPhoneNumber());
+
+        log.info("회원 생성 = 아이디 : '{}', 로그인 아이디 : '{}', 휴대폰 번호 : '{}'",
+                member.getId(), member.getUsername(), member.getPhoneNumber());
         return member.getId();
     }
 
-    private void isExistsPhoneNumber(MemberRequestDto memberDto) {
+    private void isExistsPhoneNumber(MemberRegisterDto memberDto) {
         boolean isExistsPhoneNumber = memberRepository.existsByPhoneNumber(
                 memberDto.getPhoneNumber());
         if (isExistsPhoneNumber) {
-            log.error("휴대폰 번호 중복 가입 요청 = 이메일 : '{}', 휴대폰 번호 : '{}'",
-                    memberDto.getEmail(), memberDto.getPhoneNumber());
+            log.error("휴대폰 번호 중복 가입 요청 = 로그인 아이디 : '{}', 휴대폰 번호 : '{}'",
+                    memberDto.getUsername(), memberDto.getPhoneNumber());
             throw new ResourceExistsException("이미 존재하는 휴대폰 번호 입니다.");
         }
     }
 
-    private void isExistsEmail(MemberRequestDto memberDto) {
-        boolean isExistsEmail = memberRepository.existsByEmail(memberDto.getEmail());
-        if (isExistsEmail) {
-            log.error("이메일 중복 가입 요청 = 이메일 : '{}'", memberDto.getEmail());
-            throw new ResourceExistsException("이미 존재하는 이메일 입니다.");
+    private void isExistsUsername(MemberRegisterDto memberDto) {
+        boolean isExistsUsername = memberRepository.existsByUsername(
+                memberDto.getUsername());
+        if (isExistsUsername) {
+            log.error("로그인 아이디 중복 가입 요청 = 로그인 아이디 : '{}'", memberDto.getUsername());
+            throw new ResourceExistsException("이미 존재하는 아이디 입니다.");
         }
     }
 
@@ -61,9 +66,8 @@ public class MemberServiceImpl implements MemberService {
                     return new ResourceNotFoundException("존재하지 않는 회원입니다.");
                 });
         MemberResponseDto memberDto = MemberResponseDto.from(member);
-        log.info("회원 조회 = 아이디 : '{}', 이메일 : '{}', 이름 : '{}', 잔액 : '{}'",
-                memberDto.getId(), memberDto.getEmail(), memberDto.getName(),
-                memberDto.getBalance());
+        log.info("회원 조회 = 아이디 : '{}', 로그인 아이디 : '{}', 잔액 : '{}'",
+                memberDto.getId(), memberDto.getUsername(), memberDto.getBalance());
         return memberDto;
     }
 

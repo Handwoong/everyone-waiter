@@ -2,7 +2,7 @@ package com.handwoong.everyonewaiter.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.handwoong.everyonewaiter.dto.member.MemberRequestDto;
+import com.handwoong.everyonewaiter.dto.member.MemberRegisterDto;
 import com.handwoong.everyonewaiter.dto.member.MemberResponseDto;
 import com.handwoong.everyonewaiter.exception.ResourceExistsException;
 import java.util.List;
@@ -21,13 +21,12 @@ class MemberServiceImplTest {
     @Autowired
     private MemberService memberService;
 
-    private MemberRequestDto memberDto;
+    private MemberRegisterDto memberDto;
 
 
     @BeforeEach
     void beforeEach() {
-        memberDto = new MemberRequestDto("test@test.com",
-                "password1", "handwoong", "01012345678");
+        memberDto = new MemberRegisterDto("handwoong", "password1", "01012345678");
     }
 
     @Test
@@ -39,8 +38,8 @@ class MemberServiceImplTest {
     }
 
     @Test
-    @DisplayName("회원가입 시 이메일 중복 예외")
-    void registerExistsEmail() throws Exception {
+    @DisplayName("회원가입 시 로그인 아이디 중복 예외")
+    void registerExistsUsername() throws Exception {
         memberService.register(memberDto);
         Assertions.assertThrows(ResourceExistsException.class,
                 () -> memberService.register(memberDto));
@@ -50,7 +49,7 @@ class MemberServiceImplTest {
     @DisplayName("회원가입 시 휴대폰 번호 중복 예외")
     void registerExistsPhoneNumber() throws Exception {
         memberService.register(memberDto);
-        memberDto.setEmail("handwoong@test.com");
+        memberDto.setUsername("username");
         Assertions.assertThrows(ResourceExistsException.class,
                 () -> memberService.register(memberDto));
     }
@@ -66,8 +65,7 @@ class MemberServiceImplTest {
 
         // then
         assertThat(memberResponseDto.getId()).isEqualTo(memberId);
-        assertThat(memberResponseDto.getEmail()).isEqualTo(memberDto.getEmail());
-        assertThat(memberResponseDto.getName()).isEqualTo(memberDto.getName());
+        assertThat(memberResponseDto.getUsername()).isEqualTo(memberDto.getUsername());
     }
 
     @Test
@@ -75,7 +73,7 @@ class MemberServiceImplTest {
     void findMemberList() throws Exception {
         // given
         memberService.register(memberDto);
-        memberDto.setEmail("handwoong@test.com");
+        memberDto.setUsername("handwoong@test.com");
         memberDto.setPhoneNumber("01011112222");
         memberService.register(memberDto);
 
@@ -86,7 +84,7 @@ class MemberServiceImplTest {
 
         // then
         assertThat(memberList.size()).isEqualTo(2);
-        assertThat(memberA.getEmail()).isEqualTo("test@test.com");
-        assertThat(memberB.getEmail()).isEqualTo("handwoong@test.com");
+        assertThat(memberA.getUsername()).isEqualTo("handwoong");
+        assertThat(memberB.getUsername()).isEqualTo("handwoong@test.com");
     }
 }

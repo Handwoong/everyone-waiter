@@ -3,7 +3,7 @@ package com.handwoong.everyonewaiter.domain;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
-import com.handwoong.everyonewaiter.dto.member.MemberRequestDto;
+import com.handwoong.everyonewaiter.dto.member.MemberRegisterDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -28,14 +28,10 @@ public class Member extends BaseEntity {
 
     @NotNull
     @Column(unique = true)
-    private String email;
+    private String username;
 
     @NotNull
     private String password;
-
-    @NotNull
-    @Column(length = 20)
-    private String name;
 
     @NotNull
     @Column(unique = true)
@@ -48,24 +44,26 @@ public class Member extends BaseEntity {
     private MemberRole role;
 
     @Builder(access = PRIVATE)
-    private Member(String email, String password, String name, String phoneNumber,
-            int balance, MemberRole role) {
-        this.email = email;
+    private Member(String username, String password, String phoneNumber, int balance,
+            MemberRole role) {
+        this.username = username;
         this.password = password;
-        this.name = name;
         this.phoneNumber = phoneNumber;
         this.balance = balance;
         this.role = role;
     }
 
-    public static Member createMember(MemberRequestDto memberDto) {
+    public static Member createMember(MemberRegisterDto memberDto) {
         return Member.builder()
-                .email(memberDto.getEmail())
+                .username(memberDto.getUsername())
                 .password(memberDto.getPassword())
-                .name(memberDto.getName())
                 .phoneNumber(memberDto.getPhoneNumber())
                 .balance(0)
                 .role(MemberRole.USER)
                 .build();
+    }
+
+    public void encodePassword(String encodePassword) {
+        this.password = encodePassword;
     }
 }

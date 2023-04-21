@@ -3,7 +3,7 @@ package com.handwoong.everyonewaiter.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.handwoong.everyonewaiter.domain.Member;
-import com.handwoong.everyonewaiter.dto.member.MemberRequestDto;
+import com.handwoong.everyonewaiter.dto.member.MemberRegisterDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,40 +16,39 @@ class MemberRepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    private MemberRequestDto memberDto;
+    private MemberRegisterDto memberDto;
 
     @BeforeEach
     void beforeEach() {
-        memberDto = new MemberRequestDto("test@test.com",
-                "password1", "handwoong", "01012345678");
+        memberDto = new MemberRegisterDto("handwoong", "password1", "01012345678");
     }
 
     @Test
-    @DisplayName("이메일 중복 검사")
-    void existEmail() throws Exception {
+    @DisplayName("로그인 아이디 중복 검사")
+    void existUsername() throws Exception {
         // given
-        String email = "test@test.com";
+        String username = "handwoong";
         Member member = Member.createMember(memberDto);
         memberRepository.save(member);
 
         // when
-        boolean isExistEmail = memberRepository.existsByEmail(email);
+        boolean isExistsUsername = memberRepository.existsByUsername(username);
 
         // then
-        assertThat(isExistEmail).isTrue();
+        assertThat(isExistsUsername).isTrue();
     }
 
     @Test
-    @DisplayName("이메일 중복X")
-    void notExistEmail() throws Exception {
+    @DisplayName("로그인 아이디 중복X")
+    void notExistUsername() throws Exception {
         // given
-        String email = "test@test.com";
+        String username = "handwoong";
 
         // when
-        boolean isExistEmail = memberRepository.existsByEmail(email);
+        boolean isExistsUsername = memberRepository.existsByUsername(username);
 
         // then
-        assertThat(isExistEmail).isFalse();
+        assertThat(isExistsUsername).isFalse();
     }
 
     @Test
@@ -81,18 +80,18 @@ class MemberRepositoryTest {
     }
 
     @Test
-    @DisplayName("이메일로 회원 조회")
-    void findByEmail() throws Exception {
+    @DisplayName("로그인 아이디로 회원 조회")
+    void findByUsername() throws Exception {
         // given
         Member member = Member.createMember(memberDto);
         memberRepository.save(member);
 
         // when
-        Member findMember = memberRepository.findByEmail("test@test.com").orElseThrow();
+        Member findMember = memberRepository.findByUsername("handwoong").orElseThrow();
 
         // then
         assertThat(findMember.getId()).isEqualTo(member.getId());
-        assertThat(findMember.getEmail()).isEqualTo(member.getEmail());
+        assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
         assertThat(findMember.getPhoneNumber()).isEqualTo(member.getPhoneNumber());
     }
 }
