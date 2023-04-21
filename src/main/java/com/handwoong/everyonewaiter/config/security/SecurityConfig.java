@@ -1,6 +1,5 @@
 package com.handwoong.everyonewaiter.config.security;
 
-import com.handwoong.everyonewaiter.domain.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +39,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/", "/members/register", "/assets/**", "/demo.files/**")
                 .permitAll()
-                .requestMatchers("/mypage").hasRole(MemberRole.ROLE_USER.name())
+                .requestMatchers("/mypage").hasRole("USER")
                 .requestMatchers("/messages").hasRole("MANAGER")
                 .requestMatchers("/config").hasRole("ADMIN")
                 .anyRequest().authenticated());
