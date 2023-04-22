@@ -31,19 +31,25 @@ public class Store extends BaseEntity {
     @Column(length = 50)
     private String name;
 
+    @NotNull
+    @Column(unique = true)
+    private String telephoneNumber;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder(access = PRIVATE)
-    private Store(String name, Member member) {
+    private Store(String name, String telephoneNumber, Member member) {
         this.name = name;
+        this.telephoneNumber = telephoneNumber;
         this.member = member;
     }
 
     public static Store createStore(StoreRequestDto storeDto, Member member) {
         return Store.builder()
                 .name(storeDto.getName())
+                .telephoneNumber(storeDto.getTelephoneNumber())
                 .member(member)
                 .build();
     }

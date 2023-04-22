@@ -11,7 +11,10 @@ public class StoreRequestDto {
     @Size(min = 2, max = 50)
     private String name;
 
-    public StoreRequestDto(String name) {
+    private String telephoneNumber;
+
+    public StoreRequestDto(String name, String telephoneNumber) {
         this.name = name;
+        this.telephoneNumber = telephoneNumber;
     }
 }
