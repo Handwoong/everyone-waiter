@@ -30,7 +30,7 @@ class WaitingTest {
                 "01011112222");
         Member member = Member.createMember(memberDto);
 
-        StoreRequestDto storeDto = new StoreRequestDto("나루");
+        StoreRequestDto storeDto = new StoreRequestDto("나루", "055-123-4567");
         store = Store.createStore(storeDto, member);
     }
 

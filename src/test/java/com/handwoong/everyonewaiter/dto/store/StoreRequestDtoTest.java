@@ -26,7 +26,7 @@ class StoreRequestDtoTest {
 
     @BeforeEach
     void beforeEach() {
-        storeRequestDto = new StoreRequestDto("나루");
+        storeRequestDto = new StoreRequestDto("나루", "055-123-4567");
     }
 
     @Test

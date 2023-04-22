@@ -19,7 +19,7 @@ class StoreTest {
         MemberDto memberDto = new MemberDto("handwoong", "password",
                 "01012345678");
         member = Member.createMember(memberDto);
-        storeRequestDto = new StoreRequestDto("나루");
+        storeRequestDto = new StoreRequestDto("나루", "055-123-4567");
     }
 
     @Test
@@ -27,6 +27,7 @@ class StoreTest {
     void createStore() throws Exception {
         Store store = Store.createStore(storeRequestDto, member);
         assertThat(store.getName()).isEqualTo("나루");
+        assertThat(store.getTelephoneNumber()).isEqualTo("055-123-4567");
         assertThat(store.getMember().getUsername()).isEqualTo("handwoong");
     }
 }

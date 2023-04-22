@@ -45,7 +45,7 @@ class StoreServiceImplTest {
     @DisplayName("매장 등록")
     void register() throws Exception {
         // given
-        StoreRequestDto storeDto = new StoreRequestDto("나루");
+        StoreRequestDto storeDto = new StoreRequestDto("나루", "055-123-4567");
         Long storeId = storeService.register("handwoong", storeDto);
 
         // when
@@ -54,13 +54,14 @@ class StoreServiceImplTest {
         // then
         assertThat(store.getId()).isEqualTo(storeId);
         assertThat(store.getName()).isEqualTo("나루");
+        assertThat(store.getTelephoneNumber()).isEqualTo("055-123-4567");
         assertThat(store.getMember().getUsername()).isEqualTo("handwoong");
     }
 
     @Test
     @DisplayName("매장 등록 시 회원 로그인 아이디를 찾을 수 없음")
     void registerNotFoundUsername() throws Exception {
-        StoreRequestDto storeDto = new StoreRequestDto("나루");
+        StoreRequestDto storeDto = new StoreRequestDto("나루", "055-123-4567");
         assertThatThrownBy(() -> storeService.register("notfound", storeDto))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
@@ -69,8 +70,8 @@ class StoreServiceImplTest {
     @DisplayName("회원의 매장 목록 조회")
     void findStoreList() throws Exception {
         // given
-        StoreRequestDto storeDto1 = new StoreRequestDto("나루1");
-        StoreRequestDto storeDto2 = new StoreRequestDto("나루2");
+        StoreRequestDto storeDto1 = new StoreRequestDto("나루1", "055-123-4567");
+        StoreRequestDto storeDto2 = new StoreRequestDto("나루2", "031-123-4567");
         Store storeA = Store.createStore(storeDto1, member);
         Store storeB = Store.createStore(storeDto2, member);
         storeRepository.save(storeA);
@@ -83,8 +84,12 @@ class StoreServiceImplTest {
         assertThat(storeList.size()).isEqualTo(2);
         assertThat(storeList.get(0).getName()).isEqualTo("나루1");
         assertThat(storeList.get(0).getId()).isEqualTo(storeA.getId());
+        assertThat(storeList.get(0).getTelephoneNumber()).isEqualTo(
+                storeA.getTelephoneNumber());
         assertThat(storeList.get(1).getName()).isEqualTo("나루2");
         assertThat(storeList.get(1).getId()).isEqualTo(storeB.getId());
+        assertThat(storeList.get(1).getTelephoneNumber()).isEqualTo(
+                storeB.getTelephoneNumber());
     }
 
     @Test
