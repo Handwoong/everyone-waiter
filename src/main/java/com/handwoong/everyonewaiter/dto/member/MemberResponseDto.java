@@ -14,6 +14,8 @@ public class MemberResponseDto {
 
     private String username;
 
+    private String phoneNumber;
+
     private int balance;
 
     public static MemberResponseDto from(Member member) {
@@ -21,6 +23,7 @@ public class MemberResponseDto {
         return MemberResponseDto.builder()
                 .id(member.getId())
                 .username(member.getUsername())
+                .phoneNumber(member.getPhoneNumber())
                 .balance(member.getBalance())
                 .build();
     }
