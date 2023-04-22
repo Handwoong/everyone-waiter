@@ -1,10 +1,13 @@
 package com.handwoong.everyonewaiter.service;
 
 import com.handwoong.everyonewaiter.domain.Member;
+import com.handwoong.everyonewaiter.dto.BasicMessageResponseDto;
 import com.handwoong.everyonewaiter.dto.member.MemberDto;
+import com.handwoong.everyonewaiter.dto.member.MemberPasswordDto;
 import com.handwoong.everyonewaiter.dto.member.MemberResponseDto;
 import com.handwoong.everyonewaiter.exception.ResourceExistsException;
 import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
+import com.handwoong.everyonewaiter.exception.ResourceNotMatchException;
 import com.handwoong.everyonewaiter.repository.MemberRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -72,11 +75,65 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public MemberResponseDto findMemberByUsername(String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    log.error("존재하지 않는 회원 찾기 = 찾으려는 로그인 아이디 : '{}'", username);
+                    return new ResourceNotFoundException("존재하지 않는 회원입니다.");
+                });
+        MemberResponseDto memberDto = MemberResponseDto.from(member);
+        log.info("회원 조회 = 아이디 : '{}', 로그인 아이디 : '{}', 잔액 : '{}'",
+                memberDto.getId(), memberDto.getUsername(), memberDto.getBalance());
+        return memberDto;
+    }
+
+    @Override
     public List<MemberResponseDto> findMemberList() {
         List<Member> members = memberRepository.findAll();
         log.info("회원 전체 목록 조회 = '{}'명", members.size());
         return members.stream()
                 .map(MemberResponseDto::from)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public BasicMessageResponseDto changePassword(String username,
+            MemberPasswordDto passwordDto) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    log.error("존재하지 않는 회원 비밀번호 변경 요청 = 찾으려는 로그인 아이디 : '{}'", username);
+                    return new ResourceNotFoundException("존재하지 않는 회원입니다.");
+                });
+
+        String password = passwordDto.getCurrentPassword();
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            log.error("비밀번호 변경 요청 기존 비밀번호가 일치하지 않음 = 로그인 아이디 : '{}'", username);
+            throw new ResourceNotMatchException("기존 비밀번호가 일치하지 않습니다.");
+        }
+
+        member.encodePassword(passwordEncoder.encode(passwordDto.getNewPassword()));
+        return new BasicMessageResponseDto("success");
+    }
+
+    @Override
+    @Transactional
+    public BasicMessageResponseDto deleteMember(String username,
+            MemberPasswordDto passwordDto) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    log.error("존재하지 않는 회원 탈퇴 요청 = 찾으려는 로그인 아이디 : '{}'", username);
+                    return new ResourceNotFoundException("존재하지 않는 회원입니다.");
+                });
+
+        String password = passwordDto.getCurrentPassword();
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            log.error("회원 탈퇴 요청 비밀번호가 일치하지 않음 = 로그인 아이디 : '{}'", username);
+            throw new ResourceNotMatchException("비밀번호가 일치하지 않습니다.");
+        }
+
+        memberRepository.deleteById(member.getId());
+        log.info("회원 삭제 성공 = 로그인 아이디 : '{}'", username);
+        return new BasicMessageResponseDto("success");
     }
 }
