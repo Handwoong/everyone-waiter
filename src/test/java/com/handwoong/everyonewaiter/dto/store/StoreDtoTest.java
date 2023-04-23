@@ -38,7 +38,7 @@ class StoreDtoTest {
 
     @Test
     @DisplayName("매장 이름 NULL 유효성 검사")
-    void validNameNotNull() throws Exception {
+    void validNameNull() throws Exception {
         // given
         storeDto.setName(null);
 
@@ -48,8 +48,7 @@ class StoreDtoTest {
         // then
         assertThat(validResult.size()).isEqualTo(1);
         for (ConstraintViolation<StoreDto> result : validResult) {
-            assertThat(result.getMessage()).isEqualTo(
-                    "must not be null");
+            assertThat(result.getMessage()).isEqualTo("{error.message.null}");
         }
     }
 
@@ -65,8 +64,7 @@ class StoreDtoTest {
         // then
         assertThat(validResult.size()).isEqualTo(1);
         for (ConstraintViolation<StoreDto> result : validResult) {
-            assertThat(result.getMessage()).isEqualTo(
-                    "size must be between 2 and 50");
+            assertThat(result.getMessage()).isEqualTo("{error.message.size}");
         }
     }
 
@@ -84,9 +82,39 @@ class StoreDtoTest {
         // then
         assertThat(validResult.size()).isEqualTo(1);
         for (ConstraintViolation<StoreDto> result : validResult) {
-            assertThat(result.getMessage()).isEqualTo(
-                    "size must be between 2 and 50");
+            assertThat(result.getMessage()).isEqualTo("{error.message.size}");
         }
     }
 
+    @Test
+    @DisplayName("매장 전화번호 NULL 유효성 검사")
+    void validTelNull() throws Exception {
+        // given
+        storeDto.setTelephoneNumber(null);
+
+        // when
+        Set<ConstraintViolation<StoreDto>> validResult = validator.validate(storeDto);
+
+        // then
+        assertThat(validResult.size()).isEqualTo(1);
+        for (ConstraintViolation<StoreDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.null}");
+        }
+    }
+
+    @Test
+    @DisplayName("매장 전화번호 형식 유효성 검사 실패")
+    void validTelNumberFail() throws Exception {
+        // given
+        storeDto.setTelephoneNumber("0551234567");
+
+        // when
+        Set<ConstraintViolation<StoreDto>> validResult = validator.validate(storeDto);
+
+        // then
+        assertThat(validResult.size()).isEqualTo(1);
+        for (ConstraintViolation<StoreDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.telNumber}");
+        }
+    }
 }
