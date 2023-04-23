@@ -35,8 +35,8 @@ class StoreRepositoryTest {
     @DisplayName("회원 아이디로 매장 목록 조회")
     void findAllByMemberId() throws Exception {
         // given
-        StoreDto storeDto1 = new StoreDto("나루1", "055-123-4567");
-        StoreDto storeDto2 = new StoreDto("나루2", "031-123-4567");
+        StoreDto storeDto1 = new StoreDto("나루", "055-123-4567");
+        StoreDto storeDto2 = new StoreDto("가배", "031-123-4567");
         Store storeA = Store.createStore(storeDto1, member);
         Store storeB = Store.createStore(storeDto2, member);
         storeRepository.save(storeA);
@@ -44,14 +44,18 @@ class StoreRepositoryTest {
 
         // when
         List<Store> storeList = storeRepository.findAllByMemberId(member.getId());
+        Store findStoreA = storeList.get(0);
+        Store findStoreB = storeList.get(1);
 
         // then
         assertThat(storeList.size()).isEqualTo(2);
-        assertThat(storeList.get(0).getName()).isEqualTo("나루1");
-        assertThat(storeList.get(0).getTelephoneNumber()).isEqualTo(
-                storeA.getTelephoneNumber());
-        assertThat(storeList.get(1).getName()).isEqualTo("나루2");
-        assertThat(storeList.get(1).getTelephoneNumber()).isEqualTo(
-                storeB.getTelephoneNumber());
+
+        assertThat(findStoreA.getName()).isEqualTo("나루");
+        assertThat(findStoreA.getTelephoneNumber())
+                .isEqualTo(storeA.getTelephoneNumber());
+
+        assertThat(findStoreB.getName()).isEqualTo("가배");
+        assertThat(findStoreB.getTelephoneNumber())
+                .isEqualTo(storeB.getTelephoneNumber());
     }
 }
