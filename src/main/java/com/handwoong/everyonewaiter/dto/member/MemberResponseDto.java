@@ -12,9 +12,9 @@ public class MemberResponseDto {
 
     private Long id;
 
-    private String email;
+    private String username;
 
-    private String name;
+    private String phoneNumber;
 
     private int balance;
 
@@ -22,8 +22,8 @@ public class MemberResponseDto {
         Assert.notNull(member, "(null) 회원 엔티티를 responseDto 변환에 실패하였습니다.");
         return MemberResponseDto.builder()
                 .id(member.getId())
-                .email(member.getEmail())
-                .name(member.getName())
+                .username(member.getUsername())
+                .phoneNumber(member.getPhoneNumber())
                 .balance(member.getBalance())
                 .build();
     }

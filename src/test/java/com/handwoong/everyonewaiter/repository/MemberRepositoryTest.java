@@ -3,7 +3,8 @@ package com.handwoong.everyonewaiter.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.handwoong.everyonewaiter.domain.Member;
-import com.handwoong.everyonewaiter.dto.member.MemberRequestDto;
+import com.handwoong.everyonewaiter.dto.member.MemberDto;
+import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,52 +17,49 @@ class MemberRepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    private MemberRequestDto memberDto;
+    private MemberDto memberDto;
 
     @BeforeEach
     void beforeEach() {
-        memberDto = new MemberRequestDto("test@test.com",
-                "password1", "handwoong", "01012345678");
+        memberDto = new MemberDto("handwoong", "password1", "01012345678");
     }
 
     @Test
-    @DisplayName("이메일 중복 검사")
-    void existEmail() throws Exception {
+    @DisplayName("로그인 아이디 중복 검사")
+    void existUsername() throws Exception {
         // given
-        String email = "test@test.com";
         Member member = Member.createMember(memberDto);
         memberRepository.save(member);
 
         // when
-        boolean isExistEmail = memberRepository.existsByEmail(email);
+        boolean isExistsUsername = memberRepository
+                .existsByUsername(member.getUsername());
 
         // then
-        assertThat(isExistEmail).isTrue();
+        assertThat(isExistsUsername).isTrue();
     }
 
     @Test
-    @DisplayName("이메일 중복X")
-    void notExistEmail() throws Exception {
-        // given
-        String email = "test@test.com";
-
+    @DisplayName("로그인 아이디 중복X")
+    void notExistUsername() throws Exception {
         // when
-        boolean isExistEmail = memberRepository.existsByEmail(email);
+        boolean isExistsUsername = memberRepository
+                .existsByUsername(memberDto.getUsername());
 
         // then
-        assertThat(isExistEmail).isFalse();
+        assertThat(isExistsUsername).isFalse();
     }
 
     @Test
     @DisplayName("휴대폰 번호 중복 검사")
     void existPhoneNumber() throws Exception {
         // given
-        String phoneNumber = "01012345678";
         Member member = Member.createMember(memberDto);
         memberRepository.save(member);
 
         // when
-        boolean isExistPhoneNumber = memberRepository.existsByPhoneNumber(phoneNumber);
+        boolean isExistPhoneNumber = memberRepository
+                .existsByPhoneNumber(member.getPhoneNumber());
 
         // then
         assertThat(isExistPhoneNumber).isTrue();
@@ -70,29 +68,29 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("휴대폰 번호 중복X")
     void notExistPhoneNumber() throws Exception {
-        // given
-        String phoneNumber = "01012345678";
-
         // when
-        boolean isExistPhoneNumber = memberRepository.existsByPhoneNumber(phoneNumber);
+        boolean isExistPhoneNumber = memberRepository
+                .existsByPhoneNumber(memberDto.getPhoneNumber());
 
         // then
         assertThat(isExistPhoneNumber).isFalse();
     }
 
     @Test
-    @DisplayName("이메일로 회원 조회")
-    void findByEmail() throws Exception {
+    @DisplayName("로그인 아이디로 회원 조회")
+    void findByUsername() throws Exception {
         // given
         Member member = Member.createMember(memberDto);
         memberRepository.save(member);
 
         // when
-        Member findMember = memberRepository.findByEmail("test@test.com").orElseThrow();
+        Member findMember = memberRepository
+                .findByUsername(member.getUsername())
+                .orElseThrow(ResourceNotFoundException::new);
 
         // then
         assertThat(findMember.getId()).isEqualTo(member.getId());
-        assertThat(findMember.getEmail()).isEqualTo(member.getEmail());
+        assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
         assertThat(findMember.getPhoneNumber()).isEqualTo(member.getPhoneNumber());
     }
 }

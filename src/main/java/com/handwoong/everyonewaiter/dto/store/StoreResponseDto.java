@@ -14,11 +14,14 @@ public class StoreResponseDto {
 
     private String name;
 
+    private String telephoneNumber;
+
     public static StoreResponseDto from(Store store) {
         Assert.notNull(store, "(null) 매장 엔티티를 responseDto 변환에 실패하였습니다.");
         return StoreResponseDto.builder()
                 .id(store.getId())
                 .name(store.getName())
+                .telephoneNumber(store.getTelephoneNumber())
                 .build();
     }
 }

@@ -5,7 +5,7 @@ import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.fasterxml.uuid.Generators;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingRequestDto;
+import com.handwoong.everyonewaiter.dto.waiting.WaitingDto;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
@@ -85,11 +84,11 @@ public class Waiting extends BaseEntity {
     }
 
     /**
-     * @param lastWaiting 대기, 입장, 취소 상태에 상관없이 마지막 웨이팅
-     * @param waitingList 대기 상태의 웨이팅 목록
+     * @param lastWaiting        대기, 입장, 취소 상태에 상관없이 마지막 웨이팅
+     * @param defaultLastWaiting 대기 상태의 마지막 웨이팅
      */
-    public static Waiting createWaiting(WaitingRequestDto waitingDto, Store store,
-            @Nullable Waiting lastWaiting, List<Waiting> waitingList) {
+    public static Waiting createWaiting(WaitingDto waitingDto, Store store,
+            @Nullable Waiting lastWaiting, @Nullable Waiting defaultLastWaiting) {
         int waitingNumber = 1;
         int waitingTurn = 0;
 
@@ -97,9 +96,8 @@ public class Waiting extends BaseEntity {
             waitingNumber += lastWaiting.getWaitingNumber();
         }
 
-        if (waitingList.size() > 0) {
-            Waiting waiting = waitingList.get(waitingList.size() - 1);
-            waitingTurn += waiting.getWaitingTurn() + 1;
+        if (defaultLastWaiting != null) {
+            waitingTurn += defaultLastWaiting.getWaitingTurn() + 1;
         }
 
         return Waiting.builder()

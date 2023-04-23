@@ -5,9 +5,9 @@ import static com.handwoong.everyonewaiter.domain.WaitingStatus.DEFAULT;
 import static com.handwoong.everyonewaiter.domain.WaitingStatus.ENTER;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.handwoong.everyonewaiter.dto.member.MemberRequestDto;
-import com.handwoong.everyonewaiter.dto.store.StoreRequestDto;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingRequestDto;
+import com.handwoong.everyonewaiter.dto.member.MemberDto;
+import com.handwoong.everyonewaiter.dto.store.StoreDto;
+import com.handwoong.everyonewaiter.dto.waiting.WaitingDto;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 class WaitingTest {
 
-    private WaitingRequestDto waitingDto;
+    private WaitingDto waitingDto;
 
     private Store store;
 
@@ -24,20 +24,20 @@ class WaitingTest {
 
     @BeforeEach
     void beforeEach() {
-        waitingDto = new WaitingRequestDto(2, 2, "01012345678");
+        waitingDto = new WaitingDto(2, 2, "01012345678");
 
-        MemberRequestDto memberDto = new MemberRequestDto("test@test.com", "password",
-                "handwoong", "01011112222");
+        MemberDto memberDto = new MemberDto("handwoong", "password",
+                "01011112222");
         Member member = Member.createMember(memberDto);
 
-        StoreRequestDto storeDto = new StoreRequestDto("나루");
+        StoreDto storeDto = new StoreDto("나루", "055-123-4567");
         store = Store.createStore(storeDto, member);
     }
 
     @Test
     @DisplayName("웨이팅 엔티티 생성")
     void createWaiting() throws Exception {
-        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, waitingList);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, null);
         assertThat(waiting.getAdult()).isEqualTo(2);
         assertThat(waiting.getChildren()).isEqualTo(2);
         assertThat(waiting.getStatus()).isEqualTo(DEFAULT);
@@ -51,7 +51,7 @@ class WaitingTest {
     @DisplayName("웨이팅 입장 상태 변경")
     void changeEnterStatus() throws Exception {
         // given
-        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, waitingList);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, null);
 
         // when
         waiting.changeEnterOrCancelStatus(ENTER);
@@ -64,7 +64,7 @@ class WaitingTest {
     @DisplayName("웨이팅 취소 상태 변경")
     void changeCancelStatus() throws Exception {
         // given
-        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, waitingList);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, null);
 
         // when
         waiting.changeEnterOrCancelStatus(CANCEL);
@@ -77,7 +77,7 @@ class WaitingTest {
     @DisplayName("웨이팅 대기로 상태 변경 시 변경 되지 않음")
     void changeDefaultStatus() throws Exception {
         // given
-        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, waitingList);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, null);
         waiting.changeEnterOrCancelStatus(ENTER);
 
         // when
@@ -91,7 +91,7 @@ class WaitingTest {
     @DisplayName("입장 메시지 전송 상태 변경")
     void changeSendEnterStatus() throws Exception {
         // given
-        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, waitingList);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, null);
 
         // when
         waiting.changeSendEnterStatus();
@@ -104,7 +104,7 @@ class WaitingTest {
     @DisplayName("입장 준비 메시지 전송 상태 변경")
     void changeSendReadyStatus() throws Exception {
         // given
-        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, waitingList);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, null);
 
         // when
         waiting.changeSendReadyStatus();
