@@ -43,4 +43,5 @@ out/
 resources/
 logs/
 compression-logs/
+spy.log
 generated/

@@ -1,12 +1,12 @@
 package com.handwoong.everyonewaiter.service;
 
-import com.handwoong.everyonewaiter.dto.store.StoreRequestDto;
+import com.handwoong.everyonewaiter.dto.store.StoreDto;
 import com.handwoong.everyonewaiter.dto.store.StoreResponseDto;
 import java.util.List;
 
 public interface StoreService {
 
-    Long register(StoreRequestDto storeDto, String userEmail);
+    Long register(String username, StoreDto storeDto);
 
-    List<StoreResponseDto> findStoreList(String userEmail);
+    List<StoreResponseDto> findStoreList(String username);
 }
