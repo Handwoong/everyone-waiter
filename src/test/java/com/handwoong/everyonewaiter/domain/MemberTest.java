@@ -13,6 +13,8 @@ class MemberTest {
 
     private MemberDto memberDto;
 
+    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
     @BeforeEach
     void beforeEach() {
         memberDto = new MemberDto("handwoong", "password", "01012345678");
@@ -32,7 +34,6 @@ class MemberTest {
     @DisplayName("회원 비밀번호 암호화")
     void encodePassword() throws Exception {
         // given
-        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         Member member = Member.createMember(memberDto);
 
         // when

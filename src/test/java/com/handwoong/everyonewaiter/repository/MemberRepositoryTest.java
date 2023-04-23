@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.dto.member.MemberDto;
+import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,12 +28,12 @@ class MemberRepositoryTest {
     @DisplayName("로그인 아이디 중복 검사")
     void existUsername() throws Exception {
         // given
-        String username = "handwoong";
         Member member = Member.createMember(memberDto);
         memberRepository.save(member);
 
         // when
-        boolean isExistsUsername = memberRepository.existsByUsername(username);
+        boolean isExistsUsername = memberRepository
+                .existsByUsername(member.getUsername());
 
         // then
         assertThat(isExistsUsername).isTrue();
@@ -41,11 +42,9 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("로그인 아이디 중복X")
     void notExistUsername() throws Exception {
-        // given
-        String username = "handwoong";
-
         // when
-        boolean isExistsUsername = memberRepository.existsByUsername(username);
+        boolean isExistsUsername = memberRepository
+                .existsByUsername(memberDto.getUsername());
 
         // then
         assertThat(isExistsUsername).isFalse();
@@ -55,12 +54,12 @@ class MemberRepositoryTest {
     @DisplayName("휴대폰 번호 중복 검사")
     void existPhoneNumber() throws Exception {
         // given
-        String phoneNumber = "01012345678";
         Member member = Member.createMember(memberDto);
         memberRepository.save(member);
 
         // when
-        boolean isExistPhoneNumber = memberRepository.existsByPhoneNumber(phoneNumber);
+        boolean isExistPhoneNumber = memberRepository
+                .existsByPhoneNumber(member.getPhoneNumber());
 
         // then
         assertThat(isExistPhoneNumber).isTrue();
@@ -69,11 +68,9 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("휴대폰 번호 중복X")
     void notExistPhoneNumber() throws Exception {
-        // given
-        String phoneNumber = "01012345678";
-
         // when
-        boolean isExistPhoneNumber = memberRepository.existsByPhoneNumber(phoneNumber);
+        boolean isExistPhoneNumber = memberRepository
+                .existsByPhoneNumber(memberDto.getPhoneNumber());
 
         // then
         assertThat(isExistPhoneNumber).isFalse();
@@ -87,7 +84,9 @@ class MemberRepositoryTest {
         memberRepository.save(member);
 
         // when
-        Member findMember = memberRepository.findByUsername("handwoong").orElseThrow();
+        Member findMember = memberRepository
+                .findByUsername(member.getUsername())
+                .orElseThrow(ResourceNotFoundException::new);
 
         // then
         assertThat(findMember.getId()).isEqualTo(member.getId());
