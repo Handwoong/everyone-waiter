@@ -12,11 +12,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class WaitingRequestDtoTest {
+class WaitingDtoTest {
 
     private static Validator validator;
 
-    private WaitingRequestDto waitingDto;
+    private WaitingDto waitingDto;
 
     @BeforeAll
     static void beforeAll() {
@@ -26,14 +26,13 @@ class WaitingRequestDtoTest {
 
     @BeforeEach
     void beforeEach() {
-        waitingDto = new WaitingRequestDto(20, 20, "01012345678");
+        waitingDto = new WaitingDto(20, 20, "01012345678");
     }
 
     @Test
     @DisplayName("유효성 검사 통과")
     void validSuccess() throws Exception {
-        Set<ConstraintViolation<WaitingRequestDto>> validResult = validator.validate(
-                waitingDto);
+        Set<ConstraintViolation<WaitingDto>> validResult = validator.validate(waitingDto);
         assertThat(validResult.size()).isEqualTo(0);
     }
 
@@ -44,14 +43,12 @@ class WaitingRequestDtoTest {
         waitingDto.setAdult(-1);
 
         // when
-        Set<ConstraintViolation<WaitingRequestDto>> validResult = validator.validate(
-                waitingDto);
+        Set<ConstraintViolation<WaitingDto>> validResult = validator.validate(waitingDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
-        for (ConstraintViolation<WaitingRequestDto> result : validResult) {
-            assertThat(result.getMessage()).isEqualTo(
-                    "must be greater than or equal to 0");
+        for (ConstraintViolation<WaitingDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.min}");
         }
     }
 
@@ -62,14 +59,12 @@ class WaitingRequestDtoTest {
         waitingDto.setChildren(-1);
 
         // when
-        Set<ConstraintViolation<WaitingRequestDto>> validResult = validator.validate(
-                waitingDto);
+        Set<ConstraintViolation<WaitingDto>> validResult = validator.validate(waitingDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
-        for (ConstraintViolation<WaitingRequestDto> result : validResult) {
-            assertThat(result.getMessage()).isEqualTo(
-                    "must be greater than or equal to 0");
+        for (ConstraintViolation<WaitingDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.min}");
         }
     }
 
@@ -80,14 +75,12 @@ class WaitingRequestDtoTest {
         waitingDto.setAdult(21);
 
         // when
-        Set<ConstraintViolation<WaitingRequestDto>> validResult = validator.validate(
-                waitingDto);
+        Set<ConstraintViolation<WaitingDto>> validResult = validator.validate(waitingDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
-        for (ConstraintViolation<WaitingRequestDto> result : validResult) {
-            assertThat(result.getMessage()).isEqualTo(
-                    "must be less than or equal to 20");
+        for (ConstraintViolation<WaitingDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.max}");
         }
     }
 
@@ -98,14 +91,27 @@ class WaitingRequestDtoTest {
         waitingDto.setChildren(21);
 
         // when
-        Set<ConstraintViolation<WaitingRequestDto>> validResult = validator.validate(
-                waitingDto);
+        Set<ConstraintViolation<WaitingDto>> validResult = validator.validate(waitingDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
-        for (ConstraintViolation<WaitingRequestDto> result : validResult) {
-            assertThat(result.getMessage()).isEqualTo(
-                    "must be less than or equal to 20");
+        for (ConstraintViolation<WaitingDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.max}");
+        }
+    }
+
+    @Test
+    @DisplayName("휴대폰 번호 null 유효성 검사")
+    void validPhoneNumberNull() throws Exception {
+        // given
+        waitingDto.setPhoneNumber(null);
+
+        Set<ConstraintViolation<WaitingDto>> validResult = validator.validate(waitingDto);
+
+        // then
+        assertThat(validResult.size()).isEqualTo(1);
+        for (ConstraintViolation<WaitingDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.null}");
         }
     }
 
@@ -117,10 +123,12 @@ class WaitingRequestDtoTest {
         waitingDto.setPhoneNumber("12345678910");
 
         // when
-        Set<ConstraintViolation<WaitingRequestDto>> validResult = validator.validate(
-                waitingDto);
+        Set<ConstraintViolation<WaitingDto>> validResult = validator.validate(waitingDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
+        for (ConstraintViolation<WaitingDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.phoneNumber}");
+        }
     }
 }

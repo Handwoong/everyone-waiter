@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.handwoong.everyonewaiter.dto.member.MemberDto;
 import com.handwoong.everyonewaiter.dto.store.StoreDto;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingRequestDto;
+import com.handwoong.everyonewaiter.dto.waiting.WaitingDto;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 class WaitingTest {
 
-    private WaitingRequestDto waitingDto;
+    private WaitingDto waitingDto;
 
     private Store store;
 
@@ -24,7 +24,7 @@ class WaitingTest {
 
     @BeforeEach
     void beforeEach() {
-        waitingDto = new WaitingRequestDto(2, 2, "01012345678");
+        waitingDto = new WaitingDto(2, 2, "01012345678");
 
         MemberDto memberDto = new MemberDto("handwoong", "password",
                 "01011112222");
