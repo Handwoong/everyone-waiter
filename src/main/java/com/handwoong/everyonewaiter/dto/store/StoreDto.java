@@ -11,6 +11,8 @@ public class StoreDto {
     @Size(min = 2, max = 50)
     private String name;
 
+    @NotNull
+    @Size(min = 11, max = 20)
     private String telephoneNumber;
 
     public StoreDto(String name, String telephoneNumber) {
