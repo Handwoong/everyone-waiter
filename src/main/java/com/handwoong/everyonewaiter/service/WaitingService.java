@@ -8,15 +8,15 @@ import java.util.UUID;
 
 public interface WaitingService {
 
-    WaitingCountResponseDto count(Long storeId);
+    WaitingCountResponseDto count(String username, Long storeId);
 
     WaitingResponseDto findWaiting(UUID waitingId);
 
-    List<WaitingResponseDto> findDefaultWaitingList(Long storeId);
+    List<WaitingResponseDto> findDefaultWaitingList(String username, Long storeId);
 
-    UUID register(Long storeId, WaitingDto waitingDto);
+    UUID register(String username, Long storeId, WaitingDto waitingDto);
 
-    void enterWaiting(Long storeId, UUID waitingId);
+    void enterWaiting(String username, Long storeId, UUID waitingId);
 
-    void cancelWaiting(Long storeId, UUID waitingId);
+    void cancelWaiting(UUID waitingId);
 }
