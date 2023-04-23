@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.domain.Store;
 import com.handwoong.everyonewaiter.dto.member.MemberDto;
-import com.handwoong.everyonewaiter.dto.store.StoreRequestDto;
+import com.handwoong.everyonewaiter.dto.store.StoreDto;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,8 +35,8 @@ class StoreRepositoryTest {
     @DisplayName("회원 아이디로 매장 목록 조회")
     void findAllByMemberId() throws Exception {
         // given
-        StoreRequestDto storeDto1 = new StoreRequestDto("나루1", "055-123-4567");
-        StoreRequestDto storeDto2 = new StoreRequestDto("나루2", "031-123-4567");
+        StoreDto storeDto1 = new StoreDto("나루1", "055-123-4567");
+        StoreDto storeDto2 = new StoreDto("나루2", "031-123-4567");
         Store storeA = Store.createStore(storeDto1, member);
         Store storeB = Store.createStore(storeDto2, member);
         storeRepository.save(storeA);

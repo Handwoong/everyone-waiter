@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.domain.Store;
 import com.handwoong.everyonewaiter.dto.member.MemberDto;
-import com.handwoong.everyonewaiter.dto.store.StoreRequestDto;
+import com.handwoong.everyonewaiter.dto.store.StoreDto;
 import com.handwoong.everyonewaiter.dto.store.StoreResponseDto;
 import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
 import com.handwoong.everyonewaiter.repository.MemberRepository;
@@ -45,7 +45,7 @@ class StoreServiceImplTest {
     @DisplayName("매장 등록")
     void register() throws Exception {
         // given
-        StoreRequestDto storeDto = new StoreRequestDto("나루", "055-123-4567");
+        StoreDto storeDto = new StoreDto("나루", "055-123-4567");
         Long storeId = storeService.register("handwoong", storeDto);
 
         // when
@@ -61,7 +61,7 @@ class StoreServiceImplTest {
     @Test
     @DisplayName("매장 등록 시 회원 로그인 아이디를 찾을 수 없음")
     void registerNotFoundUsername() throws Exception {
-        StoreRequestDto storeDto = new StoreRequestDto("나루", "055-123-4567");
+        StoreDto storeDto = new StoreDto("나루", "055-123-4567");
         assertThatThrownBy(() -> storeService.register("notfound", storeDto))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
@@ -70,8 +70,8 @@ class StoreServiceImplTest {
     @DisplayName("회원의 매장 목록 조회")
     void findStoreList() throws Exception {
         // given
-        StoreRequestDto storeDto1 = new StoreRequestDto("나루1", "055-123-4567");
-        StoreRequestDto storeDto2 = new StoreRequestDto("나루2", "031-123-4567");
+        StoreDto storeDto1 = new StoreDto("나루1", "055-123-4567");
+        StoreDto storeDto2 = new StoreDto("나루2", "031-123-4567");
         Store storeA = Store.createStore(storeDto1, member);
         Store storeB = Store.createStore(storeDto2, member);
         storeRepository.save(storeA);

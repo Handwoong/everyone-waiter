@@ -12,11 +12,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class StoreRequestDtoTest {
+class StoreDtoTest {
 
     private static Validator validator;
 
-    private StoreRequestDto storeRequestDto;
+    private StoreDto storeDto;
 
     @BeforeAll
     static void beforeAll() {
@@ -26,14 +26,13 @@ class StoreRequestDtoTest {
 
     @BeforeEach
     void beforeEach() {
-        storeRequestDto = new StoreRequestDto("나루", "055-123-4567");
+        storeDto = new StoreDto("나루", "055-123-4567");
     }
 
     @Test
     @DisplayName("매장 유효성 검사 통과")
     void createStore() throws Exception {
-        Set<ConstraintViolation<StoreRequestDto>> validResult = validator.validate(
-                storeRequestDto);
+        Set<ConstraintViolation<StoreDto>> validResult = validator.validate(storeDto);
         assertThat(validResult.size()).isEqualTo(0);
     }
 
@@ -41,15 +40,14 @@ class StoreRequestDtoTest {
     @DisplayName("매장 이름 NULL 유효성 검사")
     void validNameNotNull() throws Exception {
         // given
-        storeRequestDto.setName(null);
+        storeDto.setName(null);
 
         // when
-        Set<ConstraintViolation<StoreRequestDto>> validResult = validator.validate(
-                storeRequestDto);
+        Set<ConstraintViolation<StoreDto>> validResult = validator.validate(storeDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
-        for (ConstraintViolation<StoreRequestDto> result : validResult) {
+        for (ConstraintViolation<StoreDto> result : validResult) {
             assertThat(result.getMessage()).isEqualTo(
                     "must not be null");
         }
@@ -59,15 +57,14 @@ class StoreRequestDtoTest {
     @DisplayName("매장 이름 최소 길이 유효성 검사")
     void validNameLowSize() throws Exception {
         // given
-        storeRequestDto.setName("");
+        storeDto.setName("");
 
         // when
-        Set<ConstraintViolation<StoreRequestDto>> validResult = validator.validate(
-                storeRequestDto);
+        Set<ConstraintViolation<StoreDto>> validResult = validator.validate(storeDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
-        for (ConstraintViolation<StoreRequestDto> result : validResult) {
+        for (ConstraintViolation<StoreDto> result : validResult) {
             assertThat(result.getMessage()).isEqualTo(
                     "size must be between 2 and 50");
         }
@@ -77,16 +74,16 @@ class StoreRequestDtoTest {
     @DisplayName("매장 이름 최대 길이 유효성 검사")
     void validNameMaxSize() throws Exception {
         // given
-        storeRequestDto.setName(
+        storeDto.setName(
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
 
         // when
-        Set<ConstraintViolation<StoreRequestDto>> validResult = validator.validate(
-                storeRequestDto);
+        Set<ConstraintViolation<StoreDto>> validResult = validator.validate(
+                storeDto);
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
-        for (ConstraintViolation<StoreRequestDto> result : validResult) {
+        for (ConstraintViolation<StoreDto> result : validResult) {
             assertThat(result.getMessage()).isEqualTo(
                     "size must be between 2 and 50");
         }

@@ -6,7 +6,7 @@ import static com.handwoong.everyonewaiter.domain.WaitingStatus.ENTER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.handwoong.everyonewaiter.dto.member.MemberDto;
-import com.handwoong.everyonewaiter.dto.store.StoreRequestDto;
+import com.handwoong.everyonewaiter.dto.store.StoreDto;
 import com.handwoong.everyonewaiter.dto.waiting.WaitingRequestDto;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ class WaitingTest {
                 "01011112222");
         Member member = Member.createMember(memberDto);
 
-        StoreRequestDto storeDto = new StoreRequestDto("나루", "055-123-4567");
+        StoreDto storeDto = new StoreDto("나루", "055-123-4567");
         store = Store.createStore(storeDto, member);
     }
 

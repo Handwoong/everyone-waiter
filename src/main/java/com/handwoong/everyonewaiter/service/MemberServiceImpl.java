@@ -1,7 +1,7 @@
 package com.handwoong.everyonewaiter.service;
 
 import com.handwoong.everyonewaiter.domain.Member;
-import com.handwoong.everyonewaiter.dto.BasicMessageResponseDto;
+import com.handwoong.everyonewaiter.dto.BasicResponseDto;
 import com.handwoong.everyonewaiter.dto.member.MemberDto;
 import com.handwoong.everyonewaiter.dto.member.MemberPasswordDto;
 import com.handwoong.everyonewaiter.dto.member.MemberResponseDto;
@@ -98,7 +98,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public BasicMessageResponseDto changePassword(String username,
+    public BasicResponseDto changePassword(String username,
             MemberPasswordDto passwordDto) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> {
@@ -113,12 +113,12 @@ public class MemberServiceImpl implements MemberService {
         }
 
         member.encodePassword(passwordEncoder.encode(passwordDto.getNewPassword()));
-        return new BasicMessageResponseDto("success");
+        return new BasicResponseDto("success");
     }
 
     @Override
     @Transactional
-    public BasicMessageResponseDto deleteMember(String username,
+    public BasicResponseDto deleteMember(String username,
             MemberPasswordDto passwordDto) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> {
@@ -134,6 +134,6 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.deleteById(member.getId());
         log.info("회원 삭제 성공 = 로그인 아이디 : '{}'", username);
-        return new BasicMessageResponseDto("success");
+        return new BasicResponseDto("success");
     }
 }

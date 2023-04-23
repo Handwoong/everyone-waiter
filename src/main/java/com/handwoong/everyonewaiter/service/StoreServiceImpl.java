@@ -2,7 +2,7 @@ package com.handwoong.everyonewaiter.service;
 
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.domain.Store;
-import com.handwoong.everyonewaiter.dto.store.StoreRequestDto;
+import com.handwoong.everyonewaiter.dto.store.StoreDto;
 import com.handwoong.everyonewaiter.dto.store.StoreResponseDto;
 import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
 import com.handwoong.everyonewaiter.repository.MemberRepository;
@@ -25,7 +25,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     @Transactional
-    public Long register(String username, StoreRequestDto storeDto) {
+    public Long register(String username, StoreDto storeDto) {
         Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> {
             log.error("존재하지 않는 회원 로그인 아이디로 매장 생성 요청 = 찾으려는 로그인 아이디 : '{}'", username);
             return new ResourceNotFoundException("존재하지 않는 회원 입니다.");

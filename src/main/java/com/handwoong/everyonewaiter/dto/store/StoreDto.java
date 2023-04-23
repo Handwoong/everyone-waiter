@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class StoreRequestDto {
+public class StoreDto {
 
     @NotNull
     @Size(min = 2, max = 50)
@@ -13,7 +13,7 @@ public class StoreRequestDto {
 
     private String telephoneNumber;
 
-    public StoreRequestDto(String name, String telephoneNumber) {
+    public StoreDto(String name, String telephoneNumber) {
         this.name = name;
         this.telephoneNumber = telephoneNumber;
     }
