@@ -9,15 +9,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberDto {
 
-    @NotNull
+    @NotNull(message = "{error.message.null}")
     @Pattern(regexp = "^[A-Za-z0-9]{6,20}$",
             message = "{error.message.username}")
     private String username;
 
+    @NotNull(message = "{error.message.null}")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$",
             message = "{error.message.password}")
     private String password;
 
+    @NotNull(message = "{error.message.null}")
     @Pattern(regexp = "^(01[016789]{1})[0-9]{4}[0-9]{4}$",
             message = "{error.message.phoneNumber}")
     private String phoneNumber;
