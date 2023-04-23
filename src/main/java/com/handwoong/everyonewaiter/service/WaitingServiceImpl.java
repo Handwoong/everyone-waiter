@@ -4,7 +4,7 @@ import com.handwoong.everyonewaiter.domain.Store;
 import com.handwoong.everyonewaiter.domain.Waiting;
 import com.handwoong.everyonewaiter.domain.WaitingStatus;
 import com.handwoong.everyonewaiter.dto.waiting.WaitingCountResponseDto;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingRequestDto;
+import com.handwoong.everyonewaiter.dto.waiting.WaitingDto;
 import com.handwoong.everyonewaiter.dto.waiting.WaitingResponseDto;
 import com.handwoong.everyonewaiter.exception.ResourceExistsException;
 import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
@@ -62,7 +62,7 @@ public class WaitingServiceImpl implements WaitingService {
 
     @Override
     @Transactional
-    public UUID register(Long storeId, WaitingRequestDto waitingDto) {
+    public UUID register(Long storeId, WaitingDto waitingDto) {
         Store store = storeRepository.findById(storeId).orElseThrow(() -> {
             log.error("존재하지 않는 매장 웨이팅 등록 요청 = 매장 아이디 : '{}', 휴대폰 번호 : '{}'", storeId,
                     waitingDto.getPhoneNumber());

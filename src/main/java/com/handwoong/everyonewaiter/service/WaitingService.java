@@ -1,7 +1,7 @@
 package com.handwoong.everyonewaiter.service;
 
 import com.handwoong.everyonewaiter.dto.waiting.WaitingCountResponseDto;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingRequestDto;
+import com.handwoong.everyonewaiter.dto.waiting.WaitingDto;
 import com.handwoong.everyonewaiter.dto.waiting.WaitingResponseDto;
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +14,7 @@ public interface WaitingService {
 
     List<WaitingResponseDto> findDefaultWaitingList(Long storeId);
 
-    UUID register(Long storeId, WaitingRequestDto waitingDto);
+    UUID register(Long storeId, WaitingDto waitingDto);
 
     void enterWaiting(Long storeId, UUID waitingId);
 
