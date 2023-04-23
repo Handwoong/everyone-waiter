@@ -37,7 +37,7 @@ class WaitingTest {
     @Test
     @DisplayName("웨이팅 엔티티 생성")
     void createWaiting() throws Exception {
-        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, waitingList);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, null);
         assertThat(waiting.getAdult()).isEqualTo(2);
         assertThat(waiting.getChildren()).isEqualTo(2);
         assertThat(waiting.getStatus()).isEqualTo(DEFAULT);
@@ -51,7 +51,7 @@ class WaitingTest {
     @DisplayName("웨이팅 입장 상태 변경")
     void changeEnterStatus() throws Exception {
         // given
-        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, waitingList);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, null);
 
         // when
         waiting.changeEnterOrCancelStatus(ENTER);
@@ -64,7 +64,7 @@ class WaitingTest {
     @DisplayName("웨이팅 취소 상태 변경")
     void changeCancelStatus() throws Exception {
         // given
-        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, waitingList);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, null);
 
         // when
         waiting.changeEnterOrCancelStatus(CANCEL);
@@ -77,7 +77,7 @@ class WaitingTest {
     @DisplayName("웨이팅 대기로 상태 변경 시 변경 되지 않음")
     void changeDefaultStatus() throws Exception {
         // given
-        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, waitingList);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, null);
         waiting.changeEnterOrCancelStatus(ENTER);
 
         // when
@@ -91,7 +91,7 @@ class WaitingTest {
     @DisplayName("입장 메시지 전송 상태 변경")
     void changeSendEnterStatus() throws Exception {
         // given
-        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, waitingList);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, null);
 
         // when
         waiting.changeSendEnterStatus();
@@ -104,7 +104,7 @@ class WaitingTest {
     @DisplayName("입장 준비 메시지 전송 상태 변경")
     void changeSendReadyStatus() throws Exception {
         // given
-        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, waitingList);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, null, null);
 
         // when
         waiting.changeSendReadyStatus();
