@@ -50,6 +50,22 @@ class MemberDtoTest {
     }
 
     @Test
+    @DisplayName("로그인 아이디 null 유효성 검사")
+    void validUsernameNull() throws Exception {
+        // given
+        memberDto.setUsername(null);
+
+        // when
+        Set<ConstraintViolation<MemberDto>> validResult = validator.validate(memberDto);
+
+        // then
+        assertThat(validResult.size()).isEqualTo(1);
+        for (ConstraintViolation<MemberDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.null}");
+        }
+    }
+
+    @Test
     @DisplayName("로그인 아이디 공백 유효성 검사")
     void validUsernameBlank() throws Exception {
         // given
@@ -98,6 +114,22 @@ class MemberDtoTest {
     }
 
     @Test
+    @DisplayName("비밀번호 null 유효성 검사")
+    void validPasswordNull() throws Exception {
+        // given
+        memberDto.setPassword(null);
+
+        // when
+        Set<ConstraintViolation<MemberDto>> validResult = validator.validate(memberDto);
+
+        // then
+        assertThat(validResult.size()).isEqualTo(1);
+        for (ConstraintViolation<MemberDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.null}");
+        }
+    }
+
+    @Test
     @DisplayName("비밀번호 길이 유효성 검사")
     void validPasswordSize() throws Exception {
         // given
@@ -108,6 +140,9 @@ class MemberDtoTest {
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
+        for (ConstraintViolation<MemberDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.password}");
+        }
     }
 
     @Test
@@ -121,6 +156,9 @@ class MemberDtoTest {
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
+        for (ConstraintViolation<MemberDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.password}");
+        }
     }
 
     @Test
@@ -134,6 +172,24 @@ class MemberDtoTest {
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
+        for (ConstraintViolation<MemberDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.password}");
+        }
+    }
+
+    @Test
+    @DisplayName("휴대폰 번호 null 유효성 검사")
+    void validPhoneNumberNull() throws Exception {
+        // given
+        memberDto.setPhoneNumber(null);
+
+        Set<ConstraintViolation<MemberDto>> validResult = validator.validate(memberDto);
+
+        // then
+        assertThat(validResult.size()).isEqualTo(1);
+        for (ConstraintViolation<MemberDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.null}");
+        }
     }
 
     @Test
@@ -148,6 +204,9 @@ class MemberDtoTest {
 
         // then
         assertThat(validResult.size()).isEqualTo(1);
+        for (ConstraintViolation<MemberDto> result : validResult) {
+            assertThat(result.getMessage()).isEqualTo("{error.message.phoneNumber}");
+        }
     }
 
     @Test
