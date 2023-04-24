@@ -46,11 +46,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponseDto findMember(Long memberId) {
         Member member = findById(memberId);
-        MemberResponseDto memberDto = MemberResponseDto.from(member);
-
-        log.info("회원 조회 = 아이디 : '{}', 로그인 아이디 : '{}', 잔액 : '{}'",
-                memberDto.getId(), memberDto.getUsername(), memberDto.getBalance());
-        return memberDto;
+        return MemberResponseDto.from(member);
     }
 
     @Override
