@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface StoreRepository extends JpaRepository<Store, Long> {
+public interface StoreRepository extends JpaRepository<Store, Long>, CustomStoreRepository {
 
     @Query("select s from Store s where s.member.username = :username and s.id = :storeId")
     List<Store> findMemberStoreList(@Param("username") String username,
