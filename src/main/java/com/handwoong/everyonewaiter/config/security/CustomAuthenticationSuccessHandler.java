@@ -24,7 +24,7 @@ public class CustomAuthenticationSuccessHandler extends
     public void onAuthenticationSuccess(HttpServletRequest request,
             HttpServletResponse response, Authentication authentication)
             throws IOException {
-        setDefaultTargetUrl("/members/profile");
+        setDefaultTargetUrl("/members/stores");
         SavedRequest savedRequest = requestCache.getRequest(request, response);
 
         if (savedRequest != null) {
