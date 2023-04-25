@@ -36,10 +36,8 @@ public class WaitingServiceImpl implements WaitingService {
     @Override
     public WaitingCountResponseDto count(String username, Long storeId) {
         isExistsMemberStore(username, storeId);
-
         Long waitingCount = waitingRepository.countByStoreId(storeId);
 
-        log.info("매장의 현재 웨이팅 수 = 매장 아이디 : '{}', 웨이팅 수 : '{}'", storeId, waitingCount);
         return WaitingCountResponseDto.from(waitingCount);
     }
 
@@ -47,24 +45,14 @@ public class WaitingServiceImpl implements WaitingService {
     public WaitingResponseDto findWaiting(UUID waitingId) {
         Waiting waiting = findById(waitingId);
 
-        log.info(
-                "웨이팅 단건 조회 요청 = 웨이팅 아이디 : '{}', 대기 번호 : '{}', 대기 순번 : '{}', 상태 : '{}', 휴대폰 번호 : '{}', 메시지 전송 여부 : '{}', 등록일 : '{}'",
-                waiting.getId(), waiting.getWaitingNumber(), waiting.getWaitingTurn(),
-                waiting.getStatus(), waiting.getPhoneNumber(),
-                waiting.isSendEnterMessage(), waiting.getCreatedAt());
         return WaitingResponseDto.from(waiting);
     }
 
     @Override
-    public List<WaitingResponseDto> findDefaultWaitingList(String username,
-            Long storeId) {
+    public List<WaitingResponseDto> findDefaultWaitingList(String username, Long storeId) {
         isExistsMemberStore(username, storeId);
+        List<Waiting> waitingList = waitingRepository.findStatusWaitingList(storeId, DEFAULT);
 
-        List<Waiting> waitingList = waitingRepository
-                .findStatusWaitingList(storeId, DEFAULT);
-
-        log.info("웨이팅 목록 조회 요청 = 로그인 아이디 : '{}', 매장 아이디 : '{}', 웨이팅 '{}'개",
-                username, storeId, waitingList.size());
         return waitingList.stream()
                 .map(WaitingResponseDto::from)
                 .toList();
@@ -77,20 +65,13 @@ public class WaitingServiceImpl implements WaitingService {
         PageRequest page = PageRequest.of(0, 1);
 
         Store store = storeRepository.findStoreById(storeId);
-        Waiting lastWaiting = checkEmptyList(
-                waitingRepository.findLastWaiting(storeId, page));
+        Waiting lastWaiting = checkEmptyList(waitingRepository.findLastWaiting(storeId, page));
         Waiting defaultLastWaiting = checkEmptyList(
                 waitingRepository.findStatusLastWaiting(storeId, DEFAULT, page));
 
-        Waiting waiting = Waiting
-                .createWaiting(waitingDto, store, lastWaiting, defaultLastWaiting);
+        Waiting waiting = Waiting.createWaiting(waitingDto, store, lastWaiting, defaultLastWaiting);
         waitingRepository.save(waiting);
 
-        log.info(
-                "웨이팅 등록 =  로그인 아이디 : '{}', 매장 아이디 : '{}', 웨이팅 아이디 : '{}', 대기 번호 : '{}', 대기 순번 : '{}', 상태 : '{}', 휴대폰 번호 : '{}', 등록일 : '{}'",
-                username, store.getId(), waiting.getId(), waiting.getWaitingNumber(),
-                waiting.getWaitingTurn(), waiting.getStatus(), waiting.getPhoneNumber(),
-                waiting.getCreatedAt());
         return waiting.getId();
     }
 
@@ -151,8 +132,7 @@ public class WaitingServiceImpl implements WaitingService {
     private Waiting findById(UUID waitingId) {
         return waitingRepository.findById(waitingId).orElseThrow(() -> {
             log.error("[{}] 존재하지 않는 웨이팅 단건 조회 요청 = 웨이팅 아이디 : '{}'",
-                    TransactionSynchronizationManager.getCurrentTransactionName(),
-                    waitingId);
+                    TransactionSynchronizationManager.getCurrentTransactionName(), waitingId);
             return new ResourceNotFoundException("존재하지 않는 웨이팅 입니다.");
         });
     }
