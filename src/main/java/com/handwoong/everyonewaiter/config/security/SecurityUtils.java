@@ -9,6 +9,10 @@ public class SecurityUtils {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
+    public static String getUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
     public static boolean isAuthentication() {
         Authentication authentication = getAuthentication();
         return !(authentication.getPrincipal() instanceof String);
