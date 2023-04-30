@@ -62,13 +62,25 @@ public class Store extends BaseEntity {
     }
 
     public static Store createStore(StoreReqDto storeDto, Member member) {
+        StoreBusinessTime reqBusinessTime = new StoreBusinessTime(storeDto.getOpenTime(),
+                storeDto.getCloseTime());
+        StoreBreakTime reqBreakTime = new StoreBreakTime(storeDto.getStartTime(),
+                storeDto.getEndTime());
+
         return Store.builder()
                 .name(storeDto.getName())
                 .telNumber(storeDto.getTelephoneNumber())
                 .member(member)
-                .businessTime(storeDto.getBusinessTime())
-                .breakTime(storeDto.getBreakTime())
-                .waitingPossible(false)
+                .businessTime(reqBusinessTime)
+                .breakTime(reqBreakTime)
+                .waitingPossible(true)
                 .build();
+    }
+
+    public void updateStore(StoreReqDto storeDto) {
+        this.name = storeDto.getName();
+        this.telephoneNumber = storeDto.getTelephoneNumber();
+        this.businessTime = new StoreBusinessTime(storeDto.getOpenTime(), storeDto.getCloseTime());
+        this.breakTime = new StoreBreakTime(storeDto.getStartTime(), storeDto.getEndTime());
     }
 }
