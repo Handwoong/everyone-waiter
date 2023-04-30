@@ -6,6 +6,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 import com.handwoong.everyonewaiter.dto.store.StoreDto;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,18 +40,33 @@ public class Store extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Embedded
+    private StoreBusinessTime businessTime;
+
+    @Embedded
+    private StoreBreakTime breakTime;
+
+    private boolean waitingPossible;
+
     @Builder(access = PRIVATE)
-    private Store(String name, String telephoneNumber, Member member) {
+    private Store(String name, String telNumber, Member member, StoreBusinessTime businessTime,
+            StoreBreakTime breakTime, boolean waitingPossible) {
         this.name = name;
-        this.telephoneNumber = telephoneNumber;
+        this.telephoneNumber = telNumber;
         this.member = member;
+        this.businessTime = businessTime;
+        this.breakTime = breakTime;
+        this.waitingPossible = waitingPossible;
     }
 
     public static Store createStore(StoreDto storeDto, Member member) {
         return Store.builder()
                 .name(storeDto.getName())
-                .telephoneNumber(storeDto.getTelephoneNumber())
+                .telNumber(storeDto.getTelephoneNumber())
                 .member(member)
+                .businessTime(storeDto.getBusinessTime())
+                .breakTime(storeDto.getBreakTime())
+                .waitingPossible(false)
                 .build();
     }
 }
