@@ -1,13 +1,12 @@
 package com.handwoong.everyonewaiter.dto.store;
 
-import com.handwoong.everyonewaiter.embedded.StoreBreakTime;
-import com.handwoong.everyonewaiter.embedded.StoreBusinessTime;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.time.LocalTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @NoArgsConstructor
@@ -22,19 +21,29 @@ public class StoreReqDto {
             message = "{error.message.telNumber}")
     private String telephoneNumber;
 
-    @Valid
     @NotNull(message = "{error.message.null}")
-    private StoreBusinessTime businessTime;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime startTime;
 
-    @Valid
     @NotNull(message = "{error.message.null}")
-    private StoreBreakTime breakTime;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime endTime;
 
-    public StoreReqDto(String name, String telephoneNumber, StoreBusinessTime openTime,
-            StoreBreakTime breakTime) {
+    @NotNull(message = "{error.message.null}")
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime openTime;
+
+    @NotNull(message = "{error.message.null}")
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime closeTime;
+
+    public StoreReqDto(String name, String telephoneNumber, LocalTime startTime, LocalTime endTime,
+            LocalTime openTime, LocalTime closeTime) {
         this.name = name;
         this.telephoneNumber = telephoneNumber;
-        this.businessTime = openTime;
-        this.breakTime = breakTime;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
     }
 }
