@@ -13,6 +13,8 @@ public enum ErrorCode {
     /**
      * 400 Bad Request
      */
+    METHOD_ARGUMENT_NOT_VALID(HttpStatus.BAD_REQUEST, "요청 인자가 잘못되었습니다."),
+
     MEMBER_EXISTS(HttpStatus.BAD_REQUEST, "이미 존재하는 회원입니다."),
 
     PHONE_NUMBER_EXISTS(HttpStatus.BAD_REQUEST, "이미 존재하는 휴대폰 번호입니다."),
