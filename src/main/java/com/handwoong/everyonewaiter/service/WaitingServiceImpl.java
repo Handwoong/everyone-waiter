@@ -3,6 +3,8 @@ package com.handwoong.everyonewaiter.service;
 import static com.handwoong.everyonewaiter.domain.WaitingStatus.CANCEL;
 import static com.handwoong.everyonewaiter.domain.WaitingStatus.DEFAULT;
 import static com.handwoong.everyonewaiter.domain.WaitingStatus.ENTER;
+import static com.handwoong.everyonewaiter.exception.ErrorCode.STORE_NOT_FOUND;
+import static com.handwoong.everyonewaiter.exception.ErrorCode.WAITING_NOT_FOUND;
 
 import com.handwoong.everyonewaiter.domain.Store;
 import com.handwoong.everyonewaiter.domain.Waiting;
@@ -10,8 +12,7 @@ import com.handwoong.everyonewaiter.domain.WaitingStatus;
 import com.handwoong.everyonewaiter.dto.waiting.WaitingCountResponseDto;
 import com.handwoong.everyonewaiter.dto.waiting.WaitingDto;
 import com.handwoong.everyonewaiter.dto.waiting.WaitingResponseDto;
-import com.handwoong.everyonewaiter.exception.ResourceExistsException;
-import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
+import com.handwoong.everyonewaiter.exception.CustomException;
 import com.handwoong.everyonewaiter.repository.StoreRepository;
 import com.handwoong.everyonewaiter.repository.WaitingRepository;
 import java.util.List;
@@ -96,7 +97,7 @@ public class WaitingServiceImpl implements WaitingService {
             log.error("[{}] 회원의 존재하지 않는 매장 웨이팅 조회 요청 = 로그인 아이디 : '{}', 매장 아이디 : '{}'",
                     TransactionSynchronizationManager.getCurrentTransactionName(),
                     username, storeId);
-            throw new ResourceExistsException("매장이 존재하지 않습니다.");
+            throw new CustomException(STORE_NOT_FOUND);
         }
     }
 
@@ -133,7 +134,7 @@ public class WaitingServiceImpl implements WaitingService {
         return waitingRepository.findById(waitingId).orElseThrow(() -> {
             log.error("[{}] 존재하지 않는 웨이팅 단건 조회 요청 = 웨이팅 아이디 : '{}'",
                     TransactionSynchronizationManager.getCurrentTransactionName(), waitingId);
-            return new ResourceNotFoundException("존재하지 않는 웨이팅 입니다.");
+            return new CustomException(WAITING_NOT_FOUND);
         });
     }
 }

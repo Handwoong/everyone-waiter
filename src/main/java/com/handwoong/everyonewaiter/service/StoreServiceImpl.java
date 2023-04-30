@@ -1,11 +1,14 @@
 package com.handwoong.everyonewaiter.service;
 
+import static com.handwoong.everyonewaiter.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.handwoong.everyonewaiter.exception.ErrorCode.STORE_NOT_FOUND;
+import static com.handwoong.everyonewaiter.exception.ErrorCode.TELEPHONE_NUMBER_EXISTS;
+
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.domain.Store;
 import com.handwoong.everyonewaiter.dto.store.StoreDto;
 import com.handwoong.everyonewaiter.dto.store.StoreResponseDto;
-import com.handwoong.everyonewaiter.exception.ResourceExistsException;
-import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
+import com.handwoong.everyonewaiter.exception.CustomException;
 import com.handwoong.everyonewaiter.repository.MemberRepository;
 import com.handwoong.everyonewaiter.repository.StoreRepository;
 import java.util.List;
@@ -32,7 +35,7 @@ public class StoreServiceImpl implements StoreService {
         Member findMember = findMemberByUsername(username);
         boolean existTelNumber = storeRepository.existTelNumber(storeDto.getTelephoneNumber());
         if (existTelNumber) {
-            throw new ResourceExistsException("이미 존재하는 매장 전화번호입니다.");
+            throw new CustomException(TELEPHONE_NUMBER_EXISTS);
         }
 
         Store store = Store.createStore(storeDto, findMember);
@@ -59,7 +62,7 @@ public class StoreServiceImpl implements StoreService {
                 findMember.getUsername(), storeId, PageRequest.of(0, 1));
 
         if (storeList.isEmpty()) {
-            throw new ResourceNotFoundException("존재하지 않는 매장입니다.");
+            throw new CustomException(STORE_NOT_FOUND);
         }
 
         return StoreResponseDto.from(storeList.get(0));
@@ -69,7 +72,7 @@ public class StoreServiceImpl implements StoreService {
         return memberRepository.findByUsername(username).orElseThrow(() -> {
             log.error("[{}] 존재하지 않는 회원 조회 = 로그인 아이디 : {}",
                     TransactionSynchronizationManager.getCurrentTransactionName(), username);
-            return new ResourceNotFoundException("존재하지 않는 회원 입니다.");
+            return new CustomException(MEMBER_NOT_FOUND);
         });
     }
 }

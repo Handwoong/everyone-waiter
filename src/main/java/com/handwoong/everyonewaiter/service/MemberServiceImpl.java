@@ -1,13 +1,16 @@
 package com.handwoong.everyonewaiter.service;
 
+import static com.handwoong.everyonewaiter.exception.ErrorCode.MEMBER_EXISTS;
+import static com.handwoong.everyonewaiter.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.handwoong.everyonewaiter.exception.ErrorCode.NOT_MATCH_PASSWORD;
+import static com.handwoong.everyonewaiter.exception.ErrorCode.PHONE_NUMBER_EXISTS;
+
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.dto.BasicResponseDto;
 import com.handwoong.everyonewaiter.dto.member.MemberDto;
 import com.handwoong.everyonewaiter.dto.member.MemberPasswordDto;
 import com.handwoong.everyonewaiter.dto.member.MemberResponseDto;
-import com.handwoong.everyonewaiter.exception.ResourceExistsException;
-import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
-import com.handwoong.everyonewaiter.exception.ResourceNotMatchException;
+import com.handwoong.everyonewaiter.exception.CustomException;
 import com.handwoong.everyonewaiter.repository.MemberRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -91,7 +94,7 @@ public class MemberServiceImpl implements MemberService {
         if (isExists) {
             log.error("휴대폰 번호 중복 가입 요청 = 로그인 아이디 : '{}', 휴대폰 번호 : '{}'",
                     memberDto.getUsername(), memberDto.getPhoneNumber());
-            throw new ResourceExistsException("이미 존재하는 휴대폰 번호 입니다.");
+            throw new CustomException(PHONE_NUMBER_EXISTS);
         }
     }
 
@@ -100,7 +103,7 @@ public class MemberServiceImpl implements MemberService {
 
         if (isExists) {
             log.error("로그인 아이디 중복 가입 요청 = 로그인 아이디 : '{}'", memberDto.getUsername());
-            throw new ResourceExistsException("이미 존재하는 아이디 입니다.");
+            throw new CustomException(MEMBER_EXISTS);
         }
     }
 
@@ -108,7 +111,7 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findById(memberId).orElseThrow(() -> {
             log.error("[{}] 존재하지 않는 회원 찾기 = 찾으려는 아이디 : '{}'",
                     TransactionSynchronizationManager.getCurrentTransactionName(), memberId);
-            return new ResourceNotFoundException("존재하지 않는 회원입니다.");
+            return new CustomException(MEMBER_NOT_FOUND);
         });
     }
 
@@ -116,16 +119,18 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findByUsername(username).orElseThrow(() -> {
             log.error("[{}] 존재하지 않는 회원 찾기 = 찾으려는 로그인 아이디 : '{}'",
                     TransactionSynchronizationManager.getCurrentTransactionName(), username);
-            return new ResourceNotFoundException("존재하지 않는 회원입니다.");
+            return new CustomException(MEMBER_NOT_FOUND);
         });
     }
 
     private void matchPassword(Member member, String password) {
-        if (!passwordEncoder.matches(password, member.getPassword())) {
-            log.error("[{}] 기존 비밀번호가 일치하지 않음 = 로그인 아이디 : '{}'",
-                    TransactionSynchronizationManager.getCurrentTransactionName(),
-                    member.getUsername());
-            throw new ResourceNotMatchException("기존 비밀번호가 일치하지 않습니다.");
+        if (passwordEncoder.matches(password, member.getPassword())) {
+            return;
         }
+
+        log.error("[{}] 기존 비밀번호가 일치하지 않음 = 로그인 아이디 : '{}'",
+                TransactionSynchronizationManager.getCurrentTransactionName(),
+                member.getUsername());
+        throw new CustomException(NOT_MATCH_PASSWORD);
     }
 }
