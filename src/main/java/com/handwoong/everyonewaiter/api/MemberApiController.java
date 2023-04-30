@@ -1,7 +1,7 @@
 package com.handwoong.everyonewaiter.api;
 
+import com.handwoong.everyonewaiter.dto.MemberDto;
 import com.handwoong.everyonewaiter.dto.OnlyMsgResDto;
-import com.handwoong.everyonewaiter.dto.member.MemberPwdReqDto;
 import com.handwoong.everyonewaiter.service.MemberService;
 import com.handwoong.everyonewaiter.utils.validation.DeleteValidationGroup;
 import com.handwoong.everyonewaiter.utils.validation.UpdateValidationGroup;
@@ -28,7 +28,7 @@ public class MemberApiController {
     @PutMapping("/edit/password")
     public ResponseEntity<OnlyMsgResDto> changePassword(
             Authentication authentication,
-            @RequestBody @Validated(UpdateValidationGroup.class) MemberPwdReqDto passwordDto) {
+            @RequestBody @Validated(UpdateValidationGroup.class) MemberDto.PwdRequestDto passwordDto) {
         String username = authentication.getName();
         log.info("[PUT] 회원 비밀번호 수정 = 로그인 아이디 : '{}'", username);
         OnlyMsgResDto body = memberService.changePassword(username, passwordDto);
@@ -38,7 +38,7 @@ public class MemberApiController {
     @DeleteMapping("/leave")
     public ResponseEntity<OnlyMsgResDto> leaveMember(
             Authentication authentication,
-            @RequestBody @Validated(DeleteValidationGroup.class) MemberPwdReqDto passwordDto) {
+            @RequestBody @Validated(DeleteValidationGroup.class) MemberDto.PwdRequestDto passwordDto) {
         String username = authentication.getName();
         log.info("[DELETE] 회원 삭제 = 로그인 아이디 : '{}'", username);
         OnlyMsgResDto body = memberService.deleteMember(username, passwordDto);

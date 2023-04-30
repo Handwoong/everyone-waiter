@@ -3,7 +3,7 @@ package com.handwoong.everyonewaiter.domain;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
-import com.handwoong.everyonewaiter.dto.member.MemberReqDto;
+import com.handwoong.everyonewaiter.dto.MemberDto;
 import com.handwoong.everyonewaiter.enums.MemberRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -54,7 +54,7 @@ public class Member extends BaseEntity {
         this.role = role;
     }
 
-    public static Member createMember(MemberReqDto memberDto) {
+    public static Member createMember(MemberDto.RequestDto memberDto) {
         return Member.builder()
                 .username(memberDto.getUsername())
                 .password(memberDto.getPassword())

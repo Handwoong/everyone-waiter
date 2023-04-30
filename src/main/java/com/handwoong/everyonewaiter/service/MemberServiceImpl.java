@@ -6,10 +6,8 @@ import static com.handwoong.everyonewaiter.enums.ErrorCode.NOT_MATCH_PASSWORD;
 import static com.handwoong.everyonewaiter.enums.ErrorCode.PHONE_NUMBER_EXISTS;
 
 import com.handwoong.everyonewaiter.domain.Member;
+import com.handwoong.everyonewaiter.dto.MemberDto;
 import com.handwoong.everyonewaiter.dto.OnlyMsgResDto;
-import com.handwoong.everyonewaiter.dto.member.MemberPwdReqDto;
-import com.handwoong.everyonewaiter.dto.member.MemberReqDto;
-import com.handwoong.everyonewaiter.dto.member.MemberResDto;
 import com.handwoong.everyonewaiter.exception.CustomException;
 import com.handwoong.everyonewaiter.repository.MemberRepository;
 import java.util.List;
@@ -32,7 +30,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public Long register(MemberReqDto memberDto) {
+    public Long register(MemberDto.RequestDto memberDto) {
         isExistsUsername(memberDto);
         isExistsPhoneNumber(memberDto);
 
@@ -45,32 +43,32 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberResDto findMember(Long memberId) {
+    public MemberDto.ResponseDto findMember(Long memberId) {
         Member member = findById(memberId);
 
-        return MemberResDto.from(member);
+        return MemberDto.ResponseDto.from(member);
     }
 
     @Override
-    public MemberResDto findMemberByUsername(String username) {
+    public MemberDto.ResponseDto findMemberByUsername(String username) {
         Member member = findByUsername(username);
 
-        return MemberResDto.from(member);
+        return MemberDto.ResponseDto.from(member);
     }
 
 
     @Override
-    public List<MemberResDto> findMemberList() {
+    public List<MemberDto.ResponseDto> findMemberList() {
         List<Member> members = memberRepository.findAll();
 
         return members.stream()
-                .map(MemberResDto::from)
+                .map(MemberDto.ResponseDto::from)
                 .toList();
     }
 
     @Override
     @Transactional
-    public OnlyMsgResDto changePassword(String username, MemberPwdReqDto passwordDto) {
+    public OnlyMsgResDto changePassword(String username, MemberDto.PwdRequestDto passwordDto) {
         Member member = findByUsername(username);
         matchPassword(member, passwordDto.getCurrentPassword());
         member.encodePassword(passwordEncoder.encode(passwordDto.getNewPassword()));
@@ -80,7 +78,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public OnlyMsgResDto deleteMember(String username, MemberPwdReqDto passwordDto) {
+    public OnlyMsgResDto deleteMember(String username, MemberDto.PwdRequestDto passwordDto) {
         Member member = findByUsername(username);
         matchPassword(member, passwordDto.getCurrentPassword());
         memberRepository.deleteById(member.getId());
@@ -88,7 +86,7 @@ public class MemberServiceImpl implements MemberService {
         return new OnlyMsgResDto("success");
     }
 
-    private void isExistsPhoneNumber(MemberReqDto memberDto) {
+    private void isExistsPhoneNumber(MemberDto.RequestDto memberDto) {
         boolean isExists = memberRepository.existsByPhoneNumber(memberDto.getPhoneNumber());
 
         if (isExists) {
@@ -98,7 +96,7 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    private void isExistsUsername(MemberReqDto memberDto) {
+    private void isExistsUsername(MemberDto.RequestDto memberDto) {
         boolean isExists = memberRepository.existsByUsername(memberDto.getUsername());
 
         if (isExists) {

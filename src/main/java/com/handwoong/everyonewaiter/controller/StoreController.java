@@ -1,7 +1,7 @@
 package com.handwoong.everyonewaiter.controller;
 
 import com.handwoong.everyonewaiter.config.security.SecurityUtils;
-import com.handwoong.everyonewaiter.dto.member.MemberResDto;
+import com.handwoong.everyonewaiter.dto.MemberDto;
 import com.handwoong.everyonewaiter.dto.store.StoreReqDto;
 import com.handwoong.everyonewaiter.dto.store.StoreResDto;
 import com.handwoong.everyonewaiter.service.MemberService;
@@ -32,7 +32,7 @@ public class StoreController {
     public String storePage(Model model) {
         String username = SecurityUtils.getUsername();
 
-        MemberResDto memberDto = memberService.findMemberByUsername(username);
+        MemberDto.ResponseDto memberDto = memberService.findMemberByUsername(username);
         List<StoreResDto> storeList = storeService.findStoreList(username);
 
         model.addAttribute("member", memberDto);
@@ -44,7 +44,7 @@ public class StoreController {
     public String registerPage(Model model) {
         String username = SecurityUtils.getUsername();
 
-        MemberResDto memberDto = memberService.findMemberByUsername(username);
+        MemberDto.ResponseDto memberDto = memberService.findMemberByUsername(username);
 
         model.addAttribute("member", memberDto);
         model.addAttribute("storeDto", new StoreReqDto());
@@ -63,7 +63,7 @@ public class StoreController {
     public String editPage(@PathVariable Long storeId, Model model) {
         String username = SecurityUtils.getUsername();
 
-        MemberResDto memberDto = memberService.findMemberByUsername(username);
+        MemberDto.ResponseDto memberDto = memberService.findMemberByUsername(username);
         StoreResDto storeDto = storeService.findStore(username, storeId);
 
         model.addAttribute("member", memberDto);

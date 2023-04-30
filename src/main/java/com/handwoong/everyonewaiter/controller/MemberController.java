@@ -1,8 +1,7 @@
 package com.handwoong.everyonewaiter.controller;
 
 import com.handwoong.everyonewaiter.config.security.SecurityUtils;
-import com.handwoong.everyonewaiter.dto.member.MemberReqDto;
-import com.handwoong.everyonewaiter.dto.member.MemberResDto;
+import com.handwoong.everyonewaiter.dto.MemberDto;
 import com.handwoong.everyonewaiter.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,7 +30,7 @@ public class MemberController {
             return "redirect:/members/profile";
         }
 
-        model.addAttribute("memberDto", new MemberReqDto());
+        model.addAttribute("memberDto", new MemberDto.RequestDto());
         return "members/login";
     }
 
@@ -51,12 +50,12 @@ public class MemberController {
             return "redirect:/members/profile";
         }
 
-        model.addAttribute("memberDto", new MemberReqDto());
+        model.addAttribute("memberDto", new MemberDto.RequestDto());
         return "members/register";
     }
 
     @PostMapping("/register")
-    public String register(@Validated MemberReqDto memberDto) {
+    public String register(@Validated MemberDto.RequestDto memberDto) {
         memberService.register(memberDto);
         return "redirect:/members/login";
     }
@@ -64,7 +63,7 @@ public class MemberController {
     @GetMapping("/account")
     public String profilePage(Model model) {
         String username = SecurityUtils.getUsername();
-        MemberResDto memberDto = memberService.findMemberByUsername(username);
+        MemberDto.ResponseDto memberDto = memberService.findMemberByUsername(username);
         model.addAttribute("member", memberDto);
         return "members/account";
     }
