@@ -37,7 +37,9 @@ public class LoggingAop {
     public void afterReturning(JoinPoint joinPoint, Object returnValue) {
         Method method = getMethod(joinPoint);
         log.info("============== Method End : {} ==============", method.getName());
-        log.info("Return : '{}' '{}'", returnValue.getClass().getSimpleName(), returnValue);
+        if (returnValue != null) {
+            log.info("Return : '{}' '{}'", returnValue.getClass().getSimpleName(), returnValue);
+        }
     }
 
     @Around("servicePointcut()")
