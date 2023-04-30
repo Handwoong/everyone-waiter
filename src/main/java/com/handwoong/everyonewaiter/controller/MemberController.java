@@ -68,11 +68,11 @@ public class MemberController {
         return "redirect:/members/login";
     }
 
-    @GetMapping("/profile")
+    @GetMapping("/account")
     public String profilePage(Authentication authentication, Model model) {
         String username = authentication.getName();
         MemberResponseDto memberDto = memberService.findMemberByUsername(username);
         model.addAttribute("member", memberDto);
-        return "members/profile";
+        return "members/account";
     }
 }
