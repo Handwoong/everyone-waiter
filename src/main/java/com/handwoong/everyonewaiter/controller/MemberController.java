@@ -1,8 +1,8 @@
 package com.handwoong.everyonewaiter.controller;
 
 import com.handwoong.everyonewaiter.config.security.SecurityUtils;
-import com.handwoong.everyonewaiter.dto.member.MemberDto;
-import com.handwoong.everyonewaiter.dto.member.MemberResponseDto;
+import com.handwoong.everyonewaiter.dto.member.MemberReqDto;
+import com.handwoong.everyonewaiter.dto.member.MemberResDto;
 import com.handwoong.everyonewaiter.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +31,7 @@ public class MemberController {
             return "redirect:/members/profile";
         }
 
-        model.addAttribute("memberDto", new MemberDto());
+        model.addAttribute("memberDto", new MemberReqDto());
         return "members/login";
     }
 
@@ -57,20 +56,14 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public String register(@Validated MemberReqDto memberDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            log.error("회원가입 잘못된 요청 정보 = 로그인 아이디 : '{}', 휴대폰 번호 : '{}'",
-                    memberDto.getUsername(), memberDto.getPhoneNumber());
-            return "members/register";
-        }
-
+    public String register(@Validated MemberReqDto memberDto) {
         memberService.register(memberDto);
         return "redirect:/members/login";
     }
 
     @GetMapping("/account")
-    public String profilePage(Authentication authentication, Model model) {
-        String username = authentication.getName();
+    public String profilePage(Model model) {
+        String username = SecurityUtils.getUsername();
         MemberResDto memberDto = memberService.findMemberByUsername(username);
         model.addAttribute("member", memberDto);
         return "members/account";
