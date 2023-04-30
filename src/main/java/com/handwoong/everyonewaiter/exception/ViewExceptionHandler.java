@@ -2,8 +2,12 @@ package com.handwoong.everyonewaiter.exception;
 
 import com.handwoong.everyonewaiter.enums.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,12 +33,18 @@ public class ViewExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public RedirectView handleMethodArgsNotValidException(MethodArgumentNotValidException err,
-            HttpServletRequest req,
-            RedirectAttributes redirectAttr) {
+            HttpServletRequest req, RedirectAttributes redirectAttr) {
         ErrorCode errorCode = ErrorCode.METHOD_ARGUMENT_NOT_VALID;
         log.error("[{}] {} {}", errorCode.name(), errorCode.getStatus(), errorCode.getMessage());
 
+        Map<String, String[]> formData = req.getParameterMap();
+        List<FieldError> fieldErrors = err.getFieldErrors();
+
+        HashMap<String, String> fieldErrorMap = getFieldErrorMap(fieldErrors);
         String viewName = getRedirectUri(req, errorCode);
+
+        redirectAttr.addFlashAttribute("formData", formData);
+        redirectAttr.addFlashAttribute("errors", fieldErrorMap);
         redirectAttr.addFlashAttribute("errorCode", errorCode);
 
         return new RedirectView(viewName);
@@ -72,5 +82,18 @@ public class ViewExceptionHandler {
 
     private String getRedirectUri(HttpServletRequest req, ErrorCode errorCode) {
         return errorCode.getStatus() == HttpStatus.NOT_FOUND ? "/error" : req.getRequestURI();
+    }
+
+    private HashMap<String, String> getFieldErrorMap(List<FieldError> fieldErrors) {
+        HashMap<String, String> fieldErrorMap = new HashMap<>();
+
+        for (FieldError fieldError : fieldErrors) {
+            String fieldName = fieldError.getField();
+            String fieldMessage = fieldError.getDefaultMessage();
+
+            log.error("에러 필드 명 : '{}', 에러 메시지 : '{}'", fieldName, fieldMessage);
+            fieldErrorMap.put(fieldName, fieldMessage);
+        }
+        return fieldErrorMap;
     }
 }
