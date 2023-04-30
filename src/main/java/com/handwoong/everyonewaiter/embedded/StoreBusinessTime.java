@@ -3,22 +3,24 @@ package com.handwoong.everyonewaiter.embedded;
 import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
+@ToString
 @Embeddable
 @NoArgsConstructor(access = PROTECTED)
 public class StoreBusinessTime {
 
-    @Pattern(regexp = "^([01]\\d|2[0-3]):([0-5]\\d)$", message = "{error.message.time}")
+    @NotNull(message = "{error.message.null}")
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime openTime;
 
-    @Pattern(regexp = "^([01]\\d|2[0-3]):([0-5]\\d)$", message = "{error.message.time}")
+    @NotNull(message = "{error.message.null}")
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime closeTime;
 
