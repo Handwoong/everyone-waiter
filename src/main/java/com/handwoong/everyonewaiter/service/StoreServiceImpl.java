@@ -6,8 +6,7 @@ import static com.handwoong.everyonewaiter.enums.ErrorCode.TELEPHONE_NUMBER_EXIS
 
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.domain.Store;
-import com.handwoong.everyonewaiter.dto.store.StoreReqDto;
-import com.handwoong.everyonewaiter.dto.store.StoreResDto;
+import com.handwoong.everyonewaiter.dto.StoreDto;
 import com.handwoong.everyonewaiter.exception.CustomException;
 import com.handwoong.everyonewaiter.repository.MemberRepository;
 import com.handwoong.everyonewaiter.repository.StoreRepository;
@@ -31,7 +30,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     @Transactional
-    public Long register(String username, StoreReqDto storeDto) {
+    public Long register(String username, StoreDto.RequestDto storeDto) {
         Member findMember = findMemberByUsername(username);
         existsTelephone(username, storeDto.getTelephoneNumber());
 
@@ -43,7 +42,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     @Transactional
-    public void update(String username, Long storeId, StoreReqDto storeDto) {
+    public void update(String username, Long storeId, StoreDto.RequestDto storeDto) {
         existsTelephone(username, storeDto.getTelephoneNumber());
         Store store = findMemberStore(username, storeId);
         store.updateStore(storeDto);
@@ -57,17 +56,17 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public List<StoreResDto> findStoreList(String username) {
+    public List<StoreDto.ResponseDto> findStoreList(String username) {
         Member findMember = findMemberByUsername(username);
         List<Store> storeList = storeRepository.findAllByMemberId(findMember.getId());
 
         return storeList.stream()
-                .map(StoreResDto::from)
+                .map(StoreDto.ResponseDto::from)
                 .toList();
     }
 
     @Override
-    public StoreResDto findStore(String username, Long storeId) {
+    public StoreDto.ResponseDto findStore(String username, Long storeId) {
         Member findMember = findMemberByUsername(username);
         List<Store> storeList = storeRepository.findMemberStoreList(
                 findMember.getUsername(), storeId, PageRequest.of(0, 1));
@@ -76,7 +75,7 @@ public class StoreServiceImpl implements StoreService {
             throw new CustomException(STORE_NOT_FOUND);
         }
 
-        return StoreResDto.from(storeList.get(0));
+        return StoreDto.ResponseDto.from(storeList.get(0));
     }
 
     private Member findMemberByUsername(String username) {

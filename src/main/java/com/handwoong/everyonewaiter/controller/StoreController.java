@@ -2,8 +2,7 @@ package com.handwoong.everyonewaiter.controller;
 
 import com.handwoong.everyonewaiter.config.security.SecurityUtils;
 import com.handwoong.everyonewaiter.dto.MemberDto;
-import com.handwoong.everyonewaiter.dto.store.StoreReqDto;
-import com.handwoong.everyonewaiter.dto.store.StoreResDto;
+import com.handwoong.everyonewaiter.dto.StoreDto;
 import com.handwoong.everyonewaiter.service.MemberService;
 import com.handwoong.everyonewaiter.service.StoreService;
 import java.util.List;
@@ -33,7 +32,7 @@ public class StoreController {
         String username = SecurityUtils.getUsername();
 
         MemberDto.ResponseDto memberDto = memberService.findMemberByUsername(username);
-        List<StoreResDto> storeList = storeService.findStoreList(username);
+        List<StoreDto.ResponseDto> storeList = storeService.findStoreList(username);
 
         model.addAttribute("member", memberDto);
         model.addAttribute("storeList", storeList);
@@ -47,12 +46,12 @@ public class StoreController {
         MemberDto.ResponseDto memberDto = memberService.findMemberByUsername(username);
 
         model.addAttribute("member", memberDto);
-        model.addAttribute("storeDto", new StoreReqDto());
+        model.addAttribute("storeDto", new StoreDto.RequestDto());
         return "stores/register";
     }
 
     @PostMapping("/register")
-    public String register(@Validated StoreReqDto storeReqDto) {
+    public String register(@Validated StoreDto.RequestDto storeReqDto) {
         String username = SecurityUtils.getUsername();
 
         storeService.register(username, storeReqDto);
@@ -64,7 +63,7 @@ public class StoreController {
         String username = SecurityUtils.getUsername();
 
         MemberDto.ResponseDto memberDto = memberService.findMemberByUsername(username);
-        StoreResDto storeDto = storeService.findStore(username, storeId);
+        StoreDto.ResponseDto storeDto = storeService.findStore(username, storeId);
 
         model.addAttribute("member", memberDto);
         model.addAttribute("storeDto", storeDto);
@@ -72,7 +71,7 @@ public class StoreController {
     }
 
     @PutMapping("/edit/{storeId}")
-    public String edit(@PathVariable Long storeId, @Validated StoreReqDto storeReqDto) {
+    public String edit(@PathVariable Long storeId, @Validated StoreDto.RequestDto storeReqDto) {
         String username = SecurityUtils.getUsername();
 
         storeService.update(username, storeId, storeReqDto);
