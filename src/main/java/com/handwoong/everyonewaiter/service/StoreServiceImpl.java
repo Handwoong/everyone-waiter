@@ -33,15 +33,27 @@ public class StoreServiceImpl implements StoreService {
     @Transactional
     public Long register(String username, StoreReqDto storeDto) {
         Member findMember = findMemberByUsername(username);
-        boolean existTelNumber = storeRepository.existTelNumber(storeDto.getTelephoneNumber());
-        if (existTelNumber) {
-            throw new CustomException(TELEPHONE_NUMBER_EXISTS);
-        }
+        existsTelephone(username, storeDto.getTelephoneNumber());
 
         Store store = Store.createStore(storeDto, findMember);
         storeRepository.save(store);
 
         return store.getId();
+    }
+
+    @Override
+    @Transactional
+    public void update(String username, Long storeId, StoreReqDto storeDto) {
+        existsTelephone(username, storeDto.getTelephoneNumber());
+        Store store = findMemberStore(username, storeId);
+        store.updateStore(storeDto);
+    }
+
+    @Override
+    @Transactional
+    public void delete(String username, Long storeId) {
+        Store store = findMemberStore(username, storeId);
+        storeRepository.delete(store);
     }
 
     @Override
@@ -53,7 +65,6 @@ public class StoreServiceImpl implements StoreService {
                 .map(StoreResDto::from)
                 .toList();
     }
-
 
     @Override
     public StoreResDto findStore(String username, Long storeId) {
@@ -70,9 +81,25 @@ public class StoreServiceImpl implements StoreService {
 
     private Member findMemberByUsername(String username) {
         return memberRepository.findByUsername(username).orElseThrow(() -> {
-            log.error("[{}] 존재하지 않는 회원 조회 = 로그인 아이디 : {}",
-                    TransactionSynchronizationManager.getCurrentTransactionName(), username);
+            String transactionName = TransactionSynchronizationManager.getCurrentTransactionName();
+            log.error("[{}] 존재하지 않는 회원 조회 = 로그인 아이디 : '{}'", transactionName, username);
             return new CustomException(MEMBER_NOT_FOUND);
         });
+    }
+
+    private Store findMemberStore(String username, Long storeId) {
+        return storeRepository.findMemberStore(username, storeId).orElseThrow(() -> {
+            String transactionName = TransactionSynchronizationManager.getCurrentTransactionName();
+            log.error("[{}] 존재하지 않는 매장 수정 요청 = 로그인 아이디 : '{}', 매장 ID : '{}'",
+                    transactionName, username, storeId);
+            return new CustomException(STORE_NOT_FOUND);
+        });
+    }
+
+    private void existsTelephone(String username, String telephoneNumber) {
+        boolean existTelNumber = storeRepository.existTelNumber(username, telephoneNumber);
+        if (existTelNumber) {
+            throw new CustomException(TELEPHONE_NUMBER_EXISTS);
+        }
     }
 }
