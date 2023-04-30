@@ -3,6 +3,7 @@ package com.handwoong.everyonewaiter.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,6 +18,19 @@ public class ViewExceptionHandler {
     public RedirectView handleCustomException(CustomException err, HttpServletRequest req,
             RedirectAttributes redirectAttr) {
         ErrorCode errorCode = err.getErrorCode();
+        log.error("[{}] {} {}", errorCode.name(), errorCode.getStatus(), errorCode.getMessage());
+
+        String viewName = getRedirectUri(req, errorCode);
+        redirectAttr.addFlashAttribute("errorCode", errorCode);
+
+        return new RedirectView(viewName);
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public RedirectView handleMethodArgsNotValidException(MethodArgumentNotValidException err,
+            HttpServletRequest req,
+            RedirectAttributes redirectAttr) {
+        ErrorCode errorCode = ErrorCode.METHOD_ARGUMENT_NOT_VALID;
         log.error("[{}] {} {}", errorCode.name(), errorCode.getStatus(), errorCode.getMessage());
 
         String viewName = getRedirectUri(req, errorCode);
