@@ -3,11 +3,11 @@ package com.handwoong.everyonewaiter.dto;
 import lombok.Data;
 
 @Data
-public class BasicResponseDto {
+public class OnlyMsgResDto {
 
     private String message;
 
-    public BasicResponseDto(String message) {
+    public OnlyMsgResDto(String message) {
         this.message = message;
     }
 }

@@ -1,15 +1,15 @@
 package com.handwoong.everyonewaiter.dto.store;
 
 import com.handwoong.everyonewaiter.domain.Store;
-import com.handwoong.everyonewaiter.domain.StoreBreakTime;
-import com.handwoong.everyonewaiter.domain.StoreBusinessTime;
+import com.handwoong.everyonewaiter.embedded.StoreBreakTime;
+import com.handwoong.everyonewaiter.embedded.StoreBusinessTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder(access = AccessLevel.PRIVATE)
-public class StoreResponseDto {
+public class StoreResDto {
 
     private Long id;
 
@@ -21,8 +21,8 @@ public class StoreResponseDto {
 
     private StoreBreakTime breakTime;
 
-    public static StoreResponseDto from(Store store) {
-        return StoreResponseDto.builder()
+    public static StoreResDto from(Store store) {
+        return StoreResDto.builder()
                 .id(store.getId())
                 .name(store.getName())
                 .telephoneNumber(store.getTelephoneNumber())

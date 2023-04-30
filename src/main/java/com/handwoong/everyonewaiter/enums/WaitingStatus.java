@@ -1,4 +1,4 @@
-package com.handwoong.everyonewaiter.domain;
+package com.handwoong.everyonewaiter.enums;
 
 import lombok.Getter;
 

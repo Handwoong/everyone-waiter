@@ -1,5 +1,6 @@
 package com.handwoong.everyonewaiter.exception;
 
+import com.handwoong.everyonewaiter.enums.ErrorCode;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;

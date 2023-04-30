@@ -1,15 +1,15 @@
 package com.handwoong.everyonewaiter.service;
 
-import static com.handwoong.everyonewaiter.exception.ErrorCode.MEMBER_EXISTS;
-import static com.handwoong.everyonewaiter.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.handwoong.everyonewaiter.exception.ErrorCode.NOT_MATCH_PASSWORD;
-import static com.handwoong.everyonewaiter.exception.ErrorCode.PHONE_NUMBER_EXISTS;
+import static com.handwoong.everyonewaiter.enums.ErrorCode.MEMBER_EXISTS;
+import static com.handwoong.everyonewaiter.enums.ErrorCode.MEMBER_NOT_FOUND;
+import static com.handwoong.everyonewaiter.enums.ErrorCode.NOT_MATCH_PASSWORD;
+import static com.handwoong.everyonewaiter.enums.ErrorCode.PHONE_NUMBER_EXISTS;
 
 import com.handwoong.everyonewaiter.domain.Member;
-import com.handwoong.everyonewaiter.dto.BasicResponseDto;
-import com.handwoong.everyonewaiter.dto.member.MemberDto;
-import com.handwoong.everyonewaiter.dto.member.MemberPasswordDto;
-import com.handwoong.everyonewaiter.dto.member.MemberResponseDto;
+import com.handwoong.everyonewaiter.dto.OnlyMsgResDto;
+import com.handwoong.everyonewaiter.dto.member.MemberPwdReqDto;
+import com.handwoong.everyonewaiter.dto.member.MemberReqDto;
+import com.handwoong.everyonewaiter.dto.member.MemberResDto;
 import com.handwoong.everyonewaiter.exception.CustomException;
 import com.handwoong.everyonewaiter.repository.MemberRepository;
 import java.util.List;
@@ -32,7 +32,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public Long register(MemberDto memberDto) {
+    public Long register(MemberReqDto memberDto) {
         isExistsUsername(memberDto);
         isExistsPhoneNumber(memberDto);
 
@@ -45,50 +45,50 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberResponseDto findMember(Long memberId) {
+    public MemberResDto findMember(Long memberId) {
         Member member = findById(memberId);
 
-        return MemberResponseDto.from(member);
+        return MemberResDto.from(member);
     }
 
     @Override
-    public MemberResponseDto findMemberByUsername(String username) {
+    public MemberResDto findMemberByUsername(String username) {
         Member member = findByUsername(username);
 
-        return MemberResponseDto.from(member);
+        return MemberResDto.from(member);
     }
 
 
     @Override
-    public List<MemberResponseDto> findMemberList() {
+    public List<MemberResDto> findMemberList() {
         List<Member> members = memberRepository.findAll();
 
         return members.stream()
-                .map(MemberResponseDto::from)
+                .map(MemberResDto::from)
                 .toList();
     }
 
     @Override
     @Transactional
-    public BasicResponseDto changePassword(String username, MemberPasswordDto passwordDto) {
+    public OnlyMsgResDto changePassword(String username, MemberPwdReqDto passwordDto) {
         Member member = findByUsername(username);
         matchPassword(member, passwordDto.getCurrentPassword());
         member.encodePassword(passwordEncoder.encode(passwordDto.getNewPassword()));
 
-        return new BasicResponseDto("success");
+        return new OnlyMsgResDto("success");
     }
 
     @Override
     @Transactional
-    public BasicResponseDto deleteMember(String username, MemberPasswordDto passwordDto) {
+    public OnlyMsgResDto deleteMember(String username, MemberPwdReqDto passwordDto) {
         Member member = findByUsername(username);
         matchPassword(member, passwordDto.getCurrentPassword());
         memberRepository.deleteById(member.getId());
 
-        return new BasicResponseDto("success");
+        return new OnlyMsgResDto("success");
     }
 
-    private void isExistsPhoneNumber(MemberDto memberDto) {
+    private void isExistsPhoneNumber(MemberReqDto memberDto) {
         boolean isExists = memberRepository.existsByPhoneNumber(memberDto.getPhoneNumber());
 
         if (isExists) {
@@ -98,7 +98,7 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    private void isExistsUsername(MemberDto memberDto) {
+    private void isExistsUsername(MemberReqDto memberDto) {
         boolean isExists = memberRepository.existsByUsername(memberDto.getUsername());
 
         if (isExists) {

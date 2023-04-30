@@ -1,7 +1,7 @@
 package com.handwoong.everyonewaiter.dto.store;
 
-import com.handwoong.everyonewaiter.domain.StoreBreakTime;
-import com.handwoong.everyonewaiter.domain.StoreBusinessTime;
+import com.handwoong.everyonewaiter.embedded.StoreBreakTime;
+import com.handwoong.everyonewaiter.embedded.StoreBusinessTime;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class StoreDto {
+public class StoreReqDto {
 
     @NotNull(message = "{error.message.null}")
     @Size(min = 2, max = 50, message = "{error.message.size}")
@@ -30,7 +30,7 @@ public class StoreDto {
     @NotNull(message = "{error.message.null}")
     private StoreBreakTime breakTime;
 
-    public StoreDto(String name, String telephoneNumber, StoreBusinessTime openTime,
+    public StoreReqDto(String name, String telephoneNumber, StoreBusinessTime openTime,
             StoreBreakTime breakTime) {
         this.name = name;
         this.telephoneNumber = telephoneNumber;

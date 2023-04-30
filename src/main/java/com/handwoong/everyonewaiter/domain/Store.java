@@ -4,7 +4,9 @@ import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
-import com.handwoong.everyonewaiter.dto.store.StoreDto;
+import com.handwoong.everyonewaiter.dto.store.StoreReqDto;
+import com.handwoong.everyonewaiter.embedded.StoreBreakTime;
+import com.handwoong.everyonewaiter.embedded.StoreBusinessTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -59,7 +61,7 @@ public class Store extends BaseEntity {
         this.waitingPossible = waitingPossible;
     }
 
-    public static Store createStore(StoreDto storeDto, Member member) {
+    public static Store createStore(StoreReqDto storeDto, Member member) {
         return Store.builder()
                 .name(storeDto.getName())
                 .telNumber(storeDto.getTelephoneNumber())

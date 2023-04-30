@@ -1,7 +1,7 @@
 package com.handwoong.everyonewaiter.dto.waiting;
 
 import com.handwoong.everyonewaiter.domain.Waiting;
-import com.handwoong.everyonewaiter.domain.WaitingStatus;
+import com.handwoong.everyonewaiter.enums.WaitingStatus;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Builder(access = AccessLevel.PRIVATE)
-public class WaitingResponseDto {
+public class WaitingResDto {
 
     private UUID id;
 
@@ -32,8 +32,8 @@ public class WaitingResponseDto {
 
     private LocalDateTime createdAt;
 
-    public static WaitingResponseDto from(Waiting waiting) {
-        return WaitingResponseDto.builder()
+    public static WaitingResDto from(Waiting waiting) {
+        return WaitingResDto.builder()
                 .id(waiting.getId())
                 .waitingNumber(waiting.getWaitingNumber())
                 .waitingTurn(waiting.getWaitingTurn())

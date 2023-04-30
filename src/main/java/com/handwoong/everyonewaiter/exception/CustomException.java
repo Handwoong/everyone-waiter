@@ -1,5 +1,6 @@
 package com.handwoong.everyonewaiter.exception;
 
+import com.handwoong.everyonewaiter.enums.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

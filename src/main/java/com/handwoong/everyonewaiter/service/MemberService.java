@@ -1,23 +1,23 @@
 package com.handwoong.everyonewaiter.service;
 
-import com.handwoong.everyonewaiter.dto.BasicResponseDto;
-import com.handwoong.everyonewaiter.dto.member.MemberDto;
-import com.handwoong.everyonewaiter.dto.member.MemberPasswordDto;
-import com.handwoong.everyonewaiter.dto.member.MemberResponseDto;
+import com.handwoong.everyonewaiter.dto.OnlyMsgResDto;
+import com.handwoong.everyonewaiter.dto.member.MemberPwdReqDto;
+import com.handwoong.everyonewaiter.dto.member.MemberReqDto;
+import com.handwoong.everyonewaiter.dto.member.MemberResDto;
 import java.util.List;
 
 public interface MemberService {
 
-    Long register(MemberDto memberDto);
+    Long register(MemberReqDto memberDto);
 
-    MemberResponseDto findMember(Long memberId);
+    MemberResDto findMember(Long memberId);
 
-    MemberResponseDto findMemberByUsername(String username);
+    MemberResDto findMemberByUsername(String username);
 
-    List<MemberResponseDto> findMemberList();
+    List<MemberResDto> findMemberList();
 
-    BasicResponseDto changePassword(String username,
-            MemberPasswordDto passwordDto);
+    OnlyMsgResDto changePassword(String username,
+            MemberPwdReqDto passwordDto);
 
-    BasicResponseDto deleteMember(String username, MemberPasswordDto passwordDto);
+    OnlyMsgResDto deleteMember(String username, MemberPwdReqDto passwordDto);
 }

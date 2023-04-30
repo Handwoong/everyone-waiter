@@ -5,7 +5,8 @@ import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.fasterxml.uuid.Generators;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingDto;
+import com.handwoong.everyonewaiter.dto.waiting.WaitingReqDto;
+import com.handwoong.everyonewaiter.enums.WaitingStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -87,7 +88,7 @@ public class Waiting extends BaseEntity {
      * @param lastWaiting        대기, 입장, 취소 상태에 상관없이 마지막 웨이팅
      * @param defaultLastWaiting 대기 상태의 마지막 웨이팅
      */
-    public static Waiting createWaiting(WaitingDto waitingDto, Store store,
+    public static Waiting createWaiting(WaitingReqDto waitingDto, Store store,
             @Nullable Waiting lastWaiting, @Nullable Waiting defaultLastWaiting) {
         int waitingNumber = 1;
         int waitingTurn = 0;

@@ -1,4 +1,4 @@
-package com.handwoong.everyonewaiter.exception;
+package com.handwoong.everyonewaiter.enums;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 

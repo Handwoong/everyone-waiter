@@ -1,7 +1,7 @@
 package com.handwoong.everyonewaiter.api;
 
-import com.handwoong.everyonewaiter.dto.BasicResponseDto;
-import com.handwoong.everyonewaiter.dto.member.MemberPasswordDto;
+import com.handwoong.everyonewaiter.dto.OnlyMsgResDto;
+import com.handwoong.everyonewaiter.dto.member.MemberPwdReqDto;
 import com.handwoong.everyonewaiter.service.MemberService;
 import com.handwoong.everyonewaiter.utils.validation.DeleteValidationGroup;
 import com.handwoong.everyonewaiter.utils.validation.UpdateValidationGroup;
@@ -26,22 +26,22 @@ public class MemberApiController {
     private final MemberService memberService;
 
     @PutMapping("/edit/password")
-    public ResponseEntity<BasicResponseDto> changePassword(
+    public ResponseEntity<OnlyMsgResDto> changePassword(
             Authentication authentication,
-            @RequestBody @Validated(UpdateValidationGroup.class) MemberPasswordDto passwordDto) {
+            @RequestBody @Validated(UpdateValidationGroup.class) MemberPwdReqDto passwordDto) {
         String username = authentication.getName();
         log.info("[PUT] 회원 비밀번호 수정 = 로그인 아이디 : '{}'", username);
-        BasicResponseDto body = memberService.changePassword(username, passwordDto);
+        OnlyMsgResDto body = memberService.changePassword(username, passwordDto);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @DeleteMapping("/leave")
-    public ResponseEntity<BasicResponseDto> leaveMember(
+    public ResponseEntity<OnlyMsgResDto> leaveMember(
             Authentication authentication,
-            @RequestBody @Validated(DeleteValidationGroup.class) MemberPasswordDto passwordDto) {
+            @RequestBody @Validated(DeleteValidationGroup.class) MemberPwdReqDto passwordDto) {
         String username = authentication.getName();
         log.info("[DELETE] 회원 삭제 = 로그인 아이디 : '{}'", username);
-        BasicResponseDto body = memberService.deleteMember(username, passwordDto);
+        OnlyMsgResDto body = memberService.deleteMember(username, passwordDto);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 }

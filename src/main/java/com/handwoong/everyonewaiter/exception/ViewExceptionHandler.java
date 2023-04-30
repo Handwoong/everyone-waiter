@@ -1,5 +1,6 @@
 package com.handwoong.everyonewaiter.exception;
 
+import com.handwoong.everyonewaiter.enums.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

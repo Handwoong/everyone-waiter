@@ -1,17 +1,17 @@
 package com.handwoong.everyonewaiter.service;
 
-import static com.handwoong.everyonewaiter.domain.WaitingStatus.CANCEL;
-import static com.handwoong.everyonewaiter.domain.WaitingStatus.DEFAULT;
-import static com.handwoong.everyonewaiter.domain.WaitingStatus.ENTER;
-import static com.handwoong.everyonewaiter.exception.ErrorCode.STORE_NOT_FOUND;
-import static com.handwoong.everyonewaiter.exception.ErrorCode.WAITING_NOT_FOUND;
+import static com.handwoong.everyonewaiter.enums.ErrorCode.STORE_NOT_FOUND;
+import static com.handwoong.everyonewaiter.enums.ErrorCode.WAITING_NOT_FOUND;
+import static com.handwoong.everyonewaiter.enums.WaitingStatus.CANCEL;
+import static com.handwoong.everyonewaiter.enums.WaitingStatus.DEFAULT;
+import static com.handwoong.everyonewaiter.enums.WaitingStatus.ENTER;
 
 import com.handwoong.everyonewaiter.domain.Store;
 import com.handwoong.everyonewaiter.domain.Waiting;
-import com.handwoong.everyonewaiter.domain.WaitingStatus;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingCountResponseDto;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingDto;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingResponseDto;
+import com.handwoong.everyonewaiter.dto.waiting.WaitingCountResDto;
+import com.handwoong.everyonewaiter.dto.waiting.WaitingReqDto;
+import com.handwoong.everyonewaiter.dto.waiting.WaitingResDto;
+import com.handwoong.everyonewaiter.enums.WaitingStatus;
 import com.handwoong.everyonewaiter.exception.CustomException;
 import com.handwoong.everyonewaiter.repository.StoreRepository;
 import com.handwoong.everyonewaiter.repository.WaitingRepository;
@@ -35,33 +35,33 @@ public class WaitingServiceImpl implements WaitingService {
     private final StoreRepository storeRepository;
 
     @Override
-    public WaitingCountResponseDto count(String username, Long storeId) {
+    public WaitingCountResDto count(String username, Long storeId) {
         isExistsMemberStore(username, storeId);
         Long waitingCount = waitingRepository.countByStoreId(storeId);
 
-        return WaitingCountResponseDto.from(waitingCount);
+        return WaitingCountResDto.from(waitingCount);
     }
 
     @Override
-    public WaitingResponseDto findWaiting(UUID waitingId) {
+    public WaitingResDto findWaiting(UUID waitingId) {
         Waiting waiting = findById(waitingId);
 
-        return WaitingResponseDto.from(waiting);
+        return WaitingResDto.from(waiting);
     }
 
     @Override
-    public List<WaitingResponseDto> findDefaultWaitingList(String username, Long storeId) {
+    public List<WaitingResDto> findDefaultWaitingList(String username, Long storeId) {
         isExistsMemberStore(username, storeId);
         List<Waiting> waitingList = waitingRepository.findStatusWaitingList(storeId, DEFAULT);
 
         return waitingList.stream()
-                .map(WaitingResponseDto::from)
+                .map(WaitingResDto::from)
                 .toList();
     }
 
     @Override
     @Transactional
-    public UUID register(String username, Long storeId, WaitingDto waitingDto) {
+    public UUID register(String username, Long storeId, WaitingReqDto waitingDto) {
         isExistsMemberStore(username, storeId);
         PageRequest page = PageRequest.of(0, 1);
 

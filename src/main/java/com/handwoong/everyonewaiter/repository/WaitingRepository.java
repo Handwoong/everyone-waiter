@@ -1,7 +1,7 @@
 package com.handwoong.everyonewaiter.repository;
 
 import com.handwoong.everyonewaiter.domain.Waiting;
-import com.handwoong.everyonewaiter.domain.WaitingStatus;
+import com.handwoong.everyonewaiter.enums.WaitingStatus;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;

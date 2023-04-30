@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class MemberDto {
+public class MemberReqDto {
 
     @NotNull(message = "{error.message.null}")
     @Pattern(regexp = "^[A-Za-z0-9]{6,20}$",
@@ -24,7 +24,7 @@ public class MemberDto {
             message = "{error.message.phoneNumber}")
     private String phoneNumber;
 
-    public MemberDto(String username, String password, String phoneNumber) {
+    public MemberReqDto(String username, String password, String phoneNumber) {
         this.username = username.toLowerCase();
         this.password = password;
         this.phoneNumber = phoneNumber;

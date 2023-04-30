@@ -1,4 +1,4 @@
-package com.handwoong.everyonewaiter.domain;
+package com.handwoong.everyonewaiter.embedded;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -12,7 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Getter
 @Embeddable
 @NoArgsConstructor(access = PROTECTED)
-public class StoreBreakTime {
+public class StoreBusinessTime {
 
     @Pattern(regexp = "^([01]\\d|2[0-3]):([0-5]\\d)$", message = "{error.message.time}")
     @DateTimeFormat(pattern = "HH:mm")
@@ -22,7 +22,7 @@ public class StoreBreakTime {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime closeTime;
 
-    public StoreBreakTime(LocalTime openTime, LocalTime closeTime) {
+    public StoreBusinessTime(LocalTime openTime, LocalTime closeTime) {
         this.openTime = openTime;
         this.closeTime = closeTime;
     }

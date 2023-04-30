@@ -6,12 +6,12 @@ import lombok.Data;
 
 @Data
 @Builder(access = AccessLevel.PRIVATE)
-public class WaitingCountResponseDto {
+public class WaitingCountResDto {
 
     private Long count;
 
-    public static WaitingCountResponseDto from(Long count) {
-        return WaitingCountResponseDto.builder()
+    public static WaitingCountResDto from(Long count) {
+        return WaitingCountResDto.builder()
                 .count(count)
                 .build();
     }

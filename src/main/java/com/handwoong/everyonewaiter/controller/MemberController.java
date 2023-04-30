@@ -52,12 +52,12 @@ public class MemberController {
             return "redirect:/members/profile";
         }
 
-        model.addAttribute("memberDto", new MemberDto());
+        model.addAttribute("memberDto", new MemberReqDto());
         return "members/register";
     }
 
     @PostMapping("/register")
-    public String register(@Validated MemberDto memberDto, BindingResult bindingResult) {
+    public String register(@Validated MemberReqDto memberDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             log.error("회원가입 잘못된 요청 정보 = 로그인 아이디 : '{}', 휴대폰 번호 : '{}'",
                     memberDto.getUsername(), memberDto.getPhoneNumber());
@@ -71,7 +71,7 @@ public class MemberController {
     @GetMapping("/account")
     public String profilePage(Authentication authentication, Model model) {
         String username = authentication.getName();
-        MemberResponseDto memberDto = memberService.findMemberByUsername(username);
+        MemberResDto memberDto = memberService.findMemberByUsername(username);
         model.addAttribute("member", memberDto);
         return "members/account";
     }

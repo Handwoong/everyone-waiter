@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class WaitingDto {
+public class WaitingReqDto {
 
     @Min(value = 0, message = "{error.message.min}")
     @Max(value = 20, message = "{error.message.max}")
@@ -22,7 +22,7 @@ public class WaitingDto {
             message = "{error.message.phoneNumber}")
     private String phoneNumber;
 
-    public WaitingDto(int adult, int children, String phoneNumber) {
+    public WaitingReqDto(int adult, int children, String phoneNumber) {
         this.adult = adult;
         this.children = children;
         this.phoneNumber = phoneNumber;

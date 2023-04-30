@@ -1,13 +1,13 @@
 package com.handwoong.everyonewaiter.service;
 
-import static com.handwoong.everyonewaiter.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.handwoong.everyonewaiter.exception.ErrorCode.STORE_NOT_FOUND;
-import static com.handwoong.everyonewaiter.exception.ErrorCode.TELEPHONE_NUMBER_EXISTS;
+import static com.handwoong.everyonewaiter.enums.ErrorCode.MEMBER_NOT_FOUND;
+import static com.handwoong.everyonewaiter.enums.ErrorCode.STORE_NOT_FOUND;
+import static com.handwoong.everyonewaiter.enums.ErrorCode.TELEPHONE_NUMBER_EXISTS;
 
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.domain.Store;
-import com.handwoong.everyonewaiter.dto.store.StoreDto;
-import com.handwoong.everyonewaiter.dto.store.StoreResponseDto;
+import com.handwoong.everyonewaiter.dto.store.StoreReqDto;
+import com.handwoong.everyonewaiter.dto.store.StoreResDto;
 import com.handwoong.everyonewaiter.exception.CustomException;
 import com.handwoong.everyonewaiter.repository.MemberRepository;
 import com.handwoong.everyonewaiter.repository.StoreRepository;
@@ -31,7 +31,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     @Transactional
-    public Long register(String username, StoreDto storeDto) {
+    public Long register(String username, StoreReqDto storeDto) {
         Member findMember = findMemberByUsername(username);
         boolean existTelNumber = storeRepository.existTelNumber(storeDto.getTelephoneNumber());
         if (existTelNumber) {
@@ -45,18 +45,18 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public List<StoreResponseDto> findStoreList(String username) {
+    public List<StoreResDto> findStoreList(String username) {
         Member findMember = findMemberByUsername(username);
         List<Store> storeList = storeRepository.findAllByMemberId(findMember.getId());
 
         return storeList.stream()
-                .map(StoreResponseDto::from)
+                .map(StoreResDto::from)
                 .toList();
     }
 
 
     @Override
-    public StoreResponseDto findStore(String username, Long storeId) {
+    public StoreResDto findStore(String username, Long storeId) {
         Member findMember = findMemberByUsername(username);
         List<Store> storeList = storeRepository.findMemberStoreList(
                 findMember.getUsername(), storeId, PageRequest.of(0, 1));
@@ -65,7 +65,7 @@ public class StoreServiceImpl implements StoreService {
             throw new CustomException(STORE_NOT_FOUND);
         }
 
-        return StoreResponseDto.from(storeList.get(0));
+        return StoreResDto.from(storeList.get(0));
     }
 
     private Member findMemberByUsername(String username) {
