@@ -8,9 +8,7 @@ import static com.handwoong.everyonewaiter.enums.WaitingStatus.ENTER;
 
 import com.handwoong.everyonewaiter.domain.Store;
 import com.handwoong.everyonewaiter.domain.Waiting;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingCountResDto;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingReqDto;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingResDto;
+import com.handwoong.everyonewaiter.dto.WaitingDto;
 import com.handwoong.everyonewaiter.enums.WaitingStatus;
 import com.handwoong.everyonewaiter.exception.CustomException;
 import com.handwoong.everyonewaiter.repository.StoreRepository;
@@ -35,33 +33,33 @@ public class WaitingServiceImpl implements WaitingService {
     private final StoreRepository storeRepository;
 
     @Override
-    public WaitingCountResDto count(String username, Long storeId) {
+    public WaitingDto.CountResponseDto count(String username, Long storeId) {
         isExistsMemberStore(username, storeId);
         Long waitingCount = waitingRepository.countByStoreId(storeId);
 
-        return WaitingCountResDto.from(waitingCount);
+        return WaitingDto.CountResponseDto.from(waitingCount);
     }
 
     @Override
-    public WaitingResDto findWaiting(UUID waitingId) {
+    public WaitingDto.ResponseDto findWaiting(UUID waitingId) {
         Waiting waiting = findById(waitingId);
 
-        return WaitingResDto.from(waiting);
+        return WaitingDto.ResponseDto.from(waiting);
     }
 
     @Override
-    public List<WaitingResDto> findDefaultWaitingList(String username, Long storeId) {
+    public List<WaitingDto.ResponseDto> findDefaultWaitingList(String username, Long storeId) {
         isExistsMemberStore(username, storeId);
         List<Waiting> waitingList = waitingRepository.findStatusWaitingList(storeId, DEFAULT);
 
         return waitingList.stream()
-                .map(WaitingResDto::from)
+                .map(WaitingDto.ResponseDto::from)
                 .toList();
     }
 
     @Override
     @Transactional
-    public UUID register(String username, Long storeId, WaitingReqDto waitingDto) {
+    public UUID register(String username, Long storeId, WaitingDto.RequestDto waitingDto) {
         isExistsMemberStore(username, storeId);
         PageRequest page = PageRequest.of(0, 1);
 
