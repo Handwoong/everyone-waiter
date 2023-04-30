@@ -1,8 +1,11 @@
 package com.handwoong.everyonewaiter.repository;
 
+import com.handwoong.everyonewaiter.domain.Store;
+import java.util.Optional;
+
 public interface CustomStoreRepository {
 
-    boolean existTelNumber(String telNumber);
+    boolean existTelNumber(String username, String telNumber);
 
-    boolean existMemberStore(String username, Long storeId);
+    Optional<Store> findMemberStore(String username, Long storeId);
 }
