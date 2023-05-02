@@ -44,6 +44,15 @@ public class StoreDto {
         @DateTimeFormat(pattern = "HH:mm")
         private LocalTime closeTime;
 
+        public RequestDto(String name, String telephoneNumber) {
+            this.name = name;
+            this.telephoneNumber = telephoneNumber;
+            this.startTime = LocalTime.of(0, 0);
+            this.endTime = LocalTime.of(0, 0);
+            this.openTime = LocalTime.of(0, 0);
+            this.closeTime = LocalTime.of(0, 0);
+        }
+
         public RequestDto(String name, String telephoneNumber, LocalTime startTime,
                 LocalTime endTime, LocalTime openTime, LocalTime closeTime) {
             this.name = name;
