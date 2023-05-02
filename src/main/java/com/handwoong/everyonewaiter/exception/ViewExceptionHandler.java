@@ -52,7 +52,7 @@ public class ViewExceptionHandler {
 
     @ExceptionHandler({Exception.class})
     public ModelAndView handleException(Exception err) {
-        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        ErrorCode errorCode = ErrorCode.SERVER_ERROR;
         log.error("[{}] {} {} {}",
                 errorCode.name(), errorCode.getStatus(), errorCode.getMessage(), err.getMessage());
         return getModelAndView(errorCode);

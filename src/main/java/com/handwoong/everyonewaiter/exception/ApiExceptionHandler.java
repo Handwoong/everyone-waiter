@@ -27,7 +27,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler({Exception.class})
     public Object handleException(Exception err) {
-        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        ErrorCode errorCode = ErrorCode.SERVER_ERROR;
         log.error("[{}] {} {} {}",
                 errorCode.name(), errorCode.getStatus(), errorCode.getMessage(), err.getMessage());
         return ErrorResponse.toResponseEntity(errorCode);
