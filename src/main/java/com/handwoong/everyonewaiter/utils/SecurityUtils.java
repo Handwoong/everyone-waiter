@@ -1,4 +1,4 @@
-package com.handwoong.everyonewaiter.config.security;
+package com.handwoong.everyonewaiter.utils;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

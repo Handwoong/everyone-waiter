@@ -1,8 +1,8 @@
 package com.handwoong.everyonewaiter.controller;
 
-import com.handwoong.everyonewaiter.config.security.SecurityUtils;
 import com.handwoong.everyonewaiter.dto.MemberDto;
 import com.handwoong.everyonewaiter.service.MemberService;
+import com.handwoong.everyonewaiter.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

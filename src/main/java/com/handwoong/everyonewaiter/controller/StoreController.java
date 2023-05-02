@@ -1,10 +1,10 @@
 package com.handwoong.everyonewaiter.controller;
 
-import com.handwoong.everyonewaiter.config.security.SecurityUtils;
 import com.handwoong.everyonewaiter.dto.MemberDto;
 import com.handwoong.everyonewaiter.dto.StoreDto;
 import com.handwoong.everyonewaiter.service.MemberService;
 import com.handwoong.everyonewaiter.service.StoreService;
+import com.handwoong.everyonewaiter.utils.SecurityUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
