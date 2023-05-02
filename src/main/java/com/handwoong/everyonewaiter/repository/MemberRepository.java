@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    boolean existsByUsername(String username);
-
-    boolean existsByPhoneNumber(String phoneNumber);
+    boolean existsByUsernameOrPhoneNumber(String username, String phoneNumber);
 
     Optional<Member> findByUsername(String username);
+
+    void deleteByUsername(String username);
 }
