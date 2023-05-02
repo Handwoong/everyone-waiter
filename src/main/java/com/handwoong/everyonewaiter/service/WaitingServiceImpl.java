@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Slf4j
 @Service
@@ -88,15 +87,8 @@ public class WaitingServiceImpl implements WaitingService {
     }
 
     private void isExistsMemberStore(String username, Long storeId) {
-        List<Store> list = storeRepository.findMemberStoreList(username, storeId,
-                PageRequest.of(0, 1));
-
-        if (list.isEmpty()) {
-            log.error("[{}] 회원의 존재하지 않는 매장 웨이팅 조회 요청 = 로그인 아이디 : '{}', 매장 아이디 : '{}'",
-                    TransactionSynchronizationManager.getCurrentTransactionName(),
-                    username, storeId);
-            throw new CustomException(STORE_NOT_FOUND);
-        }
+        storeRepository.findMemberStore(username, storeId)
+                .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
     }
 
     private Waiting checkEmptyList(List<Waiting> waitingList) {
@@ -108,31 +100,13 @@ public class WaitingServiceImpl implements WaitingService {
 
     private void findWaitingAndChangeStatus(UUID waitingId, WaitingStatus status) {
         Waiting waiting = findById(waitingId);
-        String transactionName = TransactionSynchronizationManager.getCurrentTransactionName();
-
-        if (waiting.getStatus() != DEFAULT) {
-            log.error("[{}] 웨이팅 현재 상태 대기가 아닌데 상태 변경 요청 = 웨이팅 아이디 : '{}'",
-                    transactionName, waiting.getId());
-            return;
-        }
-
-        waiting.changeEnterOrCancelStatus(status);
         Long storeId = waiting.getStore().getId();
-        int decreaseCount = waitingRepository
-                .decreaseWaitingTurn(storeId, waiting.getWaitingTurn());
-
-        log.info(
-                "[{}] 웨이팅 상태 변경 = 매장 아이디 : '{}', 웨이팅 아이디 : '{}', 대기 번호 : '{}', 변경된 상태 : '{}', 등록일 : '{}', 웨이팅 순번 감소 개수 : '{}'",
-                transactionName,
-                storeId, waiting.getId(), waiting.getWaitingNumber(), waiting.getStatus(),
-                waiting.getCreatedAt(), decreaseCount);
+        waitingRepository.decreaseWaitingTurn(storeId, waiting.getWaitingTurn());
+        waiting.changeEnterOrCancelStatus(status);
     }
 
     private Waiting findById(UUID waitingId) {
-        return waitingRepository.findById(waitingId).orElseThrow(() -> {
-            log.error("[{}] 존재하지 않는 웨이팅 단건 조회 요청 = 웨이팅 아이디 : '{}'",
-                    TransactionSynchronizationManager.getCurrentTransactionName(), waitingId);
-            return new CustomException(WAITING_NOT_FOUND);
-        });
+        return waitingRepository.findById(waitingId)
+                .orElseThrow(() -> new CustomException(WAITING_NOT_FOUND));
     }
 }

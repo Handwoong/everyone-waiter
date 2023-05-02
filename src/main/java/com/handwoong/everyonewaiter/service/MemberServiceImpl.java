@@ -1,9 +1,8 @@
 package com.handwoong.everyonewaiter.service;
 
-import static com.handwoong.everyonewaiter.enums.ErrorCode.MEMBER_EXISTS;
 import static com.handwoong.everyonewaiter.enums.ErrorCode.MEMBER_NOT_FOUND;
+import static com.handwoong.everyonewaiter.enums.ErrorCode.MEMBER_OR_PHONE_EXISTS;
 import static com.handwoong.everyonewaiter.enums.ErrorCode.NOT_MATCH_PASSWORD;
-import static com.handwoong.everyonewaiter.enums.ErrorCode.PHONE_NUMBER_EXISTS;
 
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.dto.MemberDto;
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Slf4j
 @Service
@@ -31,10 +29,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public Long register(MemberDto.RequestDto memberDto) {
-        isExistsUsername(memberDto);
-        isExistsPhoneNumber(memberDto);
+        String username = memberDto.getUsername();
+        String phoneNumber = memberDto.getPhoneNumber();
 
-        // 회원 생성
+        isExistsUsernameOrPhone(username, phoneNumber);
+
         Member member = Member.createMember(memberDto);
         member.encodePassword(passwordEncoder.encode(member.getPassword()));
         memberRepository.save(member);
@@ -55,7 +54,6 @@ public class MemberServiceImpl implements MemberService {
 
         return MemberDto.ResponseDto.from(member);
     }
-
 
     @Override
     public List<MemberDto.ResponseDto> findMemberList() {
@@ -81,54 +79,34 @@ public class MemberServiceImpl implements MemberService {
     public OnlyMsgResDto deleteMember(String username, MemberDto.PwdRequestDto passwordDto) {
         Member member = findByUsername(username);
         matchPassword(member, passwordDto.getCurrentPassword());
-        memberRepository.deleteById(member.getId());
+        memberRepository.deleteByUsername(member.getUsername());
 
         return new OnlyMsgResDto("success");
     }
 
-    private void isExistsPhoneNumber(MemberDto.RequestDto memberDto) {
-        boolean isExists = memberRepository.existsByPhoneNumber(memberDto.getPhoneNumber());
+    private void isExistsUsernameOrPhone(String username, String phoneNumber) {
+        boolean isExists = memberRepository.existsByUsernameOrPhoneNumber(username, phoneNumber);
 
         if (isExists) {
-            log.error("휴대폰 번호 중복 가입 요청 = 로그인 아이디 : '{}', 휴대폰 번호 : '{}'",
-                    memberDto.getUsername(), memberDto.getPhoneNumber());
-            throw new CustomException(PHONE_NUMBER_EXISTS);
-        }
-    }
-
-    private void isExistsUsername(MemberDto.RequestDto memberDto) {
-        boolean isExists = memberRepository.existsByUsername(memberDto.getUsername());
-
-        if (isExists) {
-            log.error("로그인 아이디 중복 가입 요청 = 로그인 아이디 : '{}'", memberDto.getUsername());
-            throw new CustomException(MEMBER_EXISTS);
+            throw new CustomException(MEMBER_OR_PHONE_EXISTS);
         }
     }
 
     private Member findById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> {
-            log.error("[{}] 존재하지 않는 회원 찾기 = 찾으려는 아이디 : '{}'",
-                    TransactionSynchronizationManager.getCurrentTransactionName(), memberId);
-            return new CustomException(MEMBER_NOT_FOUND);
-        });
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
     }
 
     private Member findByUsername(String username) {
-        return memberRepository.findByUsername(username).orElseThrow(() -> {
-            log.error("[{}] 존재하지 않는 회원 찾기 = 찾으려는 로그인 아이디 : '{}'",
-                    TransactionSynchronizationManager.getCurrentTransactionName(), username);
-            return new CustomException(MEMBER_NOT_FOUND);
-        });
+        return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
     }
 
     private void matchPassword(Member member, String password) {
-        if (passwordEncoder.matches(password, member.getPassword())) {
-            return;
-        }
+        boolean isCorrectPassword = passwordEncoder.matches(password, member.getPassword());
 
-        log.error("[{}] 기존 비밀번호가 일치하지 않음 = 로그인 아이디 : '{}'",
-                TransactionSynchronizationManager.getCurrentTransactionName(),
-                member.getUsername());
-        throw new CustomException(NOT_MATCH_PASSWORD);
+        if (!isCorrectPassword) {
+            throw new CustomException(NOT_MATCH_PASSWORD);
+        }
     }
 }
