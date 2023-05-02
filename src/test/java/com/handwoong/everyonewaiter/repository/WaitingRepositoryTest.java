@@ -1,15 +1,16 @@
 package com.handwoong.everyonewaiter.repository;
 
-import static com.handwoong.everyonewaiter.domain.WaitingStatus.DEFAULT;
-import static com.handwoong.everyonewaiter.domain.WaitingStatus.ENTER;
+import static com.handwoong.everyonewaiter.enums.WaitingStatus.DEFAULT;
+import static com.handwoong.everyonewaiter.enums.WaitingStatus.ENTER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.handwoong.everyonewaiter.domain.Member;
 import com.handwoong.everyonewaiter.domain.Store;
 import com.handwoong.everyonewaiter.domain.Waiting;
-import com.handwoong.everyonewaiter.dto.member.MemberDto;
-import com.handwoong.everyonewaiter.dto.store.StoreDto;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingDto;
+import com.handwoong.everyonewaiter.dto.MemberDto;
+import com.handwoong.everyonewaiter.dto.StoreDto;
+import com.handwoong.everyonewaiter.dto.WaitingDto;
+import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,14 +37,19 @@ class WaitingRepositoryTest {
 
     @BeforeEach
     void beforeEach() {
-        MemberDto memberDto = new MemberDto("handwoong", "password1",
+        MemberDto.RequestDto memberDto = new MemberDto.RequestDto("handwoong", "password1",
                 "01012345678");
         Member member = memberRepository.save(Member.createMember(memberDto));
 
-        StoreDto storeDto = new StoreDto("나루", "055-123-4567");
+        LocalTime openTime = LocalTime.of(11, 0);
+        LocalTime closeTime = LocalTime.of(21, 0);
+        LocalTime startTime = LocalTime.of(15, 0);
+        LocalTime endTime = LocalTime.of(16, 30);
+        StoreDto.RequestDto storeDto = new StoreDto.RequestDto("나루", "055-123-4567", startTime,
+                endTime, openTime, closeTime);
         store = storeRepository.save(Store.createStore(storeDto, member));
 
-        WaitingDto waitingDto = new WaitingDto(4, 2, "01012345678");
+        WaitingDto.RequestDto waitingDto = new WaitingDto.RequestDto(4, 2, "01012345678");
         waiting = waitingRepository.save(
                 Waiting.createWaiting(waitingDto, store, null, null));
     }
@@ -95,7 +101,7 @@ class WaitingRepositoryTest {
     @DisplayName("매장의 마지막 웨이팅 조회")
     void findLastWaiting() throws Exception {
         // given
-        WaitingDto waitingDto = new WaitingDto(4, 2, "01012345678");
+        WaitingDto.RequestDto waitingDto = new WaitingDto.RequestDto(4, 2, "01012345678");
         Waiting newWaiting = waitingRepository.save(
                 Waiting.createWaiting(waitingDto, store, waiting, waiting));
 
@@ -114,7 +120,7 @@ class WaitingRepositoryTest {
     @DisplayName("특정 대기 순번보다 크면 대기 순번 감소")
     void greaterThanDecreaseTurn() throws Exception {
         // given
-        WaitingDto waitingDto = new WaitingDto(4, 2, "01012345678");
+        WaitingDto.RequestDto waitingDto = new WaitingDto.RequestDto(4, 2, "01012345678");
         waitingRepository.save(
                 Waiting.createWaiting(waitingDto, store, waiting, waiting));
 

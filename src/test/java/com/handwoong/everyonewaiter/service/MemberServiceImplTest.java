@@ -2,215 +2,198 @@ package com.handwoong.everyonewaiter.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.handwoong.everyonewaiter.domain.Member;
-import com.handwoong.everyonewaiter.dto.BasicResponseDto;
-import com.handwoong.everyonewaiter.dto.member.MemberDto;
-import com.handwoong.everyonewaiter.dto.member.MemberPasswordDto;
-import com.handwoong.everyonewaiter.dto.member.MemberResponseDto;
-import com.handwoong.everyonewaiter.exception.ResourceExistsException;
-import com.handwoong.everyonewaiter.exception.ResourceNotFoundException;
-import com.handwoong.everyonewaiter.exception.ResourceNotMatchException;
-import com.handwoong.everyonewaiter.repository.MemberRepository;
-import java.util.ArrayList;
+import com.handwoong.everyonewaiter.dto.MemberDto;
+import com.handwoong.everyonewaiter.dto.OnlyMsgResDto;
+import com.handwoong.everyonewaiter.enums.MemberRole;
+import com.handwoong.everyonewaiter.exception.CustomException;
+import com.handwoong.everyonewaiter.repository.FakeMemberRepository;
 import java.util.List;
-import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 class MemberServiceImplTest {
 
-    @InjectMocks
     private MemberServiceImpl memberService;
 
-    @Mock
-    private MemberRepository memberRepository;
+    private FakeMemberRepository memberRepository;
 
-    @Mock
     private PasswordEncoder passwordEncoder;
 
-    private MemberDto memberDto;
+    private MemberDto.RequestDto memberDto;
 
     @BeforeEach
     void beforeEach() {
-        MockitoAnnotations.openMocks(this);
-        memberDto = new MemberDto("handwoong", "password1", "01012345678");
+        passwordEncoder = Mockito.mock(PasswordEncoder.class);
+        memberRepository = new FakeMemberRepository();
+        memberService = new MemberServiceImpl(memberRepository, passwordEncoder);
+        memberDto = new MemberDto.RequestDto("handwoong", "password1", "01012345678");
+    }
+
+    @AfterEach
+    void afterEach() {
+        memberRepository.clear();
     }
 
     @Test
     @DisplayName("회원가입 성공")
     void register() throws Exception {
         // given
-        Member member = Member.createMember(memberDto);
-        when(memberRepository.existsByUsername(anyString())).thenReturn(false);
-        when(memberRepository.existsByPhoneNumber(anyString())).thenReturn(false);
-        when(memberRepository.save(any(Member.class))).thenReturn(member);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
 
         // when
         memberService.register(memberDto);
+        Member member = memberRepository.findById(1L).orElseThrow();
 
         // then
         verify(passwordEncoder, times(1)).encode(memberDto.getPassword());
-        verify(memberRepository, times(1)).save(any(Member.class));
+        assertThat(member.getUsername()).isEqualTo(memberDto.getUsername());
+        assertThat(member.getPassword()).isEqualTo("encodedPassword");
+        assertThat(member.getPhoneNumber()).isEqualTo(memberDto.getPhoneNumber());
+        assertThat(member.getRole()).isEqualTo(MemberRole.ROLE_USER);
+        assertThat(member.getBalance()).isEqualTo(300);
     }
 
     @Test
     @DisplayName("회원가입 시 로그인 아이디 중복 예외")
     void registerExistsUsername() throws Exception {
-        when(memberRepository.existsByUsername(anyString())).thenReturn(true);
-        when(memberRepository.existsByPhoneNumber(anyString())).thenReturn(false);
+        // given
+        memberService.register(memberDto);
 
+        // when
         assertThatThrownBy(() -> memberService.register(memberDto))
-                .isInstanceOf(ResourceExistsException.class)
-                .hasMessage("이미 존재하는 아이디 입니다.");
-        verify(passwordEncoder, times(0)).encode(memberDto.getPassword());
-        verify(memberRepository, times(0)).save(any(Member.class));
+                .isInstanceOf(CustomException.class)
+                .hasOnlyFields("errorCode");
     }
 
     @Test
     @DisplayName("회원가입 시 휴대폰 번호 중복 예외")
     void registerExistsPhoneNumber() throws Exception {
-        when(memberRepository.existsByUsername(anyString())).thenReturn(false);
-        when(memberRepository.existsByPhoneNumber(anyString())).thenReturn(true);
+        // given
+        memberService.register(memberDto);
+        memberDto.setUsername("username");
 
+        // when
         assertThatThrownBy(() -> memberService.register(memberDto))
-                .isInstanceOf(ResourceExistsException.class)
-                .hasMessage("이미 존재하는 휴대폰 번호 입니다.");
-        verify(passwordEncoder, times(0)).encode(memberDto.getPassword());
-        verify(memberRepository, times(0)).save(any(Member.class));
+                .isInstanceOf(CustomException.class)
+                .hasOnlyFields("errorCode");
     }
 
     @Test
     @DisplayName("회원 ID 조회")
     void findMemberById() throws Exception {
         // given
-        Member member = Member.createMember(memberDto);
         memberService.register(memberDto);
-        when(memberRepository.findById(1L))
-                .thenReturn(Optional.ofNullable(member));
 
         // when
-        MemberResponseDto result = memberService.findMember(1L);
+        MemberDto.ResponseDto member = memberService.findMember(1L);
 
         // then
-        assertThat(result.getUsername()).isEqualTo(memberDto.getUsername());
-        assertThat(result.getPhoneNumber()).isEqualTo(memberDto.getPhoneNumber());
-        assertThat(result.getBalance()).isEqualTo(300);
+        assertThat(member.getUsername()).isEqualTo(memberDto.getUsername());
+        assertThat(member.getPhoneNumber()).isEqualTo(memberDto.getPhoneNumber());
+        assertThat(member.getBalance()).isEqualTo(300);
     }
 
     @Test
     @DisplayName("회원 존재하지 않는 ID 조회")
     void findNotExistsById() throws Exception {
         // given
-        Member member = Member.createMember(memberDto);
-        memberService.register(memberDto);
-
-        assertThatThrownBy(() -> memberService.findMember(member.getId()))
-                .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("존재하지 않는 회원입니다.");
+        assertThatThrownBy(() -> memberService.findMember(1L))
+                .isInstanceOf(CustomException.class)
+                .hasOnlyFields("errorCode");
     }
 
     @Test
     @DisplayName("회원 Username 조회")
     void findMemberByUsername() throws Exception {
         // given
-        Member member = Member.createMember(memberDto);
         memberService.register(memberDto);
-        when(memberRepository.findByUsername(member.getUsername()))
-                .thenReturn(Optional.of(member));
 
         // when
-        MemberResponseDto result = memberService
-                .findMemberByUsername(member.getUsername());
+        MemberDto.ResponseDto member = memberService.findMemberByUsername("handwoong");
 
         // then
-        assertThat(result.getUsername()).isEqualTo(memberDto.getUsername());
-        assertThat(result.getPhoneNumber()).isEqualTo(memberDto.getPhoneNumber());
-        assertThat(result.getBalance()).isEqualTo(300);
+        assertThat(member.getUsername()).isEqualTo(memberDto.getUsername());
+        assertThat(member.getPhoneNumber()).isEqualTo(memberDto.getPhoneNumber());
+        assertThat(member.getBalance()).isEqualTo(300);
     }
 
     @Test
     @DisplayName("회원 존재하지 않는 Username 조회")
     void findNotExistsByUsername() throws Exception {
-        // given
-        Member member = Member.createMember(memberDto);
-        memberService.register(memberDto);
-
-        assertThatThrownBy(() -> memberService.findMemberByUsername(member.getUsername()))
-                .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("존재하지 않는 회원입니다.");
+        assertThatThrownBy(() -> memberService.findMemberByUsername("handwoong"))
+                .isInstanceOf(CustomException.class)
+                .hasOnlyFields("errorCode");
     }
 
     @Test
     @DisplayName("회원 목록 조회")
     void findMemberList() throws Exception {
         // given
-        Member memberA = Member.createMember(memberDto);
+        memberService.register(memberDto);
         memberDto.setUsername("handwoong@test.com");
         memberDto.setPhoneNumber("01011112222");
-        Member memberB = Member.createMember(memberDto);
-        when(memberRepository.findAll())
-                .thenReturn(new ArrayList<>(List.of(memberA, memberB)));
+        memberService.register(memberDto);
 
         // when
-        List<MemberResponseDto> memberList = memberService.findMemberList();
-        MemberResponseDto memberDtoA = memberList.get(0);
-        MemberResponseDto memberDtoB = memberList.get(1);
+        List<MemberDto.ResponseDto> memberList = memberService.findMemberList();
+        MemberDto.ResponseDto memberDtoA = memberList.get(0);
+        MemberDto.ResponseDto memberDtoB = memberList.get(1);
 
         // then
         assertThat(memberList.size()).isEqualTo(2);
         assertThat(memberDtoA.getUsername()).isEqualTo("handwoong");
         assertThat(memberDtoB.getUsername()).isEqualTo("handwoong@test.com");
+        assertThat(memberDtoA.getPhoneNumber()).isEqualTo("01012345678");
+        assertThat(memberDtoB.getPhoneNumber()).isEqualTo("01011112222");
     }
 
     @Test
     @DisplayName("회원 비밀번호 변경")
     void changeMemberPassword() throws Exception {
         // given
+        memberDto.setPassword("encodedPassword");
         Member member = Member.createMember(memberDto);
-        MemberPasswordDto passwordDto = new MemberPasswordDto(member.getPassword(),
-                "newPassword");
-        when(memberRepository.findByUsername(anyString()))
-                .thenReturn(Optional.of(member));
+        memberRepository.save(member);
+        MemberDto.PwdRequestDto passwordDto =
+                new MemberDto.PwdRequestDto(member.getPassword(), "newPassword");
+
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
 
         // when
-        BasicResponseDto result = memberService
-                .changePassword(member.getUsername(), passwordDto);
+        OnlyMsgResDto result = memberService
+                .changePassword(memberDto.getUsername(), passwordDto);
 
         // then
-        assertThat(member.getPassword()).isEqualTo("encodedPassword");
         assertThat(result.getMessage()).isEqualTo("success");
+        verify(passwordEncoder, times(1)).encode("newPassword");
+        verify(passwordEncoder, times(1)).matches("encodedPassword", "encodedPassword");
     }
 
     @Test
     @DisplayName("회원 비밀번호 변경 시 기존 비밀번호가 일치하지 않으면 예외 발생")
     void notMatchCurrentPassword() throws Exception {
         // given
+        memberDto.setPassword("encodedPassword");
         Member member = Member.createMember(memberDto);
-        MemberPasswordDto passwordDto = new MemberPasswordDto(member.getPassword(),
-                "newPassword");
-        when(memberRepository.findByUsername(anyString()))
-                .thenReturn(Optional.of(member));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+        memberRepository.save(member);
+        MemberDto.PwdRequestDto passwordDto =
+                new MemberDto.PwdRequestDto("diffPassword", "newPassword");
 
         assertThatThrownBy(
                 () -> memberService.changePassword(member.getUsername(), passwordDto))
-                .isInstanceOf(ResourceNotMatchException.class)
-                .hasMessage("기존 비밀번호가 일치하지 않습니다.");
+                .isInstanceOf(CustomException.class)
+                .hasOnlyFields("errorCode");
         verify(passwordEncoder, times(0)).encode(anyString());
     }
 
@@ -218,14 +201,13 @@ class MemberServiceImplTest {
     @DisplayName("회원 비밀번호 변경 시 회원을 찾을 수 없으면 예외 발생")
     void notFoundMember() throws Exception {
         // given
-        Member member = Member.createMember(memberDto);
-        MemberPasswordDto passwordDto = new MemberPasswordDto(member.getPassword(),
-                "newPassword");
+        MemberDto.PwdRequestDto passwordDto =
+                new MemberDto.PwdRequestDto("encodedPassword", "newPassword");
 
         assertThatThrownBy(
-                () -> memberService.changePassword(member.getUsername(), passwordDto))
-                .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("존재하지 않는 회원입니다.");
+                () -> memberService.changePassword("handwoong", passwordDto))
+                .isInstanceOf(CustomException.class)
+                .hasOnlyFields("errorCode");
         verify(passwordEncoder, times(0)).encode(anyString());
         verify(passwordEncoder, times(0)).matches(anyString(), anyString());
     }
@@ -235,33 +217,34 @@ class MemberServiceImplTest {
     void deleteMember() throws Exception {
         // given
         Member member = Member.createMember(memberDto);
-        MemberPasswordDto passwordDto = new MemberPasswordDto(member.getPassword(),
-                "newPassword");
-        when(memberRepository.findByUsername(anyString()))
-                .thenReturn(Optional.of(member));
+        memberRepository.save(member);
+        MemberDto.PwdRequestDto passwordDto =
+                new MemberDto.PwdRequestDto(member.getPassword(), "newPassword");
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
         // when
-        BasicResponseDto result = memberService.deleteMember(
-                member.getUsername(), passwordDto);
+        OnlyMsgResDto result = memberService.deleteMember(member.getUsername(), passwordDto);
+        long count = memberRepository.count();
 
         // then
-        verify(memberRepository, times(1)).deleteById(member.getId());
         assertThat(result.getMessage()).isEqualTo("success");
+        assertThat(count).isEqualTo(0);
     }
 
     @Test
     @DisplayName("회원 탈퇴 시 존재하지 않는 아이디면 예외 발생")
     void deleteMemberNotFound() throws Exception {
         // given
-        MemberPasswordDto passwordDto = new MemberPasswordDto(memberDto.getPassword(),
-                "newPassword");
+        MemberDto.PwdRequestDto passwordDto =
+                new MemberDto.PwdRequestDto(memberDto.getPassword(), "newPassword");
 
+        // when
         assertThatThrownBy(
                 () -> memberService.deleteMember(memberDto.getUsername(), passwordDto))
-                .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("존재하지 않는 회원입니다.");
-        verify(memberRepository, times(0)).deleteById(anyLong());
+                .isInstanceOf(CustomException.class)
+                .hasOnlyFields("errorCode");
+
+        // then
         verify(passwordEncoder, times(0)).matches(anyString(), anyString());
     }
 
@@ -270,17 +253,19 @@ class MemberServiceImplTest {
     void deleteMemberNotMatchPassword() throws Exception {
         // given
         Member member = Member.createMember(memberDto);
-        MemberPasswordDto passwordDto = new MemberPasswordDto(memberDto.getPassword(),
-                "newPassword");
-        when(memberRepository.findByUsername(anyString()))
-                .thenReturn(Optional.of(member));
+        memberRepository.save(member);
+        MemberDto.PwdRequestDto passwordDto =
+                new MemberDto.PwdRequestDto(memberDto.getPassword(), "newPassword");
 
+        // when
         assertThatThrownBy(
                 () -> memberService.deleteMember(memberDto.getUsername(), passwordDto))
-                .isInstanceOf(ResourceNotMatchException.class)
-                .hasMessage("기존 비밀번호가 일치하지 않습니다.");
-        verify(memberRepository, times(0)).deleteById(anyLong());
-        verify(memberRepository, times(1)).findByUsername(anyString());
+                .isInstanceOf(CustomException.class)
+                .hasOnlyFields("errorCode");
+        long count = memberRepository.count();
+
+        // then
         verify(passwordEncoder, times(1)).matches(anyString(), anyString());
+        assertThat(count).isEqualTo(1);
     }
 }

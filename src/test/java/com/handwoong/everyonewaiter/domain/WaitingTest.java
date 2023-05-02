@@ -1,13 +1,14 @@
 package com.handwoong.everyonewaiter.domain;
 
-import static com.handwoong.everyonewaiter.domain.WaitingStatus.CANCEL;
-import static com.handwoong.everyonewaiter.domain.WaitingStatus.DEFAULT;
-import static com.handwoong.everyonewaiter.domain.WaitingStatus.ENTER;
+import static com.handwoong.everyonewaiter.enums.WaitingStatus.CANCEL;
+import static com.handwoong.everyonewaiter.enums.WaitingStatus.DEFAULT;
+import static com.handwoong.everyonewaiter.enums.WaitingStatus.ENTER;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.handwoong.everyonewaiter.dto.member.MemberDto;
-import com.handwoong.everyonewaiter.dto.store.StoreDto;
-import com.handwoong.everyonewaiter.dto.waiting.WaitingDto;
+import com.handwoong.everyonewaiter.dto.MemberDto;
+import com.handwoong.everyonewaiter.dto.StoreDto;
+import com.handwoong.everyonewaiter.dto.WaitingDto;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 class WaitingTest {
 
-    private WaitingDto waitingDto;
+    private WaitingDto.RequestDto waitingDto;
 
     private Store store;
 
@@ -24,13 +25,18 @@ class WaitingTest {
 
     @BeforeEach
     void beforeEach() {
-        waitingDto = new WaitingDto(2, 2, "01012345678");
+        waitingDto = new WaitingDto.RequestDto(2, 2, "01012345678");
 
-        MemberDto memberDto = new MemberDto("handwoong", "password",
+        MemberDto.RequestDto memberDto = new MemberDto.RequestDto("handwoong", "password",
                 "01011112222");
         Member member = Member.createMember(memberDto);
 
-        StoreDto storeDto = new StoreDto("나루", "055-123-4567");
+        LocalTime openTime = LocalTime.of(11, 0);
+        LocalTime closeTime = LocalTime.of(21, 0);
+        LocalTime startTime = LocalTime.of(15, 0);
+        LocalTime endTime = LocalTime.of(16, 30);
+        StoreDto.RequestDto storeDto = new StoreDto.RequestDto("나루", "055-123-4567", startTime,
+                endTime, openTime, closeTime);
         store = Store.createStore(storeDto, member);
     }
 

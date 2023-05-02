@@ -2,7 +2,8 @@ package com.handwoong.everyonewaiter.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.handwoong.everyonewaiter.dto.member.MemberDto;
+import com.handwoong.everyonewaiter.dto.MemberDto;
+import com.handwoong.everyonewaiter.enums.MemberRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,13 +12,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 class MemberTest {
 
-    private MemberDto memberDto;
+    private MemberDto.RequestDto memberDto;
 
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     @BeforeEach
     void beforeEach() {
-        memberDto = new MemberDto("handwoong", "password", "01012345678");
+        memberDto = new MemberDto.RequestDto("handwoong", "password", "01012345678");
     }
 
     @Test
