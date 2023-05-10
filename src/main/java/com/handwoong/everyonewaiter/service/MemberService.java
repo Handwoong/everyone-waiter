@@ -14,8 +14,7 @@ public interface MemberService {
 
     List<MemberDto.ResponseDto> findMemberList();
 
-    OnlyMsgResDto changePassword(String username,
-            MemberDto.PwdRequestDto passwordDto);
+    OnlyMsgResDto changePassword(String username, MemberDto.PwdRequestDto passwordDto);
 
     OnlyMsgResDto deleteMember(String username, MemberDto.PwdRequestDto passwordDto);
 }
