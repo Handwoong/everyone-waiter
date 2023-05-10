@@ -18,7 +18,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 @Component
 public class LoggingAop {
 
-    @Pointcut("execution(* com.handwoong.everyonewaiter.service.*.*(..))")
+    @Pointcut("execution(* com.handwoong.everyonewaiter.service.*.*(..)) && !@annotation(com.handwoong.everyonewaiter.utils.ExcludeLog)")
     private void servicePointcut() {
     }
 
@@ -36,10 +36,10 @@ public class LoggingAop {
     @AfterReturning(value = "servicePointcut()", returning = "returnValue")
     public void afterReturning(JoinPoint joinPoint, Object returnValue) {
         Method method = getMethod(joinPoint);
-        log.info("============== Method End : {} ==============", method.getName());
         if (returnValue != null) {
             log.info("Return : '{}' '{}'", returnValue.getClass().getSimpleName(), returnValue);
         }
+        log.info("============== Method End : {} ==============", method.getName());
     }
 
     @Around("servicePointcut()")
