@@ -38,6 +38,10 @@ public enum ErrorCode {
 
     STORE_NOT_FOUND(NOT_FOUND, "해당 매장을 찾을 수 없습니다."),
 
+    CATEGORY_NOT_FOUND(NOT_FOUND, "해당 카테고리를 찾을 수 없습니다."),
+
+    MENU_NOT_FOUND(NOT_FOUND, "해당 메뉴를 찾을 수 없습니다."),
+
     WAITING_NOT_FOUND(NOT_FOUND, "해당 웨이팅 정보를 찾을 수 없습니다."),
 
     /**
