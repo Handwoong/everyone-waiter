@@ -7,7 +7,6 @@ import com.handwoong.everyonewaiter.dto.member.PasswordRequest
 import com.handwoong.everyonewaiter.exception.CustomException
 import com.handwoong.everyonewaiter.exception.ErrorCode.*
 import com.handwoong.everyonewaiter.repository.member.MemberRepository
-import com.handwoong.everyonewaiter.util.CleaningTestData
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -15,13 +14,15 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional
 @SpringBootTest
 class MemberServiceImplTest @Autowired constructor(
     private val memberService: MemberService,
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
-) : CleaningTestData() {
+) {
 
     @Test
     @DisplayName("회원가입에 성공한다.")

@@ -1,7 +1,7 @@
 package com.handwoong.everyonewaiter.domain.waiting
 
 enum class WaitingMessageStatus {
-    REGISTER,
-    ENTER,
-    READY,
+    SEND_REGISTER,
+    SEND_ENTER,
+    SEND_READY,
 }

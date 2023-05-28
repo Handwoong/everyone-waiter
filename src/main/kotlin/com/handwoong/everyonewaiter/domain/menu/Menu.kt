@@ -60,7 +60,7 @@ class Menu(
                 status = menuDto.status,
                 image = menuDto.image,
                 spicy = menuDto.spicy,
-                sortingSequence = category.menuList.size.inc(),
+                sortingSequence = category.menuList.size + 1,
                 category = category,
             )
         }

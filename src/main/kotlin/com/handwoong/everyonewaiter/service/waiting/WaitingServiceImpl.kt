@@ -70,7 +70,7 @@ class WaitingServiceImpl(
     private fun findWaitingAndChangeStatus(waitingId: UUID, storeId: Long, status: WaitingStatus) {
         val findWaiting = waitingRepository.findByIdOrThrow(waitingId)
         waitingRepository.decreaseWaitingTurn(storeId, findWaiting.turn)
-        findWaiting.statusEnterOrCancel(status)
+        findWaiting.changeStatusNotWait(status)
     }
 
 }
