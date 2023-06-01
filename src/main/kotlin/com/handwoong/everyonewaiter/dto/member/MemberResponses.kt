@@ -21,3 +21,19 @@ data class MemberResponse(
     }
 
 }
+
+data class TokenResponse(
+    val grantType: String,
+    val accessToken: String,
+) {
+
+    companion object {
+        fun of(accessToken: String): TokenResponse {
+            return TokenResponse(
+                grantType = "Cookie",
+                accessToken = accessToken,
+            )
+        }
+    }
+
+}
