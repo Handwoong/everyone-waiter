@@ -22,6 +22,13 @@ enum class ErrorCode(
     NOT_MATCH_PASSWORD(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 
     /**
+     * 401 Un Authorized
+     */
+    UN_AUTHORIZED(UNAUTHORIZED, "인증에 실패하였습니다."),
+
+    IN_VALID_TOKEN(UNAUTHORIZED, "유효하지 않은 토큰입니다."),
+
+    /**
      * 404 Not Found
      */
     ID_RESOURCE_NOT_FOUND(NOT_FOUND, "ID로 해당 리소스를 찾을 수 없습니다."),
