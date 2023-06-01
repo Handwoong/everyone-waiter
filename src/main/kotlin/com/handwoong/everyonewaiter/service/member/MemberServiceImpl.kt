@@ -1,13 +1,14 @@
 package com.handwoong.everyonewaiter.service.member
 
+import com.handwoong.everyonewaiter.config.security.JwtTokenProvider
 import com.handwoong.everyonewaiter.domain.member.Member
-import com.handwoong.everyonewaiter.dto.member.MemberCreateRequest
-import com.handwoong.everyonewaiter.dto.member.MemberResponse
-import com.handwoong.everyonewaiter.dto.member.PasswordRequest
+import com.handwoong.everyonewaiter.dto.member.*
 import com.handwoong.everyonewaiter.exception.ErrorCode.*
 import com.handwoong.everyonewaiter.repository.member.MemberRepository
 import com.handwoong.everyonewaiter.util.findByIdOrThrow
 import com.handwoong.everyonewaiter.util.throwFail
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,8 +17,16 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class MemberServiceImpl(
     private val memberRepository: MemberRepository,
+    private val authenticationManagerBuilder: AuthenticationManagerBuilder,
+    private val jwtTokenProvider: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder,
 ) : MemberService {
+
+    override fun login(memberDto: MemberLoginRequest): TokenResponse {
+        val authenticationToken = UsernamePasswordAuthenticationToken(memberDto.username, memberDto.password)
+        val authenticate = authenticationManagerBuilder.`object`.authenticate(authenticationToken)
+        return jwtTokenProvider.generateToken(authenticate)
+    }
 
     @Transactional
     override fun register(memberDto: MemberCreateRequest) {

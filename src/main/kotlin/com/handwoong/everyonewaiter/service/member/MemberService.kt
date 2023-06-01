@@ -1,10 +1,10 @@
 package com.handwoong.everyonewaiter.service.member
 
-import com.handwoong.everyonewaiter.dto.member.MemberCreateRequest
-import com.handwoong.everyonewaiter.dto.member.MemberResponse
-import com.handwoong.everyonewaiter.dto.member.PasswordRequest
+import com.handwoong.everyonewaiter.dto.member.*
 
 interface MemberService {
+
+    fun login(memberDto: MemberLoginRequest): TokenResponse
 
     fun register(memberDto: MemberCreateRequest)
 
