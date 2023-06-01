@@ -3,12 +3,12 @@ package com.handwoong.everyonewaiter.exception
 import org.springframework.http.ResponseEntity
 import java.time.LocalDateTime
 
-class ErrorResponse(
+data class ErrorResponse(
     val error: String,
     val message: String,
     val status: Int,
     val code: String,
-    val timestamp: LocalDateTime = LocalDateTime.now(),
+    val timestamp: LocalDateTime,
 ) {
 
     companion object {
@@ -18,6 +18,7 @@ class ErrorResponse(
                 message = errorCode.message,
                 status = errorCode.status.value(),
                 code = errorCode.name,
+                timestamp = LocalDateTime.now(),
             )
             return ResponseEntity.status(errorCode.status).body(errorResponse)
         }
