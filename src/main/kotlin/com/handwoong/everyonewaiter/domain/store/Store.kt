@@ -24,6 +24,7 @@ class Store(
     @Embedded
     var restTime: StoreRestTime,
 
+    @Enumerated(EnumType.STRING)
     var status: StoreStatus = OPEN,
 
     @Id
