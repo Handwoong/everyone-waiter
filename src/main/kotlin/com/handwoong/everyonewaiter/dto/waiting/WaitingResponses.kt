@@ -37,11 +37,17 @@ data class WaitingResponse(
 }
 
 data class WaitingCountResponse(
+    val storeId: Long,
     val count: Long,
 ) {
 
     companion object {
-        fun of(count: Long): WaitingCountResponse = WaitingCountResponse(count)
+        fun of(
+            storeId: Long,
+            count: Long,
+        ): WaitingCountResponse {
+            return WaitingCountResponse(storeId, count)
+        }
     }
 
 }

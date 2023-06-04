@@ -13,7 +13,7 @@ interface WaitingService {
 
     fun findStatusWaitWaitingList(username: String, storeId: Long): List<WaitingResponse>
 
-    fun register(username: String, storeId: Long, waitingDto: WaitingRegisterRequest)
+    fun register(username: String, storeId: Long, waitingDto: WaitingRegisterRequest): Int
 
     fun enterWaiting(username: String, storeId: Long, waitingId: UUID)
 

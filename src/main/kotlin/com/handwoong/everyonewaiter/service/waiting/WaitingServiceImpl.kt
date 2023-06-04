@@ -26,7 +26,7 @@ class WaitingServiceImpl(
     override fun count(username: String, storeId: Long): WaitingCountResponse {
         existsMemberStore(storeId, username)
         val waitingCount = waitingRepository.count(storeId, WAIT)
-        return WaitingCountResponse.of(waitingCount)
+        return WaitingCountResponse.of(storeId, waitingCount)
     }
 
     override fun findWaiting(waitingId: UUID): WaitingResponse {
