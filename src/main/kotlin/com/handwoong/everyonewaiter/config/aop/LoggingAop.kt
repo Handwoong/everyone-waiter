@@ -15,7 +15,7 @@ class LoggingAop {
 
     private val log = logger()
 
-    @Pointcut("execution(* com.handwoong.everyonewaiter.service.*.*(..)) && !@annotation(com.handwoong.everyonewaiter.util.ExcludeLog)")
+    @Pointcut("within(@org.springframework.stereotype.Service *) && !@annotation(com.handwoong.everyonewaiter.util.ExcludeLog)")
     private fun servicePointcut() {
     }
 
