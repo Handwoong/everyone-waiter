@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping
 class MemberViewController {
 
     @GetMapping("/members/register")
-    fun registerForm(): String {
+    fun memberRegisterForm(): String {
         if (isAuthentication()) {
             return "redirect:/"
         }
@@ -16,7 +16,7 @@ class MemberViewController {
     }
 
     @GetMapping("/members/login")
-    fun loginForm(): String {
+    fun memberLoginForm(): String {
         if (isAuthentication()) {
             return "redirect:/"
         }
