@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 
 data class WaitingRegisterRequest(
-    @field: Min(value = 0, message = "{error.message.min}")
+    @field: Min(value = 1, message = "{error.message.min}")
     @field: Max(value = 20, message = "{error.message.max}")
     val adult: Int,
 
