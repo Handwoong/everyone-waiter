@@ -24,6 +24,14 @@ class WaitingRepositoryCustomImpl(
             .fetchOne() ?: 0L
     }
 
+    override fun existsPhoneNumber(phoneNumber: String): Boolean {
+        val findWaiting = queryFactory.select(waiting)
+            .from(waiting)
+            .where(waiting.phoneNumber.eq(phoneNumber))
+            .fetch()
+        return findWaiting != null
+    }
+
     override fun findLastWaiting(
         storeId: Long,
         status: WaitingStatus?,

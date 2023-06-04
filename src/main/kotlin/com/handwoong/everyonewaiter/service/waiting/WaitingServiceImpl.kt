@@ -6,6 +6,7 @@ import com.handwoong.everyonewaiter.domain.waiting.WaitingStatus.*
 import com.handwoong.everyonewaiter.dto.waiting.WaitingCountResponse
 import com.handwoong.everyonewaiter.dto.waiting.WaitingRegisterRequest
 import com.handwoong.everyonewaiter.dto.waiting.WaitingResponse
+import com.handwoong.everyonewaiter.exception.ErrorCode.PHONE_EXISTS
 import com.handwoong.everyonewaiter.exception.ErrorCode.STORE_NOT_FOUND
 import com.handwoong.everyonewaiter.repository.store.StoreRepository
 import com.handwoong.everyonewaiter.repository.waiting.WaitingRepository
@@ -40,8 +41,9 @@ class WaitingServiceImpl(
     }
 
     @Transactional
-    override fun register(username: String, storeId: Long, waitingDto: WaitingRegisterRequest) {
+    override fun register(username: String, storeId: Long, waitingDto: WaitingRegisterRequest): Int {
         existsMemberStore(storeId, username)
+        existsPhoneNumber(waitingDto.phoneNumber)
 
         val findStore = storeRepository.findByIdOrThrow(storeId)
         val lastWaiting = waitingRepository.findLastWaiting(storeId, null)
@@ -50,6 +52,7 @@ class WaitingServiceImpl(
         val createWaiting =
             Waiting.createWaiting(waitingDto, findStore, lastWaiting, statusWaitLastWaiting)
         waitingRepository.save(createWaiting)
+        return createWaiting.number
     }
 
     @Transactional
@@ -61,6 +64,12 @@ class WaitingServiceImpl(
     @Transactional
     override fun cancelWaiting(storeId: Long, waitingId: UUID) {
         findWaitingAndChangeStatus(waitingId, storeId, CANCEL)
+    }
+
+    private fun existsPhoneNumber(phoneNumber: String) {
+        if (!waitingRepository.existsPhoneNumber(phoneNumber)) {
+            throwFail(PHONE_EXISTS)
+        }
     }
 
     private fun existsMemberStore(storeId: Long, username: String) {

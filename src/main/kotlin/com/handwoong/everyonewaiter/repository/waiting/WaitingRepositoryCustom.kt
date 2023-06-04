@@ -11,6 +11,10 @@ interface WaitingRepositoryCustom {
         status: WaitingStatus?,
     ): Long
 
+    fun existsPhoneNumber(
+        phoneNumber: String,
+    ): Boolean
+
     fun findLastWaiting(
         storeId: Long,
         status: WaitingStatus?,
