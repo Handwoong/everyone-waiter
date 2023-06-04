@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping
 class BasicController {
 
     @GetMapping("/")
-    fun homePage() = "home"
+    fun indexPage() = "index"
 
 }
