@@ -29,7 +29,7 @@ class SecurityConfig(
         http.authorizeRequests()
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
             .antMatchers("/webfonts/**").permitAll()
-            .antMatchers("/", "/members/login", "/members/register", "/error").permitAll()
+            .antMatchers("/", "/members", "/members/register", "/members/login", "/error").permitAll()
             .anyRequest().authenticated()
 
         http.exceptionHandling()
