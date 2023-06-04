@@ -45,8 +45,8 @@ class Waiting(
         }
     }
 
-    fun changeMessageStatusNotRegister(status: WaitingMessageStatus) {
-        if (status != SEND_REGISTER) {
+    fun changeMessageStatus(status: WaitingMessageStatus) {
+        if (status != SEND_NOT) {
             this.messageStatus = status
         }
     }
@@ -70,7 +70,7 @@ class Waiting(
                 children = waitingDto.children,
                 phoneNumber = waitingDto.phoneNumber,
                 status = WAIT,
-                messageStatus = SEND_REGISTER,
+                messageStatus = SEND_NOT,
                 id = generatedUuid,
             )
         }
