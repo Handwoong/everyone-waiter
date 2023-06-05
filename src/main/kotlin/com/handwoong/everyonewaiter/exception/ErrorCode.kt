@@ -19,7 +19,7 @@ enum class ErrorCode(
 
     TELEPHONE_EXISTS(BAD_REQUEST, "이미 존재하는 전화번호입니다."),
 
-    WAITING_EXISTS(BAD_REQUEST, "이미 존재하는 웨이팅 정보입니다."),
+    WAITING_NOT_AVAILABLE_STATUS(BAD_REQUEST, "변경 불가능한 웨이팅 상태 입니다."),
 
     NOT_MATCH_PASSWORD(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 
@@ -48,8 +48,6 @@ enum class ErrorCode(
     /**
      * 500 Internal Server Error
      */
-    FAIL_SEND_MESSAGE(INTERNAL_SERVER_ERROR, "서버 문제로 메시지 전송에 실패하였습니다."),
-
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버에 문제가 발생하였습니다.");
 
 }

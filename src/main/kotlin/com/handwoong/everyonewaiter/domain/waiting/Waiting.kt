@@ -6,6 +6,8 @@ import com.handwoong.everyonewaiter.domain.store.Store
 import com.handwoong.everyonewaiter.domain.waiting.WaitingMessageStatus.*
 import com.handwoong.everyonewaiter.domain.waiting.WaitingStatus.*
 import com.handwoong.everyonewaiter.dto.waiting.WaitingRegisterRequest
+import com.handwoong.everyonewaiter.exception.ErrorCode.*
+import com.handwoong.everyonewaiter.util.throwFail
 import java.util.*
 import javax.persistence.*
 import javax.persistence.FetchType.LAZY
@@ -39,14 +41,20 @@ class Waiting(
 ) : BaseEntity() {
 
     fun changeStatusNotWait(status: WaitingStatus) {
-        if (status != WAIT) {
-            this.status = status
-            this.turn = -1
+        if (status == WAIT) {
+            throwFail(WAITING_NOT_AVAILABLE_STATUS)
         }
+
+        this.status = status
+        this.turn = -1
     }
 
     fun changeMessageStatus(status: WaitingMessageStatus) {
-        if (this.messageStatus != status && status == SEND_NOT) {
+        if (status == SEND_NOT) {
+            throwFail(WAITING_NOT_AVAILABLE_STATUS)
+        }
+
+        if (this.messageStatus != status) {
             this.messageStatus = status
         }
     }
