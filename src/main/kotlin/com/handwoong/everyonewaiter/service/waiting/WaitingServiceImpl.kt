@@ -1,19 +1,23 @@
 package com.handwoong.everyonewaiter.service.waiting
 
+import com.handwoong.everyonewaiter.config.message.template.TemplateGenerator
+import com.handwoong.everyonewaiter.config.message.template.TemplateType
 import com.handwoong.everyonewaiter.domain.waiting.Waiting
+import com.handwoong.everyonewaiter.domain.waiting.WaitingMessageStatus.*
 import com.handwoong.everyonewaiter.domain.waiting.WaitingStatus
 import com.handwoong.everyonewaiter.domain.waiting.WaitingStatus.*
 import com.handwoong.everyonewaiter.dto.waiting.WaitingCountResponse
 import com.handwoong.everyonewaiter.dto.waiting.WaitingRegisterRequest
 import com.handwoong.everyonewaiter.dto.waiting.WaitingResponse
-import com.handwoong.everyonewaiter.exception.ErrorCode.PHONE_EXISTS
-import com.handwoong.everyonewaiter.exception.ErrorCode.STORE_NOT_FOUND
+import com.handwoong.everyonewaiter.exception.ErrorCode.*
 import com.handwoong.everyonewaiter.repository.store.StoreRepository
 import com.handwoong.everyonewaiter.repository.waiting.WaitingRepository
 import com.handwoong.everyonewaiter.util.findByIdOrThrow
+import com.handwoong.everyonewaiter.util.logger
 import com.handwoong.everyonewaiter.util.throwFail
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import sender.MessageSender
 import java.util.*
 
 @Service
@@ -21,7 +25,11 @@ import java.util.*
 class WaitingServiceImpl(
     private val storeRepository: StoreRepository,
     private val waitingRepository: WaitingRepository,
+    private val messageSender: MessageSender,
+    private val templateGenerator: TemplateGenerator,
 ) : WaitingService {
+
+    private val log = logger()
 
     override fun count(username: String, storeId: Long): WaitingCountResponse {
         existsMemberStore(storeId, username)
@@ -52,18 +60,37 @@ class WaitingServiceImpl(
         val createWaiting =
             Waiting.createWaiting(waitingDto, findStore, lastWaiting, statusWaitLastWaiting)
         waitingRepository.save(createWaiting)
+
+        sendAlimTalk(TemplateType.REGISTER, createWaiting)
+        createWaiting.changeMessageStatus(SEND_REGISTER)
         return createWaiting.number
     }
 
     @Transactional
     override fun enterWaiting(username: String, storeId: Long, waitingId: UUID) {
         existsMemberStore(storeId, username)
-        findWaitingAndChangeStatus(waitingId, storeId, ENTER)
+        val findWaiting = findWaitingById(waitingId)
+        changeWaitingStatus(findWaiting, storeId, ENTER)
     }
 
     @Transactional
     override fun cancelWaiting(storeId: Long, waitingId: UUID) {
-        findWaitingAndChangeStatus(waitingId, storeId, CANCEL)
+        val findWaiting = findWaitingById(waitingId)
+        changeWaitingStatus(findWaiting, storeId, CANCEL)
+
+        sendAlimTalk(TemplateType.CANCEL, findWaiting)
+        findWaiting.changeMessageStatus(SEND_CANCEL)
+    }
+
+    override fun sendWaitingEnterMessage(waitingId: UUID) {
+        val findWaiting = findWaitingById(waitingId)
+        sendAlimTalk(TemplateType.ENTER, findWaiting)
+        findWaiting.changeMessageStatus(SEND_ENTER)
+    }
+
+    private fun sendWaitingReadyMessage(waiting: Waiting) {
+        sendAlimTalk(TemplateType.READY, waiting)
+        waiting.changeMessageStatus(SEND_READY)
     }
 
     private fun existsPhoneNumber(phoneNumber: String) {
@@ -76,10 +103,24 @@ class WaitingServiceImpl(
         storeRepository.findStore(storeId, username) ?: throwFail(STORE_NOT_FOUND)
     }
 
-    private fun findWaitingAndChangeStatus(waitingId: UUID, storeId: Long, status: WaitingStatus) {
-        val findWaiting = waitingRepository.findByIdOrThrow(waitingId)
-        waitingRepository.decreaseWaitingTurn(storeId, findWaiting.turn)
-        findWaiting.changeStatusNotWait(status)
+    private fun changeWaitingStatus(waiting: Waiting, storeId: Long, status: WaitingStatus) {
+        waitingRepository.decreaseWaitingTurn(storeId, waiting.turn)
+        waiting.changeStatusNotWait(status)
+    }
+
+    private fun findWaitingById(waitingId: UUID): Waiting {
+        return waitingRepository.findByIdOrThrow(waitingId)
+    }
+
+    private fun sendAlimTalk(templateType: TemplateType, waiting: Waiting) {
+        log.info("[알림톡 전송] 템플릿 : ${templateType} 전화번호 : ${waiting.phoneNumber}")
+        val response = messageSender.sendAlimTalk(templateGenerator.generate(templateType, waiting))
+
+        val alimTalkSendResponseMessage = response.messages[0]
+        if (alimTalkSendResponseMessage.requestStatusCode != "A000") {
+            log.error("[알림톡 전송 실패] 코드 : ${alimTalkSendResponseMessage.requestStatusCode} 이유 : ${alimTalkSendResponseMessage.requestStatusDesc}")
+            throwFail(FAIL_SEND_MESSAGE)
+        }
     }
 
 }

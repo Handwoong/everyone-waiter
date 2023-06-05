@@ -19,4 +19,6 @@ interface WaitingService {
 
     fun cancelWaiting(storeId: Long, waitingId: UUID)
 
+    fun sendWaitingEnterMessage(waitingId: UUID)
+
 }
