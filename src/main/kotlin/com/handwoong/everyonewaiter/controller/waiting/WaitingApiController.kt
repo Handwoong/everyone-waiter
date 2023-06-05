@@ -1,21 +1,16 @@
 package com.handwoong.everyonewaiter.controller.waiting
 
 import com.handwoong.everyonewaiter.dto.waiting.WaitingRegisterRequest
-import com.handwoong.everyonewaiter.service.store.StoreService
 import com.handwoong.everyonewaiter.service.waiting.WaitingService
 import com.handwoong.everyonewaiter.util.getAuthenticationUsername
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
 
 @RestController
 class WaitingApiController(
-    private val storeService: StoreService,
     private val waitingService: WaitingService,
 ) {
 
@@ -26,6 +21,33 @@ class WaitingApiController(
     ): ResponseEntity<Int> {
         val waitingNumber = waitingService.register(getAuthenticationUsername(), storeId, waitingRequest)
         return ResponseEntity<Int>(waitingNumber, CREATED)
+    }
+
+    @PostMapping("/waiting/send/{waitingId}/stores/{storeId}")
+    fun sendEnterMessage(
+        @PathVariable waitingId: UUID,
+        @PathVariable storeId: Long,
+    ): ResponseEntity<Unit> {
+        waitingService.sendWaitingEnterMessage(waitingId)
+        return ResponseEntity<Unit>(OK)
+    }
+
+    @DeleteMapping("/waiting/cancel/{waitingId}/stores/{storeId}")
+    fun cancelWaiting(
+        @PathVariable waitingId: UUID,
+        @PathVariable storeId: Long,
+    ): ResponseEntity<Unit> {
+        waitingService.cancelWaiting(storeId, waitingId)
+        return ResponseEntity<Unit>(OK)
+    }
+
+    @DeleteMapping("/waiting/{waitingId}/stores/{storeId}")
+    fun enterWaiting(
+        @PathVariable waitingId: UUID,
+        @PathVariable storeId: Long,
+    ): ResponseEntity<Unit> {
+        waitingService.enterWaiting(getAuthenticationUsername(), storeId, waitingId)
+        return ResponseEntity<Unit>(OK)
     }
 
 }

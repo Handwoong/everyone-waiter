@@ -30,6 +30,7 @@ class SecurityConfig(
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
             .antMatchers("/webfonts/**").permitAll()
             .antMatchers("/", "/members", "/members/register", "/members/login", "/error").permitAll()
+            .antMatchers("/waiting/cancel/**", "/waiting/turn/**").permitAll()
             .anyRequest().authenticated()
 
         http.exceptionHandling()
