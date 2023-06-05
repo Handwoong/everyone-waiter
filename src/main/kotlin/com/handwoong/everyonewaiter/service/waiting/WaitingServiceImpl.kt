@@ -93,7 +93,7 @@ class WaitingServiceImpl(
     }
 
     private fun existsPhoneNumber(phoneNumber: String) {
-        if (!waitingRepository.existsPhoneNumber(phoneNumber)) {
+        if (waitingRepository.existsPhoneNumber(phoneNumber)) {
             throwFail(PHONE_EXISTS)
         }
     }

@@ -38,7 +38,7 @@ class WaitingRepositoryCustomImpl(
         val findWaiting = queryFactory.select(waiting)
             .from(waiting)
             .where(waiting.phoneNumber.eq(phoneNumber))
-            .fetch()
+            .fetchFirst()
         return findWaiting != null
     }
 
