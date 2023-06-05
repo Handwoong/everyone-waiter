@@ -41,12 +41,12 @@ class Waiting(
     fun changeStatusNotWait(status: WaitingStatus) {
         if (status != WAIT) {
             this.status = status
-            this.turn--
+            this.turn = -1
         }
     }
 
     fun changeMessageStatus(status: WaitingMessageStatus) {
-        if (status != SEND_NOT) {
+        if (this.messageStatus != status && status == SEND_NOT) {
             this.messageStatus = status
         }
     }
