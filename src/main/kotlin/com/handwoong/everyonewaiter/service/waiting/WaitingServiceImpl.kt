@@ -56,41 +56,40 @@ class WaitingServiceImpl(
         val findStore = storeRepository.findByIdOrThrow(storeId)
         val lastWaiting = waitingRepository.findLastWaiting(storeId, null)
         val statusWaitLastWaiting = waitingRepository.findLastWaiting(storeId, WAIT)
-
         val createWaiting =
             Waiting.createWaiting(waitingDto, findStore, lastWaiting, statusWaitLastWaiting)
-        waitingRepository.save(createWaiting)
 
         sendAlimTalk(TemplateType.REGISTER, createWaiting)
-        createWaiting.changeMessageStatus(SEND_REGISTER)
+        waitingRepository.save(createWaiting)
         return createWaiting.number
     }
 
     @Transactional
     override fun enterWaiting(username: String, storeId: Long, waitingId: UUID) {
         existsMemberStore(storeId, username)
-        val findWaiting = findWaitingById(waitingId)
+        val findWaiting = findLockWaitingById(waitingId)
         changeWaitingStatus(findWaiting, storeId, ENTER)
     }
 
     @Transactional
     override fun cancelWaiting(storeId: Long, waitingId: UUID) {
-        val findWaiting = findWaitingById(waitingId)
+        val findWaiting = findLockWaitingById(waitingId)
         changeWaitingStatus(findWaiting, storeId, CANCEL)
-
         sendAlimTalk(TemplateType.CANCEL, findWaiting)
-        findWaiting.changeMessageStatus(SEND_CANCEL)
     }
 
+    @Transactional
     override fun sendWaitingEnterMessage(waitingId: UUID) {
         val findWaiting = findWaitingById(waitingId)
         sendAlimTalk(TemplateType.ENTER, findWaiting)
-        findWaiting.changeMessageStatus(SEND_ENTER)
+        sendWaitingReadyMessage(findWaiting)
     }
 
     private fun sendWaitingReadyMessage(waiting: Waiting) {
-        sendAlimTalk(TemplateType.READY, waiting)
-        waiting.changeMessageStatus(SEND_READY)
+        val waitingList = waitingRepository.findAllWaiting(waiting.store.id!!, WAIT)
+        if (waitingList.size >= 3 && waitingList[0].id == waiting.id) {
+            sendAlimTalk(TemplateType.READY, waiting)
+        }
     }
 
     private fun existsPhoneNumber(phoneNumber: String) {
@@ -112,15 +111,28 @@ class WaitingServiceImpl(
         return waitingRepository.findByIdOrThrow(waitingId)
     }
 
+    private fun findLockWaitingById(waitingId: UUID): Waiting {
+        return waitingRepository.findLockWaitingById(waitingId) ?: throwFail(WAITING_NOT_FOUND)
+    }
+
     private fun sendAlimTalk(templateType: TemplateType, waiting: Waiting) {
         log.info("[알림톡 전송] 템플릿 : ${templateType} 전화번호 : ${waiting.phoneNumber}")
         val response = messageSender.sendAlimTalk(templateGenerator.generate(templateType, waiting))
 
-        val alimTalkSendResponseMessage = response.messages[0]
-        if (alimTalkSendResponseMessage.requestStatusCode != "A000") {
-            log.error("[알림톡 전송 실패] 코드 : ${alimTalkSendResponseMessage.requestStatusCode} 이유 : ${alimTalkSendResponseMessage.requestStatusDesc}")
-            throwFail(FAIL_SEND_MESSAGE)
+        val responseMessage = response.messages[0]
+        if (responseMessage.requestStatusCode != "A000") {
+            log.error("[알림톡 전송 실패] 코드 : ${responseMessage.requestStatusCode} 이유 : ${responseMessage.requestStatusDesc}")
+            return
         }
+
+        log.info("[알림톡 전송 요청 성공] 메시지 ID : ${responseMessage.messageId}")
+        val sendType = when (templateType) {
+            TemplateType.REGISTER -> SEND_REGISTER
+            TemplateType.ENTER -> SEND_ENTER
+            TemplateType.READY -> SEND_READY
+            TemplateType.CANCEL -> SEND_CANCEL
+        }
+        waiting.changeMessageStatus(sendType)
     }
 
 }
