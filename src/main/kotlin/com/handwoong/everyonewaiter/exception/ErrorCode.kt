@@ -48,6 +48,8 @@ enum class ErrorCode(
     /**
      * 500 Internal Server Error
      */
+    FAIL_SEND_MESSAGE(INTERNAL_SERVER_ERROR, "서버 문제로 메시지 전송에 실패하였습니다."),
+
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버에 문제가 발생하였습니다.");
 
 }
