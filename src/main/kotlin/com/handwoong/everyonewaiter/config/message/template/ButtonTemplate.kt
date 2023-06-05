@@ -1,9 +1,9 @@
 package com.handwoong.everyonewaiter.config.message.template
 
+import enums.ButtonType.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import template.alimtalk.Button
-import template.alimtalk.ButtonType.*
 import java.util.*
 
 @Component

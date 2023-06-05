@@ -38,7 +38,7 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1'
     implementation 'com.fasterxml.uuid:java-uuid-generator:4.1.0'
-    implementation 'com.github.Handwoong:naver-sens-kotlin:v1.0.2'
+    implementation 'com.github.Handwoong:naver-sens-kotlin:v1.0.3'
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
     implementation 'com.querydsl:querydsl-jpa:5.0.0'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
