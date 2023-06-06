@@ -11,16 +11,16 @@ class Menu(
 
     var name: String,
 
-    var description: String,
+    var description: String?,
 
-    var notice: String,
+    var notice: String?,
 
     var price: Int,
 
     @Enumerated(EnumType.STRING)
     var status: MenuStatus,
 
-    var image: String,
+    var image: String?,
 
     var spicy: Int,
 
