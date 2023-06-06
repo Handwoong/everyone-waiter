@@ -20,4 +20,20 @@ data class WaitingRegisterRequest(
         message = "{error.message.phoneNumber}"
     )
     val phoneNumber: String,
-)
+) {
+
+    companion object {
+        fun testOf(
+            adult: Int = 2,
+            children: Int = 1,
+            phoneNumber: String = "01012345678",
+        ): WaitingRegisterRequest {
+            return WaitingRegisterRequest(
+                adult = adult,
+                children = children,
+                phoneNumber = phoneNumber,
+            )
+        }
+    }
+
+}
