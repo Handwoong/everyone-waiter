@@ -2,6 +2,7 @@ package com.handwoong.everyonewaiter.service.waiting
 
 import com.handwoong.everyonewaiter.config.message.template.TemplateGenerator
 import com.handwoong.everyonewaiter.config.message.template.TemplateType
+import com.handwoong.everyonewaiter.domain.store.Store
 import com.handwoong.everyonewaiter.domain.waiting.Waiting
 import com.handwoong.everyonewaiter.domain.waiting.WaitingMessageStatus.*
 import com.handwoong.everyonewaiter.domain.waiting.WaitingStatus
@@ -91,7 +92,7 @@ class WaitingServiceImpl(
     private fun sendWaitingReadyMessage(waiting: Waiting) {
         val waitingList = waitingRepository.findAllWaiting(waiting.store.id!!, WAIT)
         if (waitingList.size >= 3 && waitingList[0].id == waiting.id) {
-            sendAlimTalk(TemplateType.READY, waiting)
+            sendAlimTalk(TemplateType.READY, waitingList[2])
         }
     }
 
