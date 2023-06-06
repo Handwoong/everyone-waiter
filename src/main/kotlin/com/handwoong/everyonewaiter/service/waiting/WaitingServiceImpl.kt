@@ -101,8 +101,8 @@ class WaitingServiceImpl(
         }
     }
 
-    private fun existsMemberStore(storeId: Long, username: String) {
-        storeRepository.findStore(storeId, username) ?: throwFail(STORE_NOT_FOUND)
+    private fun existsMemberStore(storeId: Long, username: String): Store {
+        return storeRepository.findStore(storeId, username) ?: throwFail(STORE_NOT_FOUND)
     }
 
     private fun changeWaitingStatus(waiting: Waiting, storeId: Long, status: WaitingStatus) {
