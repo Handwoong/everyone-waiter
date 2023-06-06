@@ -3,6 +3,7 @@ package com.handwoong.everyonewaiter.domain.store
 import com.handwoong.everyonewaiter.domain.BaseEntity
 import com.handwoong.everyonewaiter.domain.member.Member
 import com.handwoong.everyonewaiter.domain.store.StoreStatus.OPEN
+import com.handwoong.everyonewaiter.domain.waiting.Waiting
 import com.handwoong.everyonewaiter.dto.store.StoreRequest
 import javax.persistence.*
 import javax.persistence.FetchType.LAZY
@@ -17,6 +18,9 @@ class Store(
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     val member: Member,
+
+    @OneToMany(mappedBy = "store", cascade = [CascadeType.ALL])
+    val waitingList: MutableList<Waiting> = mutableListOf(),
 
     @Embedded
     var businessTime: StoreBusinessTime,
@@ -38,6 +42,10 @@ class Store(
         this.telephone = storeDto.telephone
         this.businessTime = StoreBusinessTime(storeDto.openTime, storeDto.closeTime)
         this.restTime = StoreRestTime(storeDto.startTime, storeDto.endTime)
+    }
+
+    fun addWaiting(waiting: Waiting) {
+        this.waitingList.add(waiting)
     }
 
     companion object {
