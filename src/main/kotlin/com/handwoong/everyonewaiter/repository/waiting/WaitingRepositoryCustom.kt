@@ -22,7 +22,7 @@ interface WaitingRepositoryCustom {
 
     fun findLastWaiting(
         storeId: Long,
-        status: WaitingStatus?,
+        status: WaitingStatus? = null,
     ): Waiting?
 
     fun findAllWaiting(

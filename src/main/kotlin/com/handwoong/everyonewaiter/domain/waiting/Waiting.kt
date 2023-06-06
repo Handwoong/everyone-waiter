@@ -63,17 +63,15 @@ class Waiting(
         fun createWaiting(
             waitingDto: WaitingRegisterRequest,
             store: Store,
-            lastWaiting: Waiting?,
-            statusWaitLastWaiting: Waiting?,
+            number: Int = 1,
+            turn: Int = 0,
         ): Waiting {
             val generatedUuid = generateUuid()
-            val generatedWaitingNumber = lastWaiting?.number?.let { it + 1 } ?: 1
-            val generatedWaitingTurn = statusWaitLastWaiting?.turn?.let { it + 1 } ?: 0
 
             return Waiting(
                 store = store,
-                number = generatedWaitingNumber,
-                turn = generatedWaitingTurn,
+                number = number,
+                turn = turn,
                 adult = waitingDto.adult,
                 children = waitingDto.children,
                 phoneNumber = waitingDto.phoneNumber,

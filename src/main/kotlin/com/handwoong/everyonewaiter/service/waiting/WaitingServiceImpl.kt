@@ -50,17 +50,20 @@ class WaitingServiceImpl(
 
     @Transactional
     override fun register(username: String, storeId: Long, waitingDto: WaitingRegisterRequest): Int {
-        existsMemberStore(storeId, username)
+        val findStore = existsMemberStore(storeId, username)
         existsPhoneNumber(waitingDto.phoneNumber)
 
-        val findStore = storeRepository.findByIdOrThrow(storeId)
-        val lastWaiting = waitingRepository.findLastWaiting(storeId, null)
+        val lastWaiting = waitingRepository.findLastWaiting(storeId)
         val statusWaitLastWaiting = waitingRepository.findLastWaiting(storeId, WAIT)
-        val createWaiting =
-            Waiting.createWaiting(waitingDto, findStore, lastWaiting, statusWaitLastWaiting)
 
+        val createWaiting = Waiting.createWaiting(
+            waitingDto = waitingDto,
+            store = findStore,
+            number = lastWaiting?.number?.let { it + 1 } ?: 1,
+            turn = statusWaitLastWaiting?.turn?.let { it + 1 } ?: 0,
+        )
         sendAlimTalk(TemplateType.REGISTER, createWaiting)
-        waitingRepository.save(createWaiting)
+        findStore.addWaiting(createWaiting)
         return createWaiting.number
     }
 
