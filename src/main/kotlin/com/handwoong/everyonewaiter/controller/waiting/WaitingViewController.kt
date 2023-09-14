@@ -22,7 +22,7 @@ class WaitingViewController(
         return "waiting/index"
     }
 
-    @GetMapping("/waiting/stores/{storeId}")
+    @GetMapping("/stores/{storeId}/waiting")
     fun waitingRegisterForm(
         @PathVariable storeId: Long,
         model: Model,
@@ -32,7 +32,7 @@ class WaitingViewController(
         return "waiting/register"
     }
 
-    @GetMapping("/waiting/stores/{storeId}/admin")
+    @GetMapping("/stores/{storeId}/waiting/admin")
     fun waitingAdminPage(
         @PathVariable storeId: Long,
         model: Model,
@@ -43,7 +43,7 @@ class WaitingViewController(
         return "waiting/admin"
     }
 
-    @GetMapping("/waiting/cancel/{waitingId}/stores/{storeId}")
+    @GetMapping("/stores/{storeId}/waiting/cancel/{waitingId}")
     fun waitingCancelForm(
         @PathVariable waitingId: UUID,
         @PathVariable storeId: Long,
@@ -55,7 +55,7 @@ class WaitingViewController(
         return "waiting/cancel"
     }
 
-    @GetMapping("/waiting/turn/{waitingId}/stores/{storeId}")
+    @GetMapping("/stores/{storeId}/waiting/turn/{waitingId}")
     fun waitingTurnForm(
         @PathVariable waitingId: UUID,
         @PathVariable storeId: Long,

@@ -3,7 +3,8 @@ package com.handwoong.everyonewaiter.controller.waiting
 import com.handwoong.everyonewaiter.dto.waiting.WaitingRegisterRequest
 import com.handwoong.everyonewaiter.service.waiting.WaitingService
 import com.handwoong.everyonewaiter.util.getAuthenticationUsername
-import org.springframework.http.HttpStatus.*
+import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.OK
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -14,7 +15,7 @@ class WaitingApiController(
     private val waitingService: WaitingService,
 ) {
 
-    @PostMapping("/waiting/stores/{storeId}")
+    @PostMapping("/stores/{storeId}/waiting")
     fun registerWaiting(
         @RequestBody @Valid waitingRequest: WaitingRegisterRequest,
         @PathVariable storeId: Long,
@@ -23,7 +24,7 @@ class WaitingApiController(
         return ResponseEntity<Int>(waitingNumber, CREATED)
     }
 
-    @PostMapping("/waiting/send/{waitingId}/stores/{storeId}")
+    @PostMapping("/stores/{storeId}/waiting/send/{waitingId}")
     fun sendEnterMessage(
         @PathVariable waitingId: UUID,
         @PathVariable storeId: Long,
@@ -32,7 +33,7 @@ class WaitingApiController(
         return ResponseEntity<Unit>(OK)
     }
 
-    @DeleteMapping("/waiting/cancel/{waitingId}/stores/{storeId}")
+    @DeleteMapping("/stores/{storeId}/waiting/cancel/{waitingId}")
     fun cancelWaiting(
         @PathVariable waitingId: UUID,
         @PathVariable storeId: Long,
@@ -41,7 +42,7 @@ class WaitingApiController(
         return ResponseEntity<Unit>(OK)
     }
 
-    @DeleteMapping("/waiting/{waitingId}/stores/{storeId}")
+    @DeleteMapping("/stores/{storeId}/waiting/{waitingId}")
     fun enterWaiting(
         @PathVariable waitingId: UUID,
         @PathVariable storeId: Long,
