@@ -30,7 +30,7 @@ class RedissonAop(
         var redissonKey = ""
         for (i in 0..parameterNames.size) {
             if (parameterNames[i] == redissonLock.key) {
-                redissonKey += joinPoint.args[i]
+                redissonKey += "${redissonLock.key}-${joinPoint.args[i]}"
                 break
             }
         }
