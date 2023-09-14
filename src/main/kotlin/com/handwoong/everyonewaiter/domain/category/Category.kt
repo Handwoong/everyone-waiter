@@ -13,6 +13,8 @@ class Category(
 
     var name: String,
 
+    var icon: String,
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     val store: Store,
@@ -41,6 +43,7 @@ class Category(
         ): Category {
             return Category(
                 name = categoryDto.name,
+                icon = categoryDto.icon,
                 store = store,
             )
         }
