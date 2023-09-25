@@ -75,7 +75,6 @@ class OrderMenu(
             requestMenu: OrderMenuRequest,
             menuStatus: OrderMenuStatus = READY,
         ): OrderMenu {
-            requestMenu.customOption
             return OrderMenu(
                 menu = menu,
                 orderCount = requestMenu.qty,
