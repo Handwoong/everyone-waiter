@@ -24,8 +24,13 @@ class CategoryServiceImpl(
         return CategoryResponse.of(findCategory)
     }
 
-    override fun findAllStoreCategory(username: String, storeId: Long): List<CategoryResponse> {
+    override fun findAllUserCategory(username: String, storeId: Long): List<CategoryResponse> {
         return categoryRepository.findAllCategory(username, storeId)
+            .map(CategoryResponse::of)
+    }
+
+    override fun findAllStoreCategory(storeId: Long): List<CategoryResponse> {
+        return categoryRepository.findAllStoreCategory(storeId)
             .map(CategoryResponse::of)
     }
 

@@ -7,7 +7,9 @@ interface CategoryService {
 
     fun findCategoryById(username: String, categoryId: Long): CategoryResponse
 
-    fun findAllStoreCategory(username: String, storeId: Long): List<CategoryResponse>
+    fun findAllUserCategory(username: String, storeId: Long): List<CategoryResponse>
+
+    fun findAllStoreCategory(storeId: Long): List<CategoryResponse>
 
     fun register(categoryDto: CategoryRequest, username: String, storeId: Long)
 

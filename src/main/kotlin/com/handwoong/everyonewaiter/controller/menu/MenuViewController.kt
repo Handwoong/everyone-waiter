@@ -37,13 +37,18 @@ class MenuViewController(
         @PathVariable storeId: Long,
         model: Model,
     ): String {
-        menuPage(storeId, model)
+        val store = storeService.findStoreById(storeId)
+        val categoryList = categoryService.findAllStoreCategory(storeId)
+        val menuList = menuService.findAllStoreMenu(storeId)
+        model.addAttribute("store", store)
+        model.addAttribute("categoryList", categoryList)
+        model.addAttribute("menuList", menuList)
         return "menus/customer"
     }
 
     private fun menuPage(storeId: Long, model: Model) {
         val store = storeService.findStore(getAuthenticationUsername(), storeId)
-        val categoryList = categoryService.findAllStoreCategory(getAuthenticationUsername(), storeId)
+        val categoryList = categoryService.findAllUserCategory(getAuthenticationUsername(), storeId)
         val menuList = menuService.findAllStoreMenu(storeId)
         model.addAttribute("store", store)
         model.addAttribute("categoryList", categoryList)
