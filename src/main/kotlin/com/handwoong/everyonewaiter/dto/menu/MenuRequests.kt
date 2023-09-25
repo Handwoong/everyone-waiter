@@ -26,6 +26,8 @@ data class MenuRequest(
 
     val isPrintKitchen: Boolean,
 
+    val isSoldOut: Boolean = false,
+
     val customOption: MutableList<MenuCustomOptionRequest>,
 
     @field:NotNull(message = "{error.message.null}")
