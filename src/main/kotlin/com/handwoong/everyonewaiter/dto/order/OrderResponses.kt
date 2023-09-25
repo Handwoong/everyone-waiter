@@ -1,9 +1,6 @@
 package com.handwoong.everyonewaiter.dto.order
 
-import com.handwoong.everyonewaiter.domain.order.Order
-import com.handwoong.everyonewaiter.domain.order.OrderMenu
-import com.handwoong.everyonewaiter.domain.order.OrderMenuStatus
-import com.handwoong.everyonewaiter.domain.order.OrderStatus
+import com.handwoong.everyonewaiter.domain.order.*
 import com.handwoong.everyonewaiter.dto.menu.MenuResponse
 import java.time.LocalDateTime
 
@@ -12,6 +9,7 @@ data class OrderResponses(
     val tableNumber: Int,
     val totalPrice: Int,
     val discountPrice: Int,
+    val memo: String,
     val orderStatus: OrderStatus,
     val orderMenuList: List<OrderMenuResponse>,
     val createdAt: LocalDateTime,
@@ -27,6 +25,7 @@ data class OrderResponses(
                 tableNumber = order.tableNumber,
                 totalPrice = order.totalPrice,
                 discountPrice = order.discountPrice,
+                memo = order.memo,
                 orderStatus = order.status,
                 orderMenuList = orderMenuList,
                 createdAt = order.createdAt,
@@ -56,6 +55,28 @@ data class OrderMenuResponse(
                 customOption = orderMenu.customOption,
                 menuStatus = orderMenu.menuStatus,
                 menu = MenuResponse.of(orderMenu.menu)
+            )
+        }
+    }
+
+}
+
+data class OrderCallResponse(
+    val id: Long,
+    val tableNumber: Int,
+    val callDetail: String,
+    val status: CallStatus,
+    val createdAt: LocalDateTime,
+) {
+
+    companion object {
+        fun of(orderCall: OrderCall): OrderCallResponse {
+            return OrderCallResponse(
+                id = orderCall.id!!,
+                tableNumber = orderCall.tableNumber,
+                callDetail = orderCall.callDetail,
+                status = orderCall.status,
+                createdAt = orderCall.createdAt,
             )
         }
     }
