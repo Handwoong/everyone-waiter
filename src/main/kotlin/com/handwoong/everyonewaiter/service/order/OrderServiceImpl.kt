@@ -1,15 +1,15 @@
 package com.handwoong.everyonewaiter.service.order
 
 import com.handwoong.everyonewaiter.domain.order.Order
+import com.handwoong.everyonewaiter.domain.order.OrderCall
 import com.handwoong.everyonewaiter.domain.order.OrderMenu
 import com.handwoong.everyonewaiter.domain.order.OrderStatus
-import com.handwoong.everyonewaiter.dto.order.DiscountRequest
-import com.handwoong.everyonewaiter.dto.order.OrderMenuQtyRequest
-import com.handwoong.everyonewaiter.dto.order.OrderRequests
-import com.handwoong.everyonewaiter.dto.order.OrderResponses
+import com.handwoong.everyonewaiter.dto.order.*
 import com.handwoong.everyonewaiter.exception.ErrorCode
 import com.handwoong.everyonewaiter.repository.menu.MenuRepository
 import com.handwoong.everyonewaiter.repository.order.OrderRepository
+import com.handwoong.everyonewaiter.repository.ordercall.OrderCallRepository
+import com.handwoong.everyonewaiter.repository.payment.PaymentRepository
 import com.handwoong.everyonewaiter.repository.store.StoreRepository
 import com.handwoong.everyonewaiter.util.findByIdOrThrow
 import com.handwoong.everyonewaiter.util.throwFail
@@ -22,6 +22,8 @@ class OrderServiceImpl(
     private val storeRepository: StoreRepository,
     private val menuRepository: MenuRepository,
     private val orderRepository: OrderRepository,
+    private val orderCallRepository: OrderCallRepository,
+    private val paymentRepository: PaymentRepository,
 ) : OrderService {
 
     @Transactional
@@ -36,6 +38,7 @@ class OrderServiceImpl(
         val createOrder = Order.createOrder(
             tableNumber = orderRequest.tableNumber,
             store = store,
+            memo = orderRequest.memo,
             orderMenu = orderMenuList.toTypedArray()
         )
 
@@ -47,6 +50,13 @@ class OrderServiceImpl(
     }
 
     @Transactional
+    override fun callRegister(storeId: Long, orderCallRequest: OrderCallRequest) {
+        val store = storeRepository.findByIdOrThrow(storeId)
+        val createOrderCall = OrderCall.createOrderCall(orderCallRequest, store)
+        orderCallRepository.save(createOrderCall)
+    }
+
+    @Transactional
     override fun changeStatusOrderMenu(storeId: Long, orderId: Long, orderMenuId: Long) {
         storeRepository.findByIdOrThrow(storeId)
         val order = orderRepository.findByIdOrThrow(orderId)
@@ -54,10 +64,27 @@ class OrderServiceImpl(
     }
 
     @Transactional
+    override fun changeStatusOrderCall(storeId: Long, orderCallId: Long) {
+        storeRepository.findByIdOrThrow(storeId)
+        val orderCall = orderCallRepository.findByIdOrThrow(orderCallId)
+        orderCall.complete()
+    }
+
+    @Transactional
     override fun changeOrderTableNumber(storeId: Long, beforeTableNumber: Int, afterTableNumber: Int) {
         storeRepository.findByIdOrThrow(storeId)
-        val orderList = orderRepository.findStoreTableOrderList(storeId, beforeTableNumber)
-        orderList.forEach { order -> order.changeTableNumber(afterTableNumber) }
+        val beforeTableOrderList = orderRepository.findStoreTableOrderList(storeId, beforeTableNumber)
+        val afterTableOrderList = orderRepository.findStoreTableOrderList(storeId, afterTableNumber)
+        beforeTableOrderList.forEach { order -> order.changeTableNumber(afterTableNumber) }
+        afterTableOrderList.forEach { order -> order.changeTableNumber(afterTableNumber) }
+
+        if (beforeTableOrderList.isNotEmpty()) {
+            beforeTableOrderList[0].payment.let { payment -> paymentRepository.delete(payment!!) }
+        }
+
+        if (afterTableOrderList.isNotEmpty()) {
+            afterTableOrderList[0].payment.let { payment -> paymentRepository.delete(payment!!) }
+        }
     }
 
     @Transactional
@@ -78,19 +105,19 @@ class OrderServiceImpl(
         orderList[0].discount(discountRequest.discountPrice)
     }
 
-    override fun findAllStoreOrderStatusOrder(storeId: Long): List<OrderResponses> {
-        val findAllStoreOrder = orderRepository.findAllStoreOrder(storeId, OrderStatus.ORDER)
-        return findAllStoreOrder.map { order -> OrderResponses.of(order) }
-    }
-
-    override fun findAllStoreOrderStatusAdd(storeId: Long): List<OrderResponses> {
-        val findAllStoreAddOrder = orderRepository.findAllStoreOrder(storeId, OrderStatus.ADD)
+    override fun findAllStoreStatusNotServe(storeId: Long): List<OrderResponses> {
+        val findAllStoreAddOrder = orderRepository.findAllStoreOrderNotServe(storeId)
         return findAllStoreAddOrder.map { order -> OrderResponses.of(order) }
     }
 
     override fun findAllStoreOrder(storeId: Long): List<OrderResponses> {
         val findStoreNotPaymentOrder = orderRepository.findStoreTableOrderList(storeId)
         return findStoreNotPaymentOrder.map { order -> OrderResponses.of(order) }
+    }
+
+    override fun findAllStoreOrderCall(storeId: Long): List<OrderCallResponse> {
+        val findAllStoreOrderCall = orderCallRepository.findAllStoreOrderCall(storeId)
+        return findAllStoreOrderCall.map { orderCall -> OrderCallResponse.of(orderCall) }
     }
 
     @Transactional

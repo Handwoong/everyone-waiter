@@ -1,15 +1,16 @@
 package com.handwoong.everyonewaiter.service.order
 
-import com.handwoong.everyonewaiter.dto.order.DiscountRequest
-import com.handwoong.everyonewaiter.dto.order.OrderMenuQtyRequest
-import com.handwoong.everyonewaiter.dto.order.OrderRequests
-import com.handwoong.everyonewaiter.dto.order.OrderResponses
+import com.handwoong.everyonewaiter.dto.order.*
 
 interface OrderService {
 
     fun register(storeId: Long, orderRequest: OrderRequests)
 
+    fun callRegister(storeId: Long, orderCallRequest: OrderCallRequest)
+
     fun changeStatusOrderMenu(storeId: Long, orderId: Long, orderMenuId: Long)
+
+    fun changeStatusOrderCall(storeId: Long, orderCallId: Long)
 
     fun changeOrderTableNumber(storeId: Long, beforeTableNumber: Int, afterTableNumber: Int)
 
@@ -17,11 +18,11 @@ interface OrderService {
 
     fun discount(storeId: Long, discountRequest: DiscountRequest)
 
-    fun findAllStoreOrderStatusOrder(storeId: Long): List<OrderResponses>
-
-    fun findAllStoreOrderStatusAdd(storeId: Long): List<OrderResponses>
+    fun findAllStoreStatusNotServe(storeId: Long): List<OrderResponses>
 
     fun findAllStoreOrder(storeId: Long): List<OrderResponses>
+
+    fun findAllStoreOrderCall(storeId: Long): List<OrderCallResponse>
 
     fun deleteOrderMenu(storeId: Long, orderId: Long, orderMenuId: Long)
 
