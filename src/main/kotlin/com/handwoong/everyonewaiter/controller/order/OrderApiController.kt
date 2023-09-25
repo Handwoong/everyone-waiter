@@ -1,9 +1,6 @@
 package com.handwoong.everyonewaiter.controller.order
 
-import com.handwoong.everyonewaiter.dto.order.DiscountRequest
-import com.handwoong.everyonewaiter.dto.order.OrderMenuQtyRequest
-import com.handwoong.everyonewaiter.dto.order.OrderRequests
-import com.handwoong.everyonewaiter.dto.order.OrderResponses
+import com.handwoong.everyonewaiter.dto.order.*
 import com.handwoong.everyonewaiter.service.order.OrderService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.OK
@@ -32,6 +29,15 @@ class OrderApiController(
         return ResponseEntity<Unit>(CREATED)
     }
 
+    @PostMapping("/stores/{storeId}/order/call")
+    fun registerOrderCall(
+        @PathVariable storeId: Long,
+        @RequestBody orderCallRequest: OrderCallRequest,
+    ): ResponseEntity<Unit> {
+        orderService.callRegister(storeId, orderCallRequest)
+        return ResponseEntity<Unit>(CREATED)
+    }
+
     @PutMapping("/stores/{storeId}/orders/{orderId}/serve/{orderMenuId}")
     fun changeStatusOrder(
         @PathVariable storeId: Long,
@@ -40,6 +46,15 @@ class OrderApiController(
     ): ResponseEntity<Unit> {
         orderService.changeStatusOrderMenu(storeId, orderId, orderMenuId)
         return ResponseEntity<Unit>(OK)
+    }
+
+    @PutMapping("/stores/{storeId}/order/call/{orderCallId}")
+    fun changeStatusOrderCall(
+        @PathVariable storeId: Long,
+        @PathVariable orderCallId: Long,
+    ): ResponseEntity<Unit> {
+        orderService.changeStatusOrderCall(storeId, orderCallId)
+        return ResponseEntity(OK)
     }
 
     @PutMapping("/stores/{storeId}/table/before/{beforeTableNumber}/after/{afterTableNumber}")
