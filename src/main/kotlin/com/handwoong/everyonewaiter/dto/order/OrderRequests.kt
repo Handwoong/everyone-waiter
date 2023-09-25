@@ -2,6 +2,7 @@ package com.handwoong.everyonewaiter.dto.order
 
 data class OrderRequests(
     val tableNumber: Int,
+    val memo: String,
     val orderMenus: MutableList<OrderMenuRequest>,
 )
 
@@ -27,4 +28,9 @@ data class OrderMenuQtyRequest(
     val orderId: Long,
     val orderMenuId: Long,
     val qty: Int,
+)
+
+data class OrderCallRequest(
+    val tableNumber: Int,
+    val callDetail: String,
 )
