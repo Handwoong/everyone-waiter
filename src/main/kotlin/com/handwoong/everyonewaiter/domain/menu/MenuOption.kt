@@ -6,4 +6,5 @@ import javax.persistence.Embeddable
 class MenuOption(
     var isSelectSpicy: Boolean,
     var isPrintKitchen: Boolean,
+    var isSoldOut: Boolean = false,
 )

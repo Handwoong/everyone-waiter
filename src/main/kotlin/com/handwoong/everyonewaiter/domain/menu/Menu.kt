@@ -50,7 +50,7 @@ class Menu(
         this.status = menuDto.status
         this.image = menuDto.image
         this.spicy = menuDto.spicy
-        this.option = MenuOption(menuDto.isSelectSpicy, menuDto.isPrintKitchen)
+        this.option = MenuOption(menuDto.isSelectSpicy, menuDto.isPrintKitchen, menuDto.isSoldOut)
         this.sortingSequence = menuDto.sortingSequence
     }
 
