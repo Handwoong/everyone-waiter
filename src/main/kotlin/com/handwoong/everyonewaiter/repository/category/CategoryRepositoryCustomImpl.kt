@@ -38,4 +38,13 @@ class CategoryRepositoryCustomImpl(
             .fetch()
     }
 
+    override fun findAllStoreCategory(storeId: Long): List<Category> {
+        return queryFactory.select(category)
+            .from(category)
+            .where(
+                category.store.id.eq(storeId),
+            )
+            .fetch()
+    }
+
 }

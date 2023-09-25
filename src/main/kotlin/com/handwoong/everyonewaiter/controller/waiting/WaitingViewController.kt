@@ -22,7 +22,7 @@ class WaitingViewController(
         return "waiting/index"
     }
 
-    @GetMapping("/waiting/stores/{storeId}")
+    @GetMapping("/stores/{storeId}/waiting")
     fun waitingRegisterForm(
         @PathVariable storeId: Long,
         model: Model,
@@ -32,7 +32,17 @@ class WaitingViewController(
         return "waiting/register"
     }
 
-    @GetMapping("/waiting/stores/{storeId}/admin")
+    @GetMapping("/stores/{storeId}/waiting/reload")
+    fun waitingRegisterFormReload(
+        @PathVariable storeId: Long,
+        model: Model,
+    ): String {
+        val waitingCount = waitingService.count(getAuthenticationUsername(), storeId)
+        model.addAttribute("countResponse", waitingCount)
+        return "waiting/fragment/register"
+    }
+
+    @GetMapping("/stores/{storeId}/waiting/admin")
     fun waitingAdminPage(
         @PathVariable storeId: Long,
         model: Model,
@@ -43,7 +53,18 @@ class WaitingViewController(
         return "waiting/admin"
     }
 
-    @GetMapping("/waiting/cancel/{waitingId}/stores/{storeId}")
+    @GetMapping("/stores/{storeId}/waiting/admin/reload")
+    fun waitingAdminPageReload(
+        @PathVariable storeId: Long,
+        model: Model,
+    ): String {
+        val waitingList = waitingService.findStatusWaitWaitingList(getAuthenticationUsername(), storeId)
+        model.addAttribute("waitingList", waitingList)
+        model.addAttribute("storeId", storeId)
+        return "waiting/fragment/admin"
+    }
+
+    @GetMapping("/stores/{storeId}/waiting/cancel/{waitingId}")
     fun waitingCancelForm(
         @PathVariable waitingId: UUID,
         @PathVariable storeId: Long,
@@ -55,7 +76,7 @@ class WaitingViewController(
         return "waiting/cancel"
     }
 
-    @GetMapping("/waiting/turn/{waitingId}/stores/{storeId}")
+    @GetMapping("/stores/{storeId}/waiting/turn/{waitingId}")
     fun waitingTurnForm(
         @PathVariable waitingId: UUID,
         @PathVariable storeId: Long,

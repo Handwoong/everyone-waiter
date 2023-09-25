@@ -5,21 +5,11 @@ import com.handwoong.everyonewaiter.domain.waiting.Waiting
 import com.handwoong.everyonewaiter.domain.waiting.WaitingStatus
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
-import java.util.*
-import javax.persistence.LockModeType
 
 @Repository
 class WaitingRepositoryCustomImpl(
     private val queryFactory: JPAQueryFactory,
 ) : WaitingRepositoryCustom {
-
-    override fun findLockWaitingById(waitingId: UUID): Waiting? {
-        return queryFactory.select(waiting)
-            .from(waiting)
-            .where(waiting.id.eq(waitingId))
-            .setLockMode(LockModeType.PESSIMISTIC_WRITE)
-            .fetchFirst()
-    }
 
     override fun count(
         storeId: Long,

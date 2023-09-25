@@ -10,9 +10,11 @@ import com.handwoong.everyonewaiter.domain.waiting.WaitingStatus.*
 import com.handwoong.everyonewaiter.dto.waiting.WaitingCountResponse
 import com.handwoong.everyonewaiter.dto.waiting.WaitingRegisterRequest
 import com.handwoong.everyonewaiter.dto.waiting.WaitingResponse
-import com.handwoong.everyonewaiter.exception.ErrorCode.*
+import com.handwoong.everyonewaiter.exception.ErrorCode.PHONE_EXISTS
+import com.handwoong.everyonewaiter.exception.ErrorCode.STORE_NOT_FOUND
 import com.handwoong.everyonewaiter.repository.store.StoreRepository
 import com.handwoong.everyonewaiter.repository.waiting.WaitingRepository
+import com.handwoong.everyonewaiter.util.RedissonLock
 import com.handwoong.everyonewaiter.util.findByIdOrThrow
 import com.handwoong.everyonewaiter.util.logger
 import com.handwoong.everyonewaiter.util.throwFail
@@ -50,6 +52,7 @@ class WaitingServiceImpl(
     }
 
     @Transactional
+    @RedissonLock(key = "storeId")
     override fun register(username: String, storeId: Long, waitingDto: WaitingRegisterRequest): Int {
         val findStore = existsMemberStore(storeId, username)
         existsPhoneNumber(waitingDto.phoneNumber)
@@ -69,15 +72,17 @@ class WaitingServiceImpl(
     }
 
     @Transactional
+    @RedissonLock(key = "storeId")
     override fun enterWaiting(username: String, storeId: Long, waitingId: UUID) {
         existsMemberStore(storeId, username)
-        val findWaiting = findLockWaitingById(waitingId)
+        val findWaiting = findWaitingById(waitingId)
         changeWaitingStatus(findWaiting, storeId, ENTER)
     }
 
     @Transactional
+    @RedissonLock(key = "storeId")
     override fun cancelWaiting(storeId: Long, waitingId: UUID) {
-        val findWaiting = findLockWaitingById(waitingId)
+        val findWaiting = findWaitingById(waitingId)
         changeWaitingStatus(findWaiting, storeId, CANCEL)
         sendAlimTalk(TemplateType.CANCEL, findWaiting)
     }
@@ -113,10 +118,6 @@ class WaitingServiceImpl(
 
     private fun findWaitingById(waitingId: UUID): Waiting {
         return waitingRepository.findByIdOrThrow(waitingId)
-    }
-
-    private fun findLockWaitingById(waitingId: UUID): Waiting {
-        return waitingRepository.findLockWaitingById(waitingId) ?: throwFail(WAITING_NOT_FOUND)
     }
 
     private fun sendAlimTalk(templateType: TemplateType, waiting: Waiting) {

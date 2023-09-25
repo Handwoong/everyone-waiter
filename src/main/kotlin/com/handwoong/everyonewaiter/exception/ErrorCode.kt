@@ -19,9 +19,19 @@ enum class ErrorCode(
 
     TELEPHONE_EXISTS(BAD_REQUEST, "이미 존재하는 전화번호입니다."),
 
+    ORDER_NOT_AVAILABLE_STATUS(BAD_REQUEST, "변경 불가능한 주문 상태 입니다."),
+
     WAITING_NOT_AVAILABLE_STATUS(BAD_REQUEST, "변경 불가능한 웨이팅 상태 입니다."),
 
+    ORDER_MENU_NOT_AVAILABLE_STATUS(BAD_REQUEST, "변경 불가능한 주문 메뉴 상태 입니다."),
+
+    TABLE_NUMBER_NOT_VALID(BAD_REQUEST, "유효하지 않은 테이블 번호 입니다."),
+
     NOT_MATCH_PASSWORD(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+
+    NOT_VALID_PAYMENT_PRICE(BAD_REQUEST, "결제 금액 정보가 잘못되었습니다."),
+
+    ALREADY_PROCEEDING_PAYMENT(BAD_REQUEST, "이미 진행 중인 결제가 있습니다."),
 
     /**
      * 401 Un Authorized

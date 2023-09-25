@@ -4,27 +4,33 @@ import com.handwoong.everyonewaiter.domain.BaseEntity
 import com.handwoong.everyonewaiter.domain.category.Category
 import com.handwoong.everyonewaiter.dto.menu.MenuRequest
 import javax.persistence.*
-import javax.persistence.FetchType.*
+import javax.persistence.FetchType.LAZY
 
 @Entity
 class Menu(
 
     var name: String,
 
-    var description: String,
+    var description: String?,
 
-    var notice: String,
+    var notice: String?,
 
     var price: Int,
 
     @Enumerated(EnumType.STRING)
     var status: MenuStatus,
 
-    var image: String,
+    var image: String?,
 
     var spicy: Int,
 
     var sortingSequence: Int,
+
+    @Embedded
+    var option: MenuOption,
+
+    @OneToMany(mappedBy = "menu", cascade = [CascadeType.ALL])
+    var customOption: MutableList<MenuCustomOption> = mutableListOf(),
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_id")
@@ -44,6 +50,7 @@ class Menu(
         this.status = menuDto.status
         this.image = menuDto.image
         this.spicy = menuDto.spicy
+        this.option = MenuOption(menuDto.isSelectSpicy, menuDto.isPrintKitchen, menuDto.isSoldOut)
         this.sortingSequence = menuDto.sortingSequence
     }
 
@@ -52,7 +59,7 @@ class Menu(
             menuDto: MenuRequest,
             category: Category,
         ): Menu {
-            return Menu(
+            val menu = Menu(
                 name = menuDto.name,
                 description = menuDto.description,
                 notice = menuDto.notice,
@@ -61,8 +68,14 @@ class Menu(
                 image = menuDto.image,
                 spicy = menuDto.spicy,
                 sortingSequence = category.menuList.size + 1,
+                option = MenuOption(menuDto.isSelectSpicy, menuDto.isPrintKitchen),
                 category = category,
             )
+
+            menuDto.customOption.forEach {
+                menu.customOption.add(MenuCustomOption.createMenuCustomOption(it, menu))
+            }
+            return menu
         }
     }
 

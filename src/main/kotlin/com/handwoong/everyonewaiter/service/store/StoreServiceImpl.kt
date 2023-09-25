@@ -7,6 +7,7 @@ import com.handwoong.everyonewaiter.dto.store.StoreResponse
 import com.handwoong.everyonewaiter.exception.ErrorCode.*
 import com.handwoong.everyonewaiter.repository.member.MemberRepository
 import com.handwoong.everyonewaiter.repository.store.StoreRepository
+import com.handwoong.everyonewaiter.util.findByIdOrThrow
 import com.handwoong.everyonewaiter.util.throwFail
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -47,6 +48,11 @@ class StoreServiceImpl(
 
     override fun findStore(username: String, storeId: Long): StoreResponse {
         val findStore = findMemberStore(storeId, username)
+        return StoreResponse.of(findStore)
+    }
+
+    override fun findStoreById(storeId: Long): StoreResponse {
+        val findStore = storeRepository.findByIdOrThrow(storeId)
         return StoreResponse.of(findStore)
     }
 

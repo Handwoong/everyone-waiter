@@ -7,6 +7,7 @@ import javax.servlet.http.Cookie
 
 const val ONE_DAY_HOUR = 24
 const val HOUR_SECONDS = 3600
+const val ONE_WEEK = 7
 
 fun getAuthentication(): Authentication? {
     return SecurityContextHolder.getContext().authentication
@@ -32,8 +33,8 @@ fun isAuthentication(): Boolean {
 fun createCookie(accessToken: String): Cookie {
     val cookie = Cookie("token", accessToken)
     cookie.path = "/"
-    cookie.maxAge = ONE_DAY_HOUR * HOUR_SECONDS
+    cookie.maxAge = ONE_DAY_HOUR * HOUR_SECONDS * ONE_WEEK
     cookie.isHttpOnly = true
-//    cookie.secure = true
+    cookie.secure = true
     return cookie
 }

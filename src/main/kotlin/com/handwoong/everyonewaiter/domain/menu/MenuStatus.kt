@@ -6,5 +6,5 @@ enum class MenuStatus(
     BASIC("기본"),
     NEW("NEW"),
     BEST("BEST"),
-    HOT("HOT");
+    REPRESENT("대표"),
 }

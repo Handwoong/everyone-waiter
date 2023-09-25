@@ -18,24 +18,30 @@ class SecurityConfig(
 ) : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
-        // 인증 정책
         http.formLogin().disable()
             .httpBasic().disable()
             .csrf().disable()
-            .addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-        // 인가 정책
         http.authorizeRequests()
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-            .antMatchers("/webfonts/**").permitAll()
-            .antMatchers("/", "/members", "/members/register", "/members/login", "/error").permitAll()
-            .antMatchers("/waiting/cancel/**", "/waiting/turn/**").permitAll()
+            .antMatchers(
+                "/webfonts/**", "/",
+                "/members",
+                "/members/register",
+                "/members/login",
+                "/menus/stores/**",
+                "/error",
+                "/stores/*/waiting/cancel/**",
+                "/stores/*/waiting/turn/**",
+            ).permitAll()
             .anyRequest().authenticated()
 
         http.exceptionHandling()
             .accessDeniedHandler(AccessDeniedHandlerCustom())
             .authenticationEntryPoint(AuthenticationEntryPointCustom())
+
+        http.addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Bean

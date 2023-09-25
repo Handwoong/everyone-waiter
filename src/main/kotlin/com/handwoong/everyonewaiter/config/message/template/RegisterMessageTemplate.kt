@@ -21,7 +21,7 @@ class RegisterMessageTemplate(
 
     override fun createTemplateMessage(waiting: Waiting): MutableList<Message> {
         val buttons = mutableListOf(
-            buttonTemplate.createMenuInfoButton(),
+            buttonTemplate.createMenuInfoButton(waiting.store.id!!),
             buttonTemplate.createTurnCheckButton(waiting.store.id!!, waiting.id),
             buttonTemplate.createWaitingCancelButton(waiting.store.id!!, waiting.id),
         )

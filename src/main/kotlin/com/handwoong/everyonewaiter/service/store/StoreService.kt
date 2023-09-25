@@ -13,6 +13,8 @@ interface StoreService {
 
     fun findStore(username: String, storeId: Long): StoreResponse
 
+    fun findStoreById(storeId: Long): StoreResponse
+
     fun findStoreList(username: String): List<StoreResponse>
 
 }

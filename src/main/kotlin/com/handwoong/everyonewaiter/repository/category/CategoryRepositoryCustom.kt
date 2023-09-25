@@ -16,4 +16,8 @@ interface CategoryRepositoryCustom {
         storeId: Long? = null,
     ): List<Category>
 
+    fun findAllStoreCategory(
+        storeId: Long
+    ): List<Category>
+
 }

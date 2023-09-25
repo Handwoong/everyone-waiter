@@ -19,8 +19,8 @@ class MenuServiceImpl(
     private val menuRepository: MenuRepository,
 ) : MenuService {
 
-    override fun findAllStoreMenu(username: String, storeId: Long): List<MenuResponse> {
-        return menuRepository.findAllMenu(username, storeId)
+    override fun findAllStoreMenu(storeId: Long): List<MenuResponse> {
+        return menuRepository.findAllMenu(storeId)
             .map(MenuResponse::of)
     }
 
@@ -32,14 +32,14 @@ class MenuServiceImpl(
     }
 
     @Transactional
-    override fun update(menuDto: MenuRequest, username: String, menuId: Long) {
-        val findMenu = findMemberMenu(username, menuId)
+    override fun update(menuDto: MenuRequest, menuId: Long) {
+        val findMenu = findMemberMenu(menuId)
         findMenu.update(menuDto)
     }
 
     @Transactional
-    override fun delete(username: String, menuId: Long) {
-        val findMenu = findMemberMenu(username, menuId)
+    override fun delete(menuId: Long) {
+        val findMenu = findMemberMenu(menuId)
         menuRepository.delete(findMenu)
     }
 
@@ -50,10 +50,9 @@ class MenuServiceImpl(
         ) ?: throwFail(CATEGORY_NOT_FOUND)
     }
 
-    private fun findMemberMenu(username: String, menuId: Long): Menu {
+    private fun findMemberMenu(menuId: Long): Menu {
         return menuRepository.findMenu(
             menuId = menuId,
-            username = username,
         ) ?: throwFail(MENU_NOT_FOUND)
     }
 

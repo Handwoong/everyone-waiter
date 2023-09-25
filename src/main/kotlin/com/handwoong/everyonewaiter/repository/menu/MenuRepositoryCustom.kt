@@ -9,12 +9,10 @@ interface MenuRepositoryCustom {
         menuId: Long,
         categoryId: Long? = null,
         storeId: Long? = null,
-        username: String? = null,
     ): Menu?
 
     fun findAllMenu(
-        username: String,
-        storeId: Long? = null,
+        storeId: Long,
     ): List<Menu>
 
 }

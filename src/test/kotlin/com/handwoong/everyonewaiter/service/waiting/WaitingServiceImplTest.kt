@@ -251,6 +251,8 @@ class WaitingServiceImplTest @Autowired constructor(
         val store = storeRepository.save(Store.createStore(StoreRequest.testOf(), member))
         val waiting = Waiting.createWaiting(WaitingRegisterRequest.testOf(), store)
         store.addWaiting(waiting)
+        em.flush()
+        em.clear()
 
         // when
         waitingService.cancelWaiting(store.id!!, waiting.id)
@@ -274,13 +276,13 @@ class WaitingServiceImplTest @Autowired constructor(
         store.addWaiting(firstWaiting)
         store.addWaiting(secondWaiting)
         store.addWaiting(thirdWaiting)
+        em.flush()
+        em.clear()
 
         // when
         waitingService.cancelWaiting(store.id!!, secondWaiting.id)
 
         // then
-        em.flush()
-        em.clear()
         val waitingList = waitingRepository.findAll()
         assertThat(waitingList[0].turn).isEqualTo(0)
         assertThat(waitingList[1].turn).isEqualTo(-1)
