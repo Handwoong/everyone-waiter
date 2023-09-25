@@ -34,7 +34,19 @@ class OrderRepositoryCustomImpl(
             .from(order)
             .where(
                 order.store.id.eq(storeId),
-                orderStatus?.let { order.status.eq(orderStatus) }
+                orderStatus?.let { order.status.eq(orderStatus) },
+                order.status.ne(OrderStatus.COMPLETE_PAYMENT),
+            )
+            .orderBy(order.createdAt.asc())
+            .fetch()
+    }
+
+    override fun findAllStoreOrderNotServe(storeId: Long): List<Order> {
+        return queryFactory.select(order)
+            .from(order)
+            .where(
+                order.store.id.eq(storeId),
+                order.status.eq(OrderStatus.ORDER).or(order.status.eq(OrderStatus.ADD)),
             )
             .orderBy(order.createdAt.asc())
             .fetch()
@@ -49,6 +61,7 @@ class OrderRepositoryCustomImpl(
             .where(
                 order.store.id.eq(storeId),
                 tableNumber?.let { order.tableNumber.eq(tableNumber) },
+                order.status.ne(OrderStatus.COMPLETE_PAYMENT),
             )
             .fetch()
     }

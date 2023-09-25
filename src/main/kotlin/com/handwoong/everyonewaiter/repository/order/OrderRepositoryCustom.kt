@@ -15,6 +15,10 @@ interface OrderRepositoryCustom {
         orderStatus: OrderStatus?,
     ): List<Order>
 
+    fun findAllStoreOrderNotServe(
+        storeId: Long,
+    ): List<Order>
+
     fun findStoreTableOrderList(
         storeId: Long,
         tableNumber: Int? = null,
