@@ -32,6 +32,16 @@ class WaitingViewController(
         return "waiting/register"
     }
 
+    @GetMapping("/stores/{storeId}/waiting/reload")
+    fun waitingRegisterFormReload(
+        @PathVariable storeId: Long,
+        model: Model,
+    ): String {
+        val waitingCount = waitingService.count(getAuthenticationUsername(), storeId)
+        model.addAttribute("countResponse", waitingCount)
+        return "waiting/fragment/register"
+    }
+
     @GetMapping("/stores/{storeId}/waiting/admin")
     fun waitingAdminPage(
         @PathVariable storeId: Long,
@@ -41,6 +51,17 @@ class WaitingViewController(
         model.addAttribute("waitingList", waitingList)
         model.addAttribute("storeId", storeId)
         return "waiting/admin"
+    }
+
+    @GetMapping("/stores/{storeId}/waiting/admin/reload")
+    fun waitingAdminPageReload(
+        @PathVariable storeId: Long,
+        model: Model,
+    ): String {
+        val waitingList = waitingService.findStatusWaitWaitingList(getAuthenticationUsername(), storeId)
+        model.addAttribute("waitingList", waitingList)
+        model.addAttribute("storeId", storeId)
+        return "waiting/fragment/admin"
     }
 
     @GetMapping("/stores/{storeId}/waiting/cancel/{waitingId}")

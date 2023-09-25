@@ -4,6 +4,7 @@ import com.handwoong.everyonewaiter.service.category.CategoryService
 import com.handwoong.everyonewaiter.service.menu.MenuService
 import com.handwoong.everyonewaiter.service.order.OrderService
 import com.handwoong.everyonewaiter.service.store.StoreService
+import com.handwoong.everyonewaiter.service.waiting.WaitingService
 import com.handwoong.everyonewaiter.util.getAuthenticationUsername
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable
 @Controller
 class OrderViewController(
     private val storeService: StoreService,
+    private val waitingService: WaitingService,
     private val categoryService: CategoryService,
     private val menuService: MenuService,
     private val orderService: OrderService,
@@ -30,7 +32,7 @@ class OrderViewController(
         @PathVariable storeId: Long,
         model: Model,
     ): String {
-        val categoryList = categoryService.findAllStoreCategory(getAuthenticationUsername(), storeId)
+        val categoryList = categoryService.findAllUserCategory(getAuthenticationUsername(), storeId)
         val menuList = menuService.findAllStoreMenu(storeId)
         val findAllStoreOrderList = orderService.findAllStoreOrder(storeId)
 
@@ -47,7 +49,7 @@ class OrderViewController(
         @PathVariable tableNumber: Long,
         model: Model,
     ): String {
-        val categoryList = categoryService.findAllStoreCategory(getAuthenticationUsername(), storeId)
+        val categoryList = categoryService.findAllUserCategory(getAuthenticationUsername(), storeId)
         val menuList = menuService.findAllStoreMenu(storeId)
 
         pageStoreData(storeId, model)
@@ -63,7 +65,21 @@ class OrderViewController(
     ): String {
         pageStoreData(storeId, model)
         pageOrderData(storeId, model)
+        val waitingList = waitingService.findStatusWaitWaitingList(getAuthenticationUsername(), storeId)
+        model.addAttribute("waitingList", waitingList)
         return "orders/serve"
+    }
+
+    @GetMapping("/stores/{storeId}/orders/serve/reload")
+    fun orderServePageReload(
+        @PathVariable storeId: Long,
+        model: Model,
+    ): String {
+        pageStoreData(storeId, model)
+        pageOrderData(storeId, model)
+        val waitingList = waitingService.findStatusWaitWaitingList(getAuthenticationUsername(), storeId)
+        model.addAttribute("waitingList", waitingList)
+        return "orders/fragment/serve"
     }
 
     @GetMapping("/stores/{storeId}/orders/pos")
@@ -84,10 +100,10 @@ class OrderViewController(
     }
 
     private fun pageOrderData(storeId: Long, model: Model) {
-        val orderList = orderService.findAllStoreOrderStatusOrder(storeId)
-        val addOrderList = orderService.findAllStoreOrderStatusAdd(storeId)
+        val orderList = orderService.findAllStoreStatusNotServe(storeId)
+        val orderCallList = orderService.findAllStoreOrderCall(storeId)
         model.addAttribute("orderList", orderList)
-        model.addAttribute("addOrderList", addOrderList)
+        model.addAttribute("orderCallList", orderCallList)
     }
 
 }
