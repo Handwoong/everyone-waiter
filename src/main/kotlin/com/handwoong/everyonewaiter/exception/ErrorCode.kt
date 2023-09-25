@@ -29,6 +29,10 @@ enum class ErrorCode(
 
     NOT_MATCH_PASSWORD(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 
+    NOT_VALID_PAYMENT_PRICE(BAD_REQUEST, "결제 금액 정보가 잘못되었습니다."),
+
+    ALREADY_PROCEEDING_PAYMENT(BAD_REQUEST, "이미 진행 중인 결제가 있습니다."),
+
     /**
      * 401 Un Authorized
      */
