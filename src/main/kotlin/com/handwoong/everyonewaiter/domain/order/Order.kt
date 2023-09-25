@@ -3,9 +3,10 @@ package com.handwoong.everyonewaiter.domain.order
 import com.handwoong.everyonewaiter.domain.BaseEntity
 import com.handwoong.everyonewaiter.domain.order.OrderMenuStatus.SERVED
 import com.handwoong.everyonewaiter.domain.order.OrderStatus.ORDER
+import com.handwoong.everyonewaiter.domain.order.OrderStatus.PAYING
+import com.handwoong.everyonewaiter.domain.payment.Payment
 import com.handwoong.everyonewaiter.domain.store.Store
-import com.handwoong.everyonewaiter.exception.ErrorCode.ORDER_NOT_AVAILABLE_STATUS
-import com.handwoong.everyonewaiter.exception.ErrorCode.TABLE_NUMBER_NOT_VALID
+import com.handwoong.everyonewaiter.exception.ErrorCode.*
 import com.handwoong.everyonewaiter.util.throwFail
 import javax.persistence.*
 import javax.persistence.FetchType.LAZY
@@ -20,6 +21,8 @@ class Order(
 
     var discountPrice: Int = 0,
 
+    val memo: String = "",
+
     @Enumerated(EnumType.STRING)
     var status: OrderStatus,
 
@@ -30,6 +33,10 @@ class Order(
     @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL], orphanRemoval = true)
     val orderMenuList: MutableList<OrderMenu> = mutableListOf(),
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "payment_id")
+    var payment: Payment? = null,
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
@@ -39,6 +46,14 @@ class Order(
     fun addOrderMenu(orderMenu: OrderMenu) {
         orderMenuList.add(orderMenu)
         orderMenu.addOrder(this)
+    }
+
+    fun addPayment(payment: Payment) {
+        this.payment = payment
+
+        if (status == OrderStatus.SERVED) {
+            this.changeOrderStatus(PAYING)
+        }
     }
 
     fun servedMenu(orderMenuId: Long) {
@@ -70,7 +85,16 @@ class Order(
         if (tableNumber <= 0 || tableNumber > 15) {
             throwFail(TABLE_NUMBER_NOT_VALID)
         }
-        this.tableNumber = tableNumber
+
+        if (this.tableNumber != tableNumber) {
+            this.tableNumber = tableNumber
+        }
+
+        payment.let { payment ->
+            if (payment?.approve?.size != 0) {
+                throwFail(ALREADY_PROCEEDING_PAYMENT)
+            }
+        }
     }
 
     fun changeOrderMenuQty(orderMenuId: Long, qty: Int) {
@@ -83,14 +107,17 @@ class Order(
 
     fun increaseTotalPrice(price: Int) {
         totalPrice += price
+        payment.let { payment -> payment?.increaseTotalPrice(price) }
     }
 
     fun decreaseTotalPrice(price: Int) {
         totalPrice -= price
+        payment.let { payment -> payment?.decreaseTotalPrice(price) }
     }
 
     fun discount(price: Int) {
         discountPrice += price
+        payment.let { payment -> payment?.discount(price) }
     }
 
     fun deleteOrderMenu(orderMenuId: Long) {
@@ -113,12 +140,14 @@ class Order(
         fun createOrder(
             tableNumber: Int,
             store: Store,
+            memo: String,
             status: OrderStatus = ORDER,
             vararg orderMenu: OrderMenu,
         ): Order {
             val newOrder = Order(
                 tableNumber = tableNumber,
                 store = store,
+                memo = memo,
                 status = status,
             )
             orderMenu.forEach {
