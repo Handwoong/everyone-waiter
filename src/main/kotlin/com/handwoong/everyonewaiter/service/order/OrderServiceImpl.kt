@@ -133,6 +133,7 @@ class OrderServiceImpl(
 
         if (findOrder.orderMenuList.isEmpty()) {
             findOrder.payment.let { payment ->
+                payment?.cancelDiscount(findOrder.discountPrice)
                 if (payment?.orderList?.size == 1) {
                     paymentRepository.delete(payment)
                 }

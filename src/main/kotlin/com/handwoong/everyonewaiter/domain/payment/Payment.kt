@@ -61,6 +61,10 @@ class Payment(
         discount += price
     }
 
+    fun cancelDiscount(price: Int) {
+        discount -= price
+    }
+
     fun pay(paymentRequest: PaymentRequest) {
         if (tableNumber != paymentRequest.tableNumber) {
             return
@@ -100,9 +104,11 @@ class Payment(
     fun reloadPayment(
         cash: Int,
         card: Int,
+        discount: Int,
     ) {
         this.cash += cash
         this.card += card
+        this.discount += discount
     }
 
     private fun addPaymentApprove(paymentRequest: PaymentRequest) {
