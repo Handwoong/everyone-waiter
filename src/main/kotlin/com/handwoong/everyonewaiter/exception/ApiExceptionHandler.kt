@@ -29,7 +29,7 @@ class ApiExceptionHandler {
     fun handleException(error: Exception): ResponseEntity<ErrorResponse> {
         val errorCode = ErrorCode.SERVER_ERROR
         log.error("[${errorCode.name}] ${errorCode.status} ${errorCode.message}")
-        log.error("${error.message} ${error.stackTrace[0]}")
+        log.error("${error.message} ${error.printStackTrace()}")
         return ErrorResponse.of(errorCode)
     }
 
