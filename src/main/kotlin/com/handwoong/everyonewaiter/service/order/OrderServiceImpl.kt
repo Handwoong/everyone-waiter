@@ -30,6 +30,7 @@ class OrderServiceImpl(
     override fun register(storeId: Long, orderRequest: OrderRequests) {
         val store = storeRepository.findByIdOrThrow(storeId)
         val isExistsOrder = orderRepository.existsOrder(storeId, orderRequest.tableNumber)
+        val findTablePayment = paymentRepository.findTablePayment(storeId, orderRequest.tableNumber)
 
         val orderMenuList = orderRequest.orderMenus.map { menu ->
             val findMenu = menuRepository.findByIdOrThrow(menu.menuId)
@@ -44,6 +45,10 @@ class OrderServiceImpl(
 
         if (isExistsOrder) {
             createOrder.changeOrderStatus(OrderStatus.ADD)
+        }
+
+        if (findTablePayment.isNotEmpty()) {
+            findTablePayment[0].addOrder(createOrder)
         }
 
         orderRepository.save(createOrder)
@@ -127,7 +132,12 @@ class OrderServiceImpl(
         findOrder.deleteOrderMenu(orderMenuId)
 
         if (findOrder.orderMenuList.isEmpty()) {
-            orderRepository.deleteById(findOrder.id!!)
+            findOrder.payment.let { payment ->
+                if (payment?.orderList?.size == 1) {
+                    paymentRepository.delete(payment)
+                }
+            }
+            orderRepository.delete(findOrder)
         }
     }
 
