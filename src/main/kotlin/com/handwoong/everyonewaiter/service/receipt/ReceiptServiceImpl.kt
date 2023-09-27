@@ -31,7 +31,8 @@ class ReceiptServiceImpl(
 
     override fun findStoreReceiptList(storeId: Long): List<ReceiptResponse> {
         val receiptList = receiptRepository.findAllStorePrint(storeId)
-        return receiptList.map { receipt -> ReceiptResponse.of(receipt) }
+        val receiptCount = receiptRepository.findTodayReceiptCount(storeId)
+        return receiptList.map { receipt -> ReceiptResponse.of(receipt, receiptCount) }
     }
 
 }
