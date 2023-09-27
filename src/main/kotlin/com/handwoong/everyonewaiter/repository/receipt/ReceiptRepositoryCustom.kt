@@ -6,4 +6,6 @@ interface ReceiptRepositoryCustom {
 
     fun findAllStorePrint(storeId: Long): List<Receipt>
 
+    fun findTodayReceiptCount(storeId: Long): Long
+
 }
