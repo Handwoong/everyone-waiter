@@ -136,6 +136,10 @@ class Order(
         totalPrice -= orderMenu.orderPrice
     }
 
+    fun disconnectPayment() {
+        this.payment = null
+    }
+
     companion object {
         fun createOrder(
             tableNumber: Int,

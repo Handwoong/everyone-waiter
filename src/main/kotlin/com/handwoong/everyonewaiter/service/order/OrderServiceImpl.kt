@@ -135,6 +135,7 @@ class OrderServiceImpl(
             findOrder.payment.let { payment ->
                 payment?.cancelDiscount(findOrder.discountPrice)
                 if (payment?.orderList?.size == 1) {
+                    payment.disconnectOrder(findOrder)
                     paymentRepository.delete(payment)
                 }
             }

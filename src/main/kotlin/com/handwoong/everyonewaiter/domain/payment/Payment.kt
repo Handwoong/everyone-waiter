@@ -111,6 +111,18 @@ class Payment(
         this.discount += discount
     }
 
+    fun disconnectOrder(targetOrder: Order) {
+        val iterator = orderList.iterator()
+        while (iterator.hasNext()) {
+            val order = iterator.next()
+            if (order.id == targetOrder.id) {
+                order.disconnectPayment()
+                iterator.remove()
+                break
+            }
+        }
+    }
+
     private fun addPaymentApprove(paymentRequest: PaymentRequest) {
         if (paymentRequest.approveType == ApproveType.CARD) {
             if (paymentRequest.approveNumber.isEmpty() || paymentRequest.approveDate.isEmpty()) {
