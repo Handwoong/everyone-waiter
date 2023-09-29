@@ -110,16 +110,19 @@ class OrderServiceImpl(
         orderList[0].discount(discountRequest.discountPrice)
     }
 
+    @ExcludeLog
     override fun findAllStoreStatusNotServe(storeId: Long): List<OrderResponses> {
         val findAllStoreAddOrder = orderRepository.findAllStoreOrderNotServe(storeId)
         return findAllStoreAddOrder.map { order -> OrderResponses.of(order) }
     }
 
+    @ExcludeLog
     override fun findAllStoreOrder(storeId: Long): List<OrderResponses> {
         val findStoreNotPaymentOrder = orderRepository.findStoreTableOrderList(storeId)
         return findStoreNotPaymentOrder.map { order -> OrderResponses.of(order) }
     }
 
+    @ExcludeLog
     override fun findAllStoreOrderCall(storeId: Long): List<OrderCallResponse> {
         val findAllStoreOrderCall = orderCallRepository.findAllStoreOrderCall(storeId)
         return findAllStoreOrderCall.map { orderCall -> OrderCallResponse.of(orderCall) }
