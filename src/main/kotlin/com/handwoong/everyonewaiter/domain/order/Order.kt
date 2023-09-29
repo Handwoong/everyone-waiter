@@ -90,8 +90,8 @@ class Order(
             this.tableNumber = tableNumber
         }
 
-        payment.let { payment ->
-            if (payment?.approve?.size != 0) {
+        payment?.let { payment ->
+            if (payment.approve.size != 0) {
                 throwFail(ALREADY_PROCEEDING_PAYMENT)
             }
         }
@@ -107,17 +107,17 @@ class Order(
 
     fun increaseTotalPrice(price: Int) {
         totalPrice += price
-        payment.let { payment -> payment?.increaseTotalPrice(price) }
+        payment?.increaseTotalPrice(price)
     }
 
     fun decreaseTotalPrice(price: Int) {
         totalPrice -= price
-        payment.let { payment -> payment?.decreaseTotalPrice(price) }
+        payment?.decreaseTotalPrice(price)
     }
 
     fun discount(price: Int) {
         discountPrice += price
-        payment.let { payment -> payment?.discount(price) }
+        payment?.discount(price)
     }
 
     fun deleteOrderMenu(orderMenuId: Long) {

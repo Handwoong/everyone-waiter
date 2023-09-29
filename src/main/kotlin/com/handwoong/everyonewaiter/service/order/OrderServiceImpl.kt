@@ -11,6 +11,7 @@ import com.handwoong.everyonewaiter.repository.order.OrderRepository
 import com.handwoong.everyonewaiter.repository.ordercall.OrderCallRepository
 import com.handwoong.everyonewaiter.repository.payment.PaymentRepository
 import com.handwoong.everyonewaiter.repository.store.StoreRepository
+import com.handwoong.everyonewaiter.util.ExcludeLog
 import com.handwoong.everyonewaiter.util.findByIdOrThrow
 import com.handwoong.everyonewaiter.util.throwFail
 import org.springframework.stereotype.Service
@@ -84,11 +85,11 @@ class OrderServiceImpl(
         afterTableOrderList.forEach { order -> order.changeTableNumber(afterTableNumber) }
 
         if (beforeTableOrderList.isNotEmpty()) {
-            beforeTableOrderList[0].payment.let { payment -> paymentRepository.delete(payment!!) }
+            beforeTableOrderList[0].payment?.let { payment -> paymentRepository.delete(payment) }
         }
 
         if (afterTableOrderList.isNotEmpty()) {
-            afterTableOrderList[0].payment.let { payment -> paymentRepository.delete(payment!!) }
+            afterTableOrderList[0].payment?.let { payment -> paymentRepository.delete(payment) }
         }
     }
 
@@ -135,9 +136,9 @@ class OrderServiceImpl(
         findOrder.deleteOrderMenu(orderMenuId)
 
         if (findOrder.orderMenuList.isEmpty()) {
-            findOrder.payment.let { payment ->
-                payment?.cancelDiscount(findOrder.discountPrice)
-                if (payment?.orderList?.size == 1) {
+            findOrder.payment?.let { payment ->
+                payment.cancelDiscount(findOrder.discountPrice)
+                if (payment.orderList.size == 1) {
                     payment.disconnectOrder(findOrder)
                     paymentRepository.delete(payment)
                 }
