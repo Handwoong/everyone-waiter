@@ -123,6 +123,10 @@ class Payment(
         }
     }
 
+    fun disconnectOrderList() {
+        orderList.clear()
+    }
+
     private fun addPaymentApprove(paymentRequest: PaymentRequest) {
         if (paymentRequest.approveType == ApproveType.CARD) {
             if (paymentRequest.approveNumber.isEmpty() || paymentRequest.approveDate.isEmpty()) {

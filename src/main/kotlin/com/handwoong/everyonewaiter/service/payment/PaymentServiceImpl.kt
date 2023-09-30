@@ -40,15 +40,16 @@ class PaymentServiceImpl(
             val createPayment = Payment.createPayment(PaymentRegisterRequest(tableNumber), store)
             val orderList = orderRepository.findStoreTableOrderList(storeId, tableNumber)
 
+            orderList.forEach { createPayment.addOrder(it) }
             tablePaymentList.forEach { payment ->
+                payment.disconnectOrderList()
                 createPayment.reloadPayment(
                     cash = payment.cash,
                     card = payment.card,
                     discount = payment.discount,
                 )
-                paymentRepository.deleteById(payment.id!!)
+                paymentRepository.delete(payment)
             }
-            orderList.forEach { createPayment.addOrder(it) }
 
             paymentRepository.save(createPayment)
             PaymentExistsResponse.of(createPayment.id!!)
