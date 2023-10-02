@@ -29,11 +29,11 @@
 
 **주문**<br/>
 <br/>
-<img width="50%" src="https://github.com/Handwoong/everyone-waiter/assets/95131477/43fde41c-b3c5-4e61-bbf0-7a237411c649">
+<img src="https://github.com/Handwoong/everyone-waiter/blob/eebd4f33f246f212404313ef782ec398dd9ca64d/docs/%EC%A3%BC%EB%AC%B8.gif">
 
 **결제**<br/>
 <br/>
-<img width="50%" src="https://github.com/Handwoong/everyone-waiter/assets/95131477/3b25daf2-d9d3-4957-9186-763b0dbbd058">
+<img src="https://github.com/Handwoong/everyone-waiter/blob/eebd4f33f246f212404313ef782ec398dd9ca64d/docs/%EA%B2%B0%EC%A0%9C.gif">
 
 ## 기능 소개
 
