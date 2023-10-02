@@ -31,6 +31,7 @@ class MenuRepositoryCustomImpl(
         return queryFactory.select(menu)
             .from(menu)
             .where(menu.category.store.id.eq(storeId))
+            .orderBy(menu.createdAt.asc())
             .fetch()
     }
 
