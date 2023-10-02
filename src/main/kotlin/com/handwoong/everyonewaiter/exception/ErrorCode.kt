@@ -33,6 +33,8 @@ enum class ErrorCode(
 
     ALREADY_PROCEEDING_PAYMENT(BAD_REQUEST, "이미 진행 중인 결제가 있습니다."),
 
+    IS_SOLD_OUT_MENU(BAD_REQUEST, "SOLD OUT 메뉴가 포함되어 있습니다."),
+
     /**
      * 401 Un Authorized
      */
