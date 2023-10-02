@@ -5,19 +5,21 @@ import com.handwoong.everyonewaiter.domain.receipt.ReceiptMenu
 
 data class ReceiptResponse(
     val id: Long,
+    val printIdx: Long,
     val tableNumber: Int,
     val memo: String,
     val receiptMenuList: List<ReceiptMenuResponse>,
 ) {
 
     companion object {
-        fun of(receipt: Receipt): ReceiptResponse {
+        fun of(receipt: Receipt, printIdx: Long): ReceiptResponse {
             val receiptMenuResponseList = receipt.menuList.map { printMenu -> ReceiptMenuResponse.of(printMenu) }
             return ReceiptResponse(
                 id = receipt.id!!,
                 tableNumber = receipt.tableNumber,
                 memo = receipt.memo,
                 receiptMenuList = receiptMenuResponseList,
+                printIdx = printIdx,
             )
         }
     }

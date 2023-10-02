@@ -57,13 +57,12 @@ class WaitingServiceImpl(
         val findStore = existsMemberStore(storeId, username)
         existsPhoneNumber(waitingDto.phoneNumber)
 
-        val lastWaiting = waitingRepository.findLastWaiting(storeId)
         val statusWaitLastWaiting = waitingRepository.findLastWaiting(storeId, WAIT)
 
         val createWaiting = Waiting.createWaiting(
             waitingDto = waitingDto,
             store = findStore,
-            number = lastWaiting?.number?.let { it + 1 } ?: 1,
+            number = statusWaitLastWaiting?.number?.let { it + 1 } ?: 1,
             turn = statusWaitLastWaiting?.turn?.let { it + 1 } ?: 0,
         )
         sendAlimTalk(TemplateType.REGISTER, createWaiting)

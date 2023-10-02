@@ -27,7 +27,10 @@ class WaitingRepositoryCustomImpl(
     override fun existsPhoneNumber(phoneNumber: String): Boolean {
         val findWaiting = queryFactory.select(waiting)
             .from(waiting)
-            .where(waiting.phoneNumber.eq(phoneNumber))
+            .where(
+                waiting.phoneNumber.eq(phoneNumber),
+                waiting.status.eq(WaitingStatus.WAIT),
+            )
             .fetchFirst()
         return findWaiting != null
     }

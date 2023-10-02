@@ -61,6 +61,10 @@ class Payment(
         discount += price
     }
 
+    fun cancelDiscount(price: Int) {
+        discount -= price
+    }
+
     fun pay(paymentRequest: PaymentRequest) {
         if (tableNumber != paymentRequest.tableNumber) {
             return
@@ -100,9 +104,27 @@ class Payment(
     fun reloadPayment(
         cash: Int,
         card: Int,
+        discount: Int,
     ) {
         this.cash += cash
         this.card += card
+        this.discount += discount
+    }
+
+    fun disconnectOrder(targetOrder: Order) {
+        val iterator = orderList.iterator()
+        while (iterator.hasNext()) {
+            val order = iterator.next()
+            if (order.id == targetOrder.id) {
+                order.disconnectPayment()
+                iterator.remove()
+                break
+            }
+        }
+    }
+
+    fun disconnectOrderList() {
+        orderList.clear()
     }
 
     private fun addPaymentApprove(paymentRequest: PaymentRequest) {

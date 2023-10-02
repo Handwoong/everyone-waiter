@@ -26,6 +26,12 @@ class PaymentServiceImpl(
         val store = storeRepository.findByIdOrThrow(storeId)
         val tablePaymentList = paymentRepository.findTablePayment(storeId, tableNumber)
 
+        tablePaymentList.forEach { payment: Payment ->
+            if (payment.orderList.isEmpty()) {
+                paymentRepository.delete(payment)
+            }
+        }
+
         return if (tablePaymentList.isEmpty()) {
             PaymentExistsResponse.of(0L)
         } else if (tablePaymentList.size == 1) {
@@ -34,14 +40,16 @@ class PaymentServiceImpl(
             val createPayment = Payment.createPayment(PaymentRegisterRequest(tableNumber), store)
             val orderList = orderRepository.findStoreTableOrderList(storeId, tableNumber)
 
+            orderList.forEach { createPayment.addOrder(it) }
             tablePaymentList.forEach { payment ->
+                payment.disconnectOrderList()
                 createPayment.reloadPayment(
                     cash = payment.cash,
                     card = payment.card,
+                    discount = payment.discount,
                 )
-                paymentRepository.deleteById(payment.id!!)
+                paymentRepository.delete(payment)
             }
-            orderList.forEach { createPayment.addOrder(it) }
 
             paymentRepository.save(createPayment)
             PaymentExistsResponse.of(createPayment.id!!)

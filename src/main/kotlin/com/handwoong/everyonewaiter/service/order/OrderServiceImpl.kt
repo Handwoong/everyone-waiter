@@ -11,6 +11,7 @@ import com.handwoong.everyonewaiter.repository.order.OrderRepository
 import com.handwoong.everyonewaiter.repository.ordercall.OrderCallRepository
 import com.handwoong.everyonewaiter.repository.payment.PaymentRepository
 import com.handwoong.everyonewaiter.repository.store.StoreRepository
+import com.handwoong.everyonewaiter.util.ExcludeLog
 import com.handwoong.everyonewaiter.util.findByIdOrThrow
 import com.handwoong.everyonewaiter.util.throwFail
 import org.springframework.stereotype.Service
@@ -30,6 +31,7 @@ class OrderServiceImpl(
     override fun register(storeId: Long, orderRequest: OrderRequests) {
         val store = storeRepository.findByIdOrThrow(storeId)
         val isExistsOrder = orderRepository.existsOrder(storeId, orderRequest.tableNumber)
+        val findTablePayment = paymentRepository.findTablePayment(storeId, orderRequest.tableNumber)
 
         val orderMenuList = orderRequest.orderMenus.map { menu ->
             val findMenu = menuRepository.findByIdOrThrow(menu.menuId)
@@ -44,6 +46,10 @@ class OrderServiceImpl(
 
         if (isExistsOrder) {
             createOrder.changeOrderStatus(OrderStatus.ADD)
+        }
+
+        if (findTablePayment.isNotEmpty()) {
+            findTablePayment[0].addOrder(createOrder)
         }
 
         orderRepository.save(createOrder)
@@ -79,11 +85,11 @@ class OrderServiceImpl(
         afterTableOrderList.forEach { order -> order.changeTableNumber(afterTableNumber) }
 
         if (beforeTableOrderList.isNotEmpty()) {
-            beforeTableOrderList[0].payment.let { payment -> paymentRepository.delete(payment!!) }
+            beforeTableOrderList[0].payment?.let { payment -> paymentRepository.delete(payment) }
         }
 
         if (afterTableOrderList.isNotEmpty()) {
-            afterTableOrderList[0].payment.let { payment -> paymentRepository.delete(payment!!) }
+            afterTableOrderList[0].payment?.let { payment -> paymentRepository.delete(payment) }
         }
     }
 
@@ -105,16 +111,19 @@ class OrderServiceImpl(
         orderList[0].discount(discountRequest.discountPrice)
     }
 
+    @ExcludeLog
     override fun findAllStoreStatusNotServe(storeId: Long): List<OrderResponses> {
         val findAllStoreAddOrder = orderRepository.findAllStoreOrderNotServe(storeId)
         return findAllStoreAddOrder.map { order -> OrderResponses.of(order) }
     }
 
+    @ExcludeLog
     override fun findAllStoreOrder(storeId: Long): List<OrderResponses> {
         val findStoreNotPaymentOrder = orderRepository.findStoreTableOrderList(storeId)
         return findStoreNotPaymentOrder.map { order -> OrderResponses.of(order) }
     }
 
+    @ExcludeLog
     override fun findAllStoreOrderCall(storeId: Long): List<OrderCallResponse> {
         val findAllStoreOrderCall = orderCallRepository.findAllStoreOrderCall(storeId)
         return findAllStoreOrderCall.map { orderCall -> OrderCallResponse.of(orderCall) }
@@ -127,7 +136,14 @@ class OrderServiceImpl(
         findOrder.deleteOrderMenu(orderMenuId)
 
         if (findOrder.orderMenuList.isEmpty()) {
-            orderRepository.deleteById(findOrder.id!!)
+            findOrder.payment?.let { payment ->
+                payment.cancelDiscount(findOrder.discountPrice)
+                if (payment.orderList.size == 1) {
+                    payment.disconnectOrder(findOrder)
+                    paymentRepository.delete(payment)
+                }
+            }
+            orderRepository.delete(findOrder)
         }
     }
 

@@ -16,6 +16,7 @@ data class WaitingResponse(
     val status: WaitingStatus,
     val messageStatus: WaitingMessageStatus,
     val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
 ) {
 
     companion object {
@@ -30,6 +31,7 @@ data class WaitingResponse(
                 status = waiting.status,
                 messageStatus = waiting.messageStatus,
                 createdAt = waiting.createdAt,
+                updatedAt = waiting.updatedAt,
             )
         }
     }
