@@ -10,6 +10,7 @@
 - [모두의 웨이터](#모두의-웨이터)
     - [목차](#목차)
     - [서비스 개요](#서비스-개요)
+    - [서비스 시연](#서비스-시연)
     - [기능 소개](#기능-소개)
     - [개발 환경](#개발-환경)
     - [ERD](#erd)
@@ -24,6 +25,16 @@
 타 서비스 **장비 대여비용 및 관리비용 1500만원 -> 300만원**으로 비용을 $\frac{1}{5}$로 절감 할 수 있습니다.<br/>
 또한 주말 기준 홀 인원 3인 -> 2인으로 1인 구인효과로 **매달 약 800,000원**의 인건비를 절감 할 수 있습니다.<br/>
 
+## 서비스 시연
+
+**주문**<br/>
+<br/>
+<img width="50%" src="https://github.com/Handwoong/everyone-waiter/assets/95131477/43fde41c-b3c5-4e61-bbf0-7a237411c649">
+
+**결제**<br/>
+<br/>
+<img width="50%" src="https://github.com/Handwoong/everyone-waiter/assets/95131477/3b25daf2-d9d3-4957-9186-763b0dbbd058">
+
 ## 기능 소개
 
 [기능 소개 WIKI](https://github.com/Handwoong/everyone-waiter/wiki/Introduce)<br/>
@@ -36,6 +47,7 @@
 - OpenJDK 11.0.18
 - SpringBoot 2.6.15
 - QueryDsl 5.0.0
+- Thymeleaf 3.0.15
 
 **DB**
 
