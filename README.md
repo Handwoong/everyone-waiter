@@ -1,5 +1,8 @@
 # 모두의 웨이터
 
+<img width="1281" alt="image" src="https://github.com/Handwoong/everyone-waiter/assets/95131477/66790928-117b-413a-9be8-71785175565e">
+<br/>
+<br/>
 매장의 웨이팅을 관리하고 손님이 테이블에서 태블릿을 통해 메뉴를 주문하고 카운터에서 주문/결제를 관리할 수 있는 서비스입니다.
 
 ## 목차
