@@ -4,4 +4,5 @@ enum class StoreStatus {
     OPEN,
     REST,
     CLOSE,
+    DELETE,
 }
