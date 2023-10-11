@@ -16,7 +16,7 @@ class Category(
     var icon: String,
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "store_id")
     val store: Store,
 
     @OneToMany(mappedBy = "category", cascade = [CascadeType.ALL])
