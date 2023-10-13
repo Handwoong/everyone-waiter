@@ -38,6 +38,15 @@ class OrderApiController(
         return ResponseEntity<Unit>(CREATED)
     }
 
+    @PutMapping("/stores/{storeId}/orders/{orderId}/serve")
+    fun changeStatusAllOrder(
+        @PathVariable storeId: Long,
+        @PathVariable orderId: Long,
+    ): ResponseEntity<Unit> {
+        orderService.changeStatusAllOrderMenu(storeId, orderId)
+        return ResponseEntity<Unit>(OK)
+    }
+
     @PutMapping("/stores/{storeId}/orders/{orderId}/serve/{orderMenuId}")
     fun changeStatusOrder(
         @PathVariable storeId: Long,

@@ -63,6 +63,13 @@ class OrderServiceImpl(
     }
 
     @Transactional
+    override fun changeStatusAllOrderMenu(storeId: Long, orderId: Long) {
+        storeRepository.findByIdOrThrow(storeId)
+        val order = orderRepository.findByIdOrThrow(orderId)
+        order.changeOrderStatus(OrderStatus.SERVED)
+    }
+
+    @Transactional
     override fun changeStatusOrderMenu(storeId: Long, orderId: Long, orderMenuId: Long) {
         storeRepository.findByIdOrThrow(storeId)
         val order = orderRepository.findByIdOrThrow(orderId)

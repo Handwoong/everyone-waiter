@@ -8,6 +8,8 @@ interface OrderService {
 
     fun callRegister(storeId: Long, orderCallRequest: OrderCallRequest)
 
+    fun changeStatusAllOrderMenu(storeId: Long, orderId: Long)
+    
     fun changeStatusOrderMenu(storeId: Long, orderId: Long, orderMenuId: Long)
 
     fun changeStatusOrderCall(storeId: Long, orderCallId: Long)
