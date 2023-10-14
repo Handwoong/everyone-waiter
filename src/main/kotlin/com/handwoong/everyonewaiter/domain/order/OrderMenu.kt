@@ -5,7 +5,6 @@ import com.handwoong.everyonewaiter.domain.menu.Menu
 import com.handwoong.everyonewaiter.domain.order.OrderMenuStatus.READY
 import com.handwoong.everyonewaiter.dto.order.OrderMenuRequest
 import com.handwoong.everyonewaiter.exception.ErrorCode.IS_SOLD_OUT_MENU
-import com.handwoong.everyonewaiter.exception.ErrorCode.ORDER_MENU_NOT_AVAILABLE_STATUS
 import com.handwoong.everyonewaiter.util.throwFail
 import javax.persistence.*
 import javax.persistence.FetchType.LAZY
@@ -47,9 +46,6 @@ class OrderMenu(
     }
 
     fun changeStatus(status: OrderMenuStatus) {
-        if (status == READY) {
-            throwFail(ORDER_MENU_NOT_AVAILABLE_STATUS)
-        }
         menuStatus = status
     }
 

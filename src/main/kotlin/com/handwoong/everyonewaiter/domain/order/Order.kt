@@ -1,7 +1,6 @@
 package com.handwoong.everyonewaiter.domain.order
 
 import com.handwoong.everyonewaiter.domain.BaseEntity
-import com.handwoong.everyonewaiter.domain.order.OrderMenuStatus.SERVED
 import com.handwoong.everyonewaiter.domain.order.OrderStatus.ORDER
 import com.handwoong.everyonewaiter.domain.order.OrderStatus.PAYING
 import com.handwoong.everyonewaiter.domain.payment.Payment
@@ -57,20 +56,17 @@ class Order(
     }
 
     fun servedMenu(orderMenuId: Long) {
-        var isNotServedStatus = false
-
-        orderMenuList.forEach { orderMenu ->
-            if (orderMenu.id == orderMenuId) {
-                orderMenu.changeStatus(SERVED)
-            }
-
-            if (orderMenu.menuStatus != SERVED) {
-                isNotServedStatus = true
-            }
+        val findOrderMenu = orderMenuList.first { orderMenu ->
+            orderMenu.id == orderMenuId
         }
 
-        if (!isNotServedStatus) {
-            this.changeOrderStatus(OrderStatus.SERVED)
+        if (findOrderMenu.menuStatus == OrderMenuStatus.READY) {
+            findOrderMenu.changeStatus(OrderMenuStatus.SERVED)
+            return
+        }
+
+        if (findOrderMenu.menuStatus == OrderMenuStatus.SERVED) {
+            findOrderMenu.changeStatus(OrderMenuStatus.READY)
         }
     }
 

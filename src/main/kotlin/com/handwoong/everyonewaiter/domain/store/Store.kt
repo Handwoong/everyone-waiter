@@ -2,6 +2,7 @@ package com.handwoong.everyonewaiter.domain.store
 
 import com.handwoong.everyonewaiter.domain.BaseEntity
 import com.handwoong.everyonewaiter.domain.member.Member
+import com.handwoong.everyonewaiter.domain.store.StoreStatus.DELETE
 import com.handwoong.everyonewaiter.domain.store.StoreStatus.OPEN
 import com.handwoong.everyonewaiter.domain.waiting.Waiting
 import com.handwoong.everyonewaiter.dto.store.StoreRequest
@@ -46,6 +47,10 @@ class Store(
 
     fun addWaiting(waiting: Waiting) {
         this.waitingList.add(waiting)
+    }
+
+    fun removeStore() {
+        status = DELETE
     }
 
     companion object {

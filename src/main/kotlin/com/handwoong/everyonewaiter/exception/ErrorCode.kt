@@ -15,6 +15,8 @@ enum class ErrorCode(
 
     USERNAME_OR_PHONE_EXISTS(BAD_REQUEST, "이미 존재하는 회원이거나 휴대폰 번호입니다."),
 
+    CHECK_USERNAME_AND_PASSWORD(BAD_REQUEST, "아이디와 비밀번호를 확인 해주세요."),
+
     PHONE_EXISTS(BAD_REQUEST, "이미 존재하는 휴대폰 번호입니다."),
 
     TELEPHONE_EXISTS(BAD_REQUEST, "이미 존재하는 전화번호입니다."),

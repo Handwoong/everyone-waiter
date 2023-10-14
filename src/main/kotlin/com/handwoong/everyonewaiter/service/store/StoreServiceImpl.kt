@@ -43,7 +43,7 @@ class StoreServiceImpl(
     @Transactional
     override fun delete(username: String, storeId: Long) {
         val findStore = findMemberStore(storeId, username)
-        storeRepository.delete(findStore)
+        findStore.removeStore()
     }
 
     override fun findStore(username: String, storeId: Long): StoreResponse {

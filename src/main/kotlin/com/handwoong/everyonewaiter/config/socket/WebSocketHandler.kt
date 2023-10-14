@@ -28,7 +28,8 @@ class WebSocketHandler(
             return
         }
 
-        for (sess in sessionStorage[keyString + id]!!) {
+        val webSocketSessions = sessionStorage[keyString + id] ?: mutableListOf()
+        for (sess in webSocketSessions) {
             if (sess.isOpen) {
                 sess.sendMessage(TextMessage(msg))
             }
